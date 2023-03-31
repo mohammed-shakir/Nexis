@@ -19,10 +19,59 @@
 </details>
 
 ## Description
-Nexis is a chat application built using Flutter and Firebase. Nexis suppoorts not only direct/group messaging, but also voice and video calls using webrtc. It is designed to work on multiple platforms, including android, IOS, web, windows, linux, and macos. The app uses Firebase Firestore as its database and also utilizes other Firebase services. Nexis provides users with a seamless and intuitive chatting experience with a modern and aesthetically pleasing user interface.
+Nexis is a chat application built using Flutter and Firebase. Nexis supports not only direct/group messaging, but also voice and video calls using webrtc. It is designed to work on multiple platforms, including android, IOS, web, windows, linux, and macos. The app uses Firebase Firestore as its database and also utilizes other Firebase services. Nexis provides users with a seamless and intuitive chatting experience with a modern and aesthetically pleasing user interface.
 
 ## Getting started
-To be written.
+This section provides a step-by-step guide to set up the Nexis project locally. Please follow the instructions.
+
+### Prerequisites
+Before you begin, ensure you have the following software installed on your local machine:
+1. Flutter SDK (latest version)
+2. Dart SDK (latest version)
+3. Visual Studio Code (VSCode) or your preferred IDE
+
+### Step 1: Install Flutter and Dart
+Follow the Flutter installation guide from the official Flutter documentation to set up the Flutter SDK and Dart SDK on your machine:
+https://docs.flutter.dev/get-started/install
+  
+### Step 2: Install Flutter and Dart Plugins in VSCode
+Open Visual Studio Code, and install the Flutter and Dart plugins from the extensions marketplace. These plugins provide helpful tools and utilities for developing Flutter applications.
+
+1. Launch VSCode
+2. Click on the Extensions view icon on the sidebar, or press Ctrl+Shift+X
+3. Search for "Flutter" and "Dart" in the marketplace
+4. Install both the Flutter and Dart extensions by clicking the "Install" button
+  
+### Step 3: Clone the Nexis Repository
+Clone the Nexis repository to your local machine using the following command:
+```
+https://github.com/mohammed-shakir/Nexis.git
+```
+
+### Step 4: Open the Project in VSCode
+Open the cloned Nexis repository in VSCode:
+
+1. Launch VSCode
+2. Click on 'File' > 'Open Folder...'
+3. Navigate to the 'Nexis' > 'nexis' directory and click 'Select Folder'
+  
+### Step 5: Get Dependencies
+In the terminal, navigate to the 'Nexis' > 'nexis' project directory and run the following command to fetch all the required dependencies:
+```
+flutter pub get
+```
+  
+### Step 6: Run the App
+To run the Nexis app, execute the following command in the terminal:
+```
+flutter run
+```
+
+This command will start the app on your connected device or emulator.
+
+You're all set! You can now start contributing to the Nexis project. For more information on working with Flutter, refer to the official documentation:
+
+https://docs.flutter.dev/
 
 ## Code writing practice
 To be written.
