@@ -1,50 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'pages/home.dart';
+import 'pages/test_page.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print('Failed to initialize Firebase: $e');
+  }
+
+  runApp(const Nexis());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Nexis extends StatelessWidget {
+  const Nexis({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Nexis',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const MyHomePage(title: 'Nexis'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              'Nexis',
-            ),
-          ],
-        ),
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const Home(),
+        '/test_page': (context) => const TestPage(),
+      },
     );
   }
 }
