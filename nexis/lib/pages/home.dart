@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../src/widgets.dart';
+import '../src/auth.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  Home({super.key});
+
+  final Auth _auth = Auth();
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +21,19 @@ class Home extends StatelessWidget {
               ),
             ),
             CustomButton(
-              text: 'Nexis',
+              text: 'Test Page',
               onPressed: () {
                 Navigator.pushNamed(context, '/test_page');
+                // print('Go to Test Page');
+              },
+              textStyle: const TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            CustomButton(
+              text: 'Logout',
+              onPressed: () async {
+                await _auth.signOut();
                 // print('Go to Test Page');
               },
               textStyle: const TextStyle(

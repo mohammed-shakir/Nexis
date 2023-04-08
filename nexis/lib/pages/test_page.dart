@@ -20,7 +20,7 @@ class TestPage extends StatelessWidget {
             CustomButton(
               text: 'Go Back',
               onPressed: () {
-                Navigator.pushNamed(context, '/');
+                Navigator.of(context).pop();
                 // print('Go to Test Page');
               },
               textStyle: const TextStyle(
