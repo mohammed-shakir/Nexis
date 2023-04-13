@@ -23,6 +23,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "site": "nexis",
     "public": "public",
     "ignore": [
       "firebase.json",
