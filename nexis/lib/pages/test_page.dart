@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../src/widgets.dart';
+import '../widgets/custom_button.dart';
 
 class TestPage extends StatelessWidget {
   const TestPage({super.key});
@@ -7,25 +7,25 @@ class TestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF171c2a),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const CustomText(
-              text: 'Test Page',
+          children: [
+            const Text(
+              'Test Page',
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
+                fontFamily: 'Arial',
+                fontSize: 24,
               ),
             ),
+            const SizedBox(height: 10),
             CustomButton(
-              text: 'Go Back',
+              text: 'Back',
               onPressed: () {
                 Navigator.of(context).pop();
-                // print('Go to Test Page');
               },
-              textStyle: const TextStyle(
-                color: Colors.black,
-              ),
             ),
           ],
         ),

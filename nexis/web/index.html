@@ -38,8 +38,38 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <script>
+    // Import the functions you need from the SDKs you need
+    // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+    // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyCoLcjf9pJLSwCF0zBXq-0-_aYxx8cF7sI",
+      authDomain: "nexis-4723a.firebaseapp.com",
+      projectId: "nexis-4723a",
+      storageBucket: "nexis-4723a.appspot.com",
+      messagingSenderId: "829981996033",
+      appId: "1:829981996033:web:41927a7a0a8747a5897c00",
+      measurementId: "G-8BGQT6NDR2"
+    };
+
+    // Initialize Firebase
+    // const app = initializeApp(firebaseConfig);
+    // const analytics = getAnalytics(app);
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
 </head>
 <body>
+  <script src="main.dart.js" type="application/javascript"></script>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
@@ -55,5 +85,6 @@
       });
     });
   </script>
+
 </body>
 </html>
