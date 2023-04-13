@@ -7,8 +7,8 @@ import 'pages/test_page.dart';
 import 'pages/auth_page.dart';
 import 'src/theme.dart';
 
-const apiKey = 'AIzaSyCoLcjf9pJLSwCF0zBXq-0-_aYxx8cF7sI';
-const projectId = 'nexis-4723a';
+const apiKey = '';
+const projectId = '';
 
 Future<void> main() async {
   // await dotenv.load(fileName: ".env");

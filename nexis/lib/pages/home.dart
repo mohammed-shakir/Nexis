@@ -3,7 +3,7 @@ import '../widgets/custom_button.dart';
 import '../src/theme.dart';
 import 'package:firedart/firedart.dart';
 
-const projectId = 'nexis-4723a';
+const projectId = '';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
