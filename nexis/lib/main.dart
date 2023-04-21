@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firedart/firedart.dart';
 import 'pages/home.dart';
 import 'pages/test_page.dart';
 import 'pages/auth_page.dart';
 import 'src/theme.dart';
-
-const apiKey = '';
-const projectId = '';
 
 Future<void> main() async {
   // await dotenv.load(fileName: ".env");
@@ -17,7 +12,6 @@ Future<void> main() async {
 
   try {
     await Firebase.initializeApp();
-    Firestore.initialize(projectId);
   } catch (e) {
     print('Failed to initialize Firebase: $e');
   }
