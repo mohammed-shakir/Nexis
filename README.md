@@ -142,6 +142,11 @@ git checkout your-branch-name
 ```
 command to switch to the new branch.
 
+NOTE: You could use the following git command which is a combination of the two previous commands (It is a short-cut):
+```
+git checkout -b your-branch-name
+```
+
 4. Make and commit your changes: Make small, focused changes to the codebase, and commit them frequently with descriptive commit messages. This makes it easier for reviewers to understand the purpose of each change, and ensures that your changes are easy to review. Do it like this:
 ```
 git commit -m "Descriptive message"
