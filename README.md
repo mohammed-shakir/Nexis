@@ -73,7 +73,57 @@ https://docs.flutter.dev/
 Check the wiki: https://github.com/mohammed-shakir/Nexis/wiki/Code-writing-practices
 
 ## Emulators
-To be written.
+In this section, we will guide you through setting up Android Studio and configuring an Android emulator to test the Flutter Chat App on Visual Studio Code.
+
+### Install Android Studio
+First, you need to install Android Studio on your computer. Follow the steps below:
+
+1. Visit the official Android Studio download page: https://developer.android.com/studio
+
+2. Download the installer for your operating system (Windows, macOS, or Linux).
+
+3. Run the installer and follow the on-screen instructions to complete the installation.
+
+4. When the installation is complete, launch Android Studio.
+
+### Set up Android Virtual Device (AVD)
+To create an Android emulator, you need to set up an Android Virtual Device (AVD):
+
+1. Launch Android Studio and click "more actions" in the Welcome screen.
+
+2. Click "Create Virtual Device".
+
+3. Choose a device definition (e.g., Pixel 6) and click "Next."
+
+4. Select a system image and click "Next."
+
+5. Confirm your AVD configuration and click "Finish" to create the virtual device.
+
+### Run the Android Emulator in Visual Studio Code
+To run the Android emulator in Visual Studio Code, follow these steps:
+
+1. Open your Flutter Chat App project in Visual Studio Code.
+
+2. Open the terminal by clicking "Terminal" in the top menu and selecting "New Terminal."
+
+3. Type flutter doctor in the terminal to ensure that all dependencies are correctly set up.
+
+4. If there are any issues, follow the instructions in the terminal to resolve them.
+
+5. In the terminal, type flutter devices to list available devices.
+
+6. Locate the Android emulator (AVD) you created earlier in the list of devices.
+
+7. To run the app on the emulator, type the following command in the terminal, replacing <device_id> with the actual device ID:
+```
+flutter run -d <device_id>
+```
+
+8. The emulator will launch, and the Flutter Chat App will be installed and started on the virtual device.
+
+9. You can change the platform in the bottom-right corner (choose between win, android, web) if you dont want to use the terminal.
+
+Now you have successfully set up Android Studio and the Android emulator in Visual Studio Code.
 
 ## Git commands
 Git is a version control system that is widely used by developers to manage code changes and collaborate on projects. To contribute to Nexis, it is important to have a basic understanding of Git. Here are some useful Git commands:
