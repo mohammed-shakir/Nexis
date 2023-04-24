@@ -7,7 +7,6 @@
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-  <li><a href="#description">Description</a></li>
   <li><a href="#getting-started">Getting started</a></li>
   <li><a href="#code-writing-practice">Code writing practice</a></li>
   <li><a href="#emulators">Emulators</a></li>
@@ -17,9 +16,6 @@
   <li><a href="#testing">Testing</a></li>
 
 </details>
-
-## Description
-Nexis is a chat application built using Flutter and Firebase. Nexis supports not only direct/group messaging, but also voice and video calls using webrtc. It is designed to work on multiple platforms, including android, IOS, web, windows, linux, and macos. The app uses Firebase Firestore as its database and also utilizes other Firebase services. Nexis provides users with a seamless and intuitive chatting experience with a modern and aesthetically pleasing user interface.
 
 ## Getting started
 This section provides a step-by-step guide to set up the Nexis project locally. Please follow the instructions.
@@ -74,7 +70,7 @@ You're all set! You can now start contributing to the Nexis project. For more in
 https://docs.flutter.dev/
 
 ## Code writing practice
-To be written.
+Check the wiki: https://github.com/mohammed-shakir/Nexis/wiki/Code-writing-practices
 
 ## Emulators
 To be written.
@@ -128,15 +124,39 @@ It is important to follow good Git practices, such as committing frequently, wri
 When contributing to Nexis, it's important to follow a structured process for pushing your changes to the project. This helps to ensure that your changes are reviewed and merged in a timely manner, and that the project remains stable and functional.
 
 To push your code changes, we recommend following these steps:
-1. Pull changes from the remote branch: Before making any changes to the codebase, use the "git pull" command to ensure that your local copy of the codebase is up to date with the remote branch.
+1. Pull changes from the remote branch: Before making any changes to the codebase, use the
+```
+git pull
+```
+command to ensure that your local copy of the codebase is up to date with the remote branch.
 
-2. Create a new branch for your changes: Once your local copy of the codebase is up to date, create a new branch with a descriptive name that reflects the changes you intend to make. This keeps your changes isolated from the main codebase until they are ready to be merged.
+2. Create a new branch for your changes: Once your local copy of the codebase is up to date, create a new branch with a descriptive name that reflects the changes you intend to make like this:
+```
+git branch your-branch-name
+```
+This keeps your changes isolated from the main codebase until they are ready to be merged.
 
-3. Checkout the new branch: Use the "git checkout your-branch-name" command to switch to the new branch.
+3. Checkout the new branch: Use the
+```
+git checkout your-branch-name
+```
+command to switch to the new branch.
 
-4. Make and commit your changes: Make small, focused changes to the codebase, and commit them frequently with descriptive commit messages. This makes it easier for reviewers to understand the purpose of each change, and ensures that your changes are easy to review.
+NOTE: You could use the following git command which is a combination of the two previous commands (It is a short-cut):
+```
+git checkout -b your-branch-name
+```
 
-5. Push your changes to the remote branch: Use the "git push your-branch-name" command to push your changes to the remote branch on Github.
+4. Make and commit your changes: Make small, focused changes to the codebase, and commit them frequently with descriptive commit messages. This makes it easier for reviewers to understand the purpose of each change, and ensures that your changes are easy to review. Do it like this:
+```
+git commit -m "Descriptive message"
+```
+
+5. Push your changes to the remote branch: Use the
+```
+git push your-branch-name
+```
+command to push your changes to the remote branch on Github.
 
 6. Create a pull request: Create a pull request to merge your changes into the main codebase. Assign a reviewer to your pull request to ensure that your changes are reviewed in a timely manner.
 
