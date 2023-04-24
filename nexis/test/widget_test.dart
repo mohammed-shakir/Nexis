@@ -4,7 +4,7 @@ import 'package:nexis/pages/home.dart';
 
 void main() {
   testWidgets('Press Test Page button navigates to /test_page', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+    // Build our app and trigger a frame
     await tester.pumpWidget(const MaterialApp(home: Home()));
   });
 }

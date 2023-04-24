@@ -12,18 +12,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF171c2a),
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Nexis',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Arial',
-                fontSize: 24,
-              ),
+              style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(height: 10),
             CustomButton(
