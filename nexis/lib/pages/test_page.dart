@@ -13,7 +13,7 @@ class TestPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Why are u gae?',
+              'Test Page',
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Arial',

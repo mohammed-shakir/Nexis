@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
-import 'package:firedart/firedart.dart';
-
-const projectId = '';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
