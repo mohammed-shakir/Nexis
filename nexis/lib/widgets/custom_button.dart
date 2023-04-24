@@ -7,7 +7,7 @@ class CustomButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
   final EdgeInsetsGeometry? padding;
-  final BorderRadius? borderRadius; 
+  final BorderRadius? borderRadius;
   final Logger logger;
 
   CustomButton({
@@ -23,7 +23,7 @@ class CustomButton extends StatelessWidget {
 
   VoidCallback get defaultOnPress => () {
         logger.i("Button pressed");
-  };
+      };
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,12 @@ final ThemeData appTheme = ThemeData(
     displayMedium: TextStyle(
       color: Colors.white,
       fontFamily: 'Arial',
-      fontSize: 12,
+      fontSize: 16,
+    ),
+    labelLarge: TextStyle(
+      color: Colors.white,
+      fontFamily: 'Arial',
+      fontSize: 18,
     ),
   ),
 );
