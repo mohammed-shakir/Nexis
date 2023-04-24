@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'pages/home.dart';
 import 'pages/test_page.dart';
@@ -8,8 +7,6 @@ import 'pages/auth_page.dart';
 import 'themes/default_theme.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-
   WidgetsFlutterBinding.ensureInitialized();
 
   try {

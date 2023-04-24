@@ -24,11 +24,6 @@ jobs:
       run: flutter pub get
       working-directory: ./nexis
 
-    - name: Set up environment variables
-      run: |
-        echo "APIKEY=${{ secrets.APIKEY }}" >> ./nexis/.env
-      working-directory: ./nexis
-
     - name: Run Flutter tests
       run: flutter test
       working-directory: ./nexis
