@@ -5,7 +5,7 @@ import 'package:firedart/firedart.dart';
 import 'pages/home.dart';
 import 'pages/test_page.dart';
 import 'pages/auth_page.dart';
-import 'src/theme.dart';
+import 'themes/default_theme.dart';
 
 const apiKey = '';
 const projectId = '';

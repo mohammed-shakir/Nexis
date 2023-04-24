@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
-import '../src/theme.dart';
+import '../themes/default_theme.dart';
 import 'package:firedart/firedart.dart';
 
 const projectId = '';
