@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'pages/home.dart';
 import 'pages/test_page.dart';
 import 'pages/auth_page.dart';
-import 'src/theme.dart';
+import 'themes/default_theme.dart';
 
 Future<void> main() async {
   // await dotenv.load(fileName: ".env");
