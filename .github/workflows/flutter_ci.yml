@@ -20,8 +20,5 @@ jobs:
       with:
         flutter-version: '2.x'
 
-    - name: Install dependencies
-      run: flutter pub get
-
     - name: Run Flutter tests
       run: flutter test
