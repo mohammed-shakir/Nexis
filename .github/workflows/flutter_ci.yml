@@ -18,5 +18,12 @@ jobs:
     - name: Set up Flutter actions
       uses: subosito/flutter-action@v1
       with:
-        flutter-version: '2.x'
+        channel: 'stable' # This will use the latest stable version
 
+    - name: Install dependencies
+      run: flutter pub get
+      working-directory: ./nexis
+
+    - name: Run Flutter tests
+      run: flutter test
+      working-directory: ./nexis
