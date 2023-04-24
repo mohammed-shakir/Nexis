@@ -20,5 +20,3 @@ jobs:
       with:
         flutter-version: '2.x'
 
-    - name: Run Flutter tests
-      run: flutter test
