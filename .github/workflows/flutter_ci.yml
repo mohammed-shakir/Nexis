@@ -22,6 +22,8 @@ jobs:
 
     - name: Install dependencies
       run: flutter pub get
+      working-directory: ./nexis
 
     - name: Run Flutter tests
       run: flutter test
+      working-directory: ./nexis
