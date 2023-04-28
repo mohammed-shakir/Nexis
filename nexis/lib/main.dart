@@ -1,18 +1,29 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firedart/firedart.dart';
+import 'package:nexis/firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/home.dart';
 import 'pages/test_page.dart';
-import 'pages/auth_page.dart';
 import 'themes/default_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  var logger = Logger();
 
   try {
-    await Firebase.initializeApp();
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } else {
+      Firestore.initialize(dotenv.env['FIREBASE_PROJECT_ID']!);
+    }
   } catch (e) {
-    Logger().e('Failed to initialize Firebase: $e');
+    logger.e('Failed to initialize Firebase: $e');
   }
 
   runApp(const Nexis());
@@ -30,7 +41,6 @@ class Nexis extends StatelessWidget {
       routes: {
         '/home': (context) => const Home(),
         '/test_page': (context) => const TestPage(),
-        '/auth_page': (context) => AuthPage(),
       },
     );
   }

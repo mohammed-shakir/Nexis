@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:nexis/src/auth.dart';
+import 'package:logger/logger.dart';
 import 'package:nexis/widgets/custom_button.dart';
 
 class AuthPage extends StatefulWidget {
+  const AuthPage({super.key});
+
   @override
-  _AuthPageState createState() => _AuthPageState();
+  AuthPageState createState() => AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class AuthPageState extends State<AuthPage> {
+  var logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +22,7 @@ class _AuthPageState extends State<AuthPage> {
             CustomButton(
               text: 'Sign in with Google',
               onPressed: () {
-                print("Sign in with Google");
+                logger.i("Sign in with Google");
               },
             ),
           ],
