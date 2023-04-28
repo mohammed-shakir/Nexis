@@ -26,8 +26,11 @@ jobs:
       run: flutter pub get
       working-directory: ./nexis
 
-    - name: Clear cache
-      run: rm -rf /home/runner/.pub-cache/hosted
+    - name: Create .env file
+      run: |
+        echo "VAR1=test_value1" > ./nexis/.env
+        echo "VAR2=test_value2" >> ./nexis/.env
+      working-directory: ./nexis
 
     - name: Run Flutter tests
       run: flutter test
