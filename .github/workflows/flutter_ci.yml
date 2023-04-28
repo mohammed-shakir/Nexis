@@ -22,12 +22,8 @@ jobs:
       with:
         channel: 'stable' # This will use the latest stable version
 
-    # - name: Install dependencies
-      # run: flutter pub get
-      # working-directory: ./nexis
-
     - name: Install dependencies
-      run: flutter pub get --config pubspec_test.yaml
+      run: flutter pub get
       working-directory: ./nexis
 
     - name: Create .env file
