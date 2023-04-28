@@ -26,6 +26,9 @@ jobs:
       run: flutter pub get
       working-directory: ./nexis
 
+    - name: Clear cache
+      run: rm -rf /home/runner/.pub-cache/hosted
+
     - name: Run Flutter tests
       run: flutter test
       working-directory: ./nexis
