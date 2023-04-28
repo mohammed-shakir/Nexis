@@ -21,15 +21,15 @@ jobs:
       uses: subosito/flutter-action@v1
       with:
         channel: 'stable' # This will use the latest stable version
+    
+    - name: Create .env file
+      run: |
+        echo "FIREBASE_API_KEY=test_value1" > ./nexis/env.dart
+        echo "FIREBASE_PROJECT_ID=test_value2" >> ./nexis/.env
+      working-directory: ./nexis
 
     - name: Install dependencies
       run: flutter pub get
-      working-directory: ./nexis
-
-    - name: Create .env file
-      run: |
-        echo "FIREBASE_API_KEY=test_value1" > ./nexis/.env
-        echo "FIREBASE_PROJECT_ID=test_value2" >> ./nexis/.env
       working-directory: ./nexis
 
     - name: Run Flutter tests
