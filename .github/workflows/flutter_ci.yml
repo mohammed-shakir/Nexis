@@ -20,7 +20,7 @@ jobs:
     - name: Set up Flutter actions
       uses: subosito/flutter-action@v1
       with:
-        channel: 'stable' # This will use the latest stable version
+        channel: 'stable'
 
     - name: Install dependencies
       run: flutter pub get
@@ -30,8 +30,8 @@ jobs:
       run: |
         echo "FIREBASE_API_KEY=test1" > ./nexis/.env
         echo "FIREBASE_PROJECT_ID=test2" >> ./nexis/.env
-      working-directory: ./nexis
 
     - name: Run Flutter tests
-      run: flutter test
-      working-directory: ./nexis
+      run: |
+        cd nexis
+        flutter test
