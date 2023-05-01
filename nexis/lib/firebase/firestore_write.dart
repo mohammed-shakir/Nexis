@@ -10,6 +10,43 @@ class FirestoreWrite {
   static Future<void> sendMessage({
     required String message,
     required String sender,
+    required String conversationId,
+    DateTime? createdAt,
+  }) async {
+    DateTime timestamp = createdAt ?? DateTime.now();
+
+    try {
+      if (kIsWeb) {
+        await firestoreWeb.collection('messages').add({
+          'content': message,
+          'sender': sender,
+          'conversationId': conversationId,
+          'createdAt': timestamp,
+          'type': 'text',
+        });
+      } else {
+        await firestore.collection('messages').add({
+          'content': message,
+          'sender': sender,
+          'conversationId': conversationId,
+          'createdAt': timestamp,
+          'type': 'text',
+        });
+      }
+    } catch (e) {
+      throw Exception('Failed to send message: $e');
+    }
+  }
+}
+
+/*
+class FirestoreWrite {
+  static final Firestore firestore = Firestore.instance;
+  static final FirebaseFirestore firestoreWeb = FirebaseFirestore.instance;
+
+  static Future<void> sendMessage({
+    required String message,
+    required String sender,
     DateTime? timestamp,
   }) async {
     String formattedTimestamp = DateFormat('dd/MM/yyyy HH:mm').format(timestamp ?? DateTime.now());
@@ -33,3 +70,4 @@ class FirestoreWrite {
     }
   }
 }
+*/

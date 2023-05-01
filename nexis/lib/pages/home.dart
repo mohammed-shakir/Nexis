@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firedart/firedart.dart';
 import '../widgets/custom_button.dart';
 import '../firebase/firestore_write.dart';
 
@@ -11,73 +12,87 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   final TextEditingController messageController = TextEditingController();
+  static final Firestore firestore = Firestore.instance;
+  CollectionReference messages = firestore.collection('messages');
+
+  void sendMessage() async {
+    try {
+      await FirestoreWrite.sendMessage(
+        message: messageController.text,
+        sender: 'userId',
+        conversationId: 'conversationId',
+      );
+      messageController.clear();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending message: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const Spacer(),
             Text(
               'Nexis',
               style: Theme.of(context).textTheme.displayMedium,
             ),
-            const SizedBox(height: 10),
-            // TODO: Replace this in the future with a custom text field
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  labelText: 'Enter your message',
-                  fillColor: Theme.of(context).colorScheme.tertiary,
-                  filled: true,
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: messageController,
+                      onSubmitted: (_) => sendMessage(),
+                      decoration: InputDecoration(
+                        // labelText: 'Enter your message',
+                        hintText: 'Enter your message',
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        hintStyle: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        fillColor: Theme.of(context).colorScheme.tertiary,
+                        filled: true,
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        labelStyle: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  const SizedBox(width: 10),
+                  CustomButton(
+                    text: 'Send Message',
+                    onPressed: () async {
+                      sendMessage();
+                    },
                   ),
-                  labelStyle: const TextStyle(color: Colors.white),
-                ),
+                  const SizedBox(width: 10),
+                  CustomButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/settings_page');
+                    },
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            // TODO: Replace this in the future with a icon button
-            CustomButton(
-              text: 'Send Message',
-              onPressed: () async {
-                try {
-                  await FirestoreWrite.sendMessage(
-                    message: messageController.text,
-                    // TODO: Replace this with the actual user's name
-                    sender: 'some user',
-                  );
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message sent successfully!')),
-                  );
-
-                  messageController.clear();
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error sending message: $e')),
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 10),
-            CustomButton(
-              text: 'Test Page',
-              onPressed: () {
-                Navigator.pushNamed(context, '/test_page');
-              },
-            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+            const SizedBox(height: 20),
           ],
         ),
       ),

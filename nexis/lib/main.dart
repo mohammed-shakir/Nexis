@@ -6,7 +6,7 @@ import 'package:firedart/firedart.dart';
 import 'package:nexis/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/home.dart';
-import 'pages/test_page.dart';
+import 'pages/settings/settings_page.dart';
 import 'themes/default_theme.dart';
 
 Future<void> main() async {
@@ -38,9 +38,11 @@ class Nexis extends StatelessWidget {
       title: 'Nexis',
       theme: appTheme,
       initialRoute: '/home',
+      // remove debug banner
+      debugShowCheckedModeBanner: false,
       routes: {
         '/home': (context) => const Home(),
-        '/test_page': (context) => const TestPage(),
+        '/settings_page': (context) => const SettingsPage(),
       },
     );
   }
