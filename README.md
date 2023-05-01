@@ -44,6 +44,13 @@ Clone the Nexis repository to your local machine using the following command:
 https://github.com/mohammed-shakir/Nexis.git
 ```
 
+### Step 4: Add .env and google-services.json files
+Add the .env file at the root directory /nexis. This file should contain the environment variables needed for the project.
+
+Also, add the google-services.json file in the following directory /nexis/android/app/ in order for the android app to work with Firebase.
+
+You can find these files in the nexis discord server under the channel "code".
+
 ### Step 4: Open the Project in VSCode
 Open the cloned Nexis repository in VSCode:
 
