@@ -51,20 +51,20 @@ Also, add the google-services.json file in the following directory /nexis/androi
 
 You can find these files in the nexis discord server under the channel "code".
 
-### Step 4: Open the Project in VSCode
+### Step 5: Open the Project in VSCode
 Open the cloned Nexis repository in VSCode:
 
 1. Launch VSCode
 2. Click on 'File' > 'Open Folder...'
 3. Navigate to the 'Nexis' > 'nexis' directory and click 'Select Folder'
   
-### Step 5: Get Dependencies
+### Step 6: Get Dependencies
 In the terminal, navigate to the 'Nexis' > 'nexis' project directory and run the following command to fetch all the required dependencies:
 ```
 flutter pub get
 ```
   
-### Step 6: Run the App
+### Step 7: Run the App
 To run the Nexis app, execute the following command in the terminal:
 ```
 flutter run
