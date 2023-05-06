@@ -20,6 +20,7 @@ Future<void> main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
     } else {
+      FirebaseAuth.initialize(dotenv.env['FIREBASE_API_KEY']!, VolatileStore());
       Firestore.initialize(dotenv.env['FIREBASE_PROJECT_ID']!);
     }
   } catch (e) {

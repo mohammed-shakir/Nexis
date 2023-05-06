@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firedart/firedart.dart';
+import 'package:logger/logger.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../widgets/custom_button.dart';
 import '../firebase/firestore_write.dart';
+import '../firebase/firestore_read.dart';
+import 'dart:async';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -12,15 +16,15 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   final TextEditingController messageController = TextEditingController();
-  static final Firestore firestore = Firestore.instance;
-  CollectionReference messages = firestore.collection('messages');
+  StreamSubscription<List<Document>>? messagesSubscription;
+  var logger = Logger();
 
   void sendMessage() async {
     try {
       await FirestoreWrite.sendMessage(
         message: messageController.text,
         sender: 'userId',
-        conversationId: 'conversationId',
+        groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
       );
       messageController.clear();
     } catch (e) {
@@ -28,6 +32,32 @@ class HomeState extends State<Home> {
         SnackBar(content: Text('Error sending message: $e')),
       );
     }
+  }
+
+  Future<void> signInAndSetupMessagesListener() async {
+    try {
+      await dotenv.load(fileName: ".env");
+      await FirestoreRead.signIn(dotenv.env['TEMP_TEST_EMAIL']!, dotenv.env['TEMP_TEST_PASSWORD']!);
+      messagesSubscription = FirestoreRead.listenToMessages(
+        isGroupChat: true,
+        groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
+        // isGroupChat: false,
+        // user1Id: 'user1Id',
+        // user2Id: 'user2Id',
+      ).listen((messages) {
+        logger.i('New message: $messages');
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error reading messages: $e')),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    signInAndSetupMessagesListener();
   }
 
   @override
@@ -102,6 +132,7 @@ class HomeState extends State<Home> {
   // Clean up resources that are no longer needed (messageController). If it is not removed, it could cause a memory leak.
   @override
   void dispose() {
+    messagesSubscription?.cancel();
     messageController.dispose();
     super.dispose();
   }

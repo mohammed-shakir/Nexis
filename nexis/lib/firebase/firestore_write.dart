@@ -1,7 +1,7 @@
 import 'package:firedart/firedart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 class FirestoreWrite {
   static final Firestore firestore = Firestore.instance;
@@ -10,27 +10,25 @@ class FirestoreWrite {
   static Future<void> sendMessage({
     required String message,
     required String sender,
-    required String conversationId,
+    required String groupChatId,
     DateTime? createdAt,
   }) async {
     DateTime timestamp = createdAt ?? DateTime.now();
+    // String formattedTimestamp = DateFormat('dd/MM/yyyy HH:mm').format(timestamp ?? DateTime.now());
+    // 'timestamp': formattedTimestamp,
 
     try {
       if (kIsWeb) {
-        await firestoreWeb.collection('messages').add({
-          'content': message,
+        await firestoreWeb.collection('group_chats').doc(groupChatId).collection('messages').add({
+          'message': message,
           'sender': sender,
-          'conversationId': conversationId,
           'createdAt': timestamp,
-          'type': 'text',
         });
       } else {
-        await firestore.collection('messages').add({
-          'content': message,
+        await firestore.collection('group_chats').document(groupChatId).collection('messages').add({
+          'message': message,
           'sender': sender,
-          'conversationId': conversationId,
           'createdAt': timestamp,
-          'type': 'text',
         });
       }
     } catch (e) {
@@ -38,36 +36,3 @@ class FirestoreWrite {
     }
   }
 }
-
-/*
-class FirestoreWrite {
-  static final Firestore firestore = Firestore.instance;
-  static final FirebaseFirestore firestoreWeb = FirebaseFirestore.instance;
-
-  static Future<void> sendMessage({
-    required String message,
-    required String sender,
-    DateTime? timestamp,
-  }) async {
-    String formattedTimestamp = DateFormat('dd/MM/yyyy HH:mm').format(timestamp ?? DateTime.now());
-
-    try {
-      if (kIsWeb) {
-        await firestoreWeb.collection('messages').add({
-          'message': message,
-          'sender': sender,
-          'timestamp': formattedTimestamp,
-        });
-      } else {
-        await firestore.collection('messages').add({
-          'message': message,
-          'sender': sender,
-          'timestamp': formattedTimestamp,
-        });
-      }
-    } catch (e) {
-      throw Exception('Failed to send message: $e');
-    }
-  }
-}
-*/
