@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/basic_input_field.dart';
 import '../firebase/firestore_write.dart';
 
 class Home extends StatefulWidget {
@@ -25,6 +27,11 @@ class HomeState extends State<Home> {
               style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(height: 10),
+            BasicInputField(
+              labelText: 'heheh',
+              fillColor: Theme.of(context).colorScheme.tertiary,
+            ),
+            BasicInputField(labelText: 'jaja'),
             // TODO: Replace this in the future with a custom text field
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.6,
