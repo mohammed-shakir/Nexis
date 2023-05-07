@@ -28,10 +28,25 @@ class HomeState extends State<Home> {
             ),
             const SizedBox(height: 10),
             BasicInputField(
-              labelText: 'heheh',
-              fillColor: Theme.of(context).colorScheme.tertiary,
+              //labelText: 'heheh',
+              // labelStyle: const TextStyle(color: Colors.red),
+
+              /* border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30),
+                ),
+              ), */
+              //fillColor: Colors.red,
+              /* focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30),
+                ),
+              ), */
+              fontSize: 10,
             ),
-            BasicInputField(labelText: 'jaja'),
+            BasicInputField(),
             // TODO: Replace this in the future with a custom text field
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.6,

@@ -5,12 +5,14 @@ class BasicInputField extends StatefulWidget {
   final String? labelText;
   final Color? fillColor;
   final TextStyle? labelStyle;
-  final int? fontSize;
+  final double? fontSize;
+  final InputBorder? border;
+  final InputBorder? focusedBorder;
   final EdgeInsetsGeometry? padding;
   final BorderRadius? borderRadius;
   final Color? borderColor;
   final VoidCallback? textControllerListenerFunction;
-  final Logger? logger;
+  final Logger logger;
 
   BasicInputField(
       {Key? key,
@@ -18,6 +20,8 @@ class BasicInputField extends StatefulWidget {
       this.fillColor,
       this.labelStyle,
       this.fontSize,
+      this.border,
+      this.focusedBorder,
       this.padding,
       this.borderRadius,
       this.borderColor,
@@ -35,8 +39,8 @@ class _BasicInputField extends State<BasicInputField> {
   @override
   void initState() {
     super.initState();
-    textController
-        .addListener(widget.textControllerListenerFunction ?? defaultFunction);
+    textController.addListener(
+        widget.textControllerListenerFunction ?? defaultListenerFunction);
   }
 
   @override
@@ -45,9 +49,8 @@ class _BasicInputField extends State<BasicInputField> {
     super.dispose();
   }
 
-  // Testing TextEditingController, prints current text in TextField in debug console
-  void _printTest() {
-    widget.logger?.i(textController.text);
+  void defaultListenerFunction() {
+    widget.logger.i(textController.text);
   }
 
   @override
@@ -55,11 +58,23 @@ class _BasicInputField extends State<BasicInputField> {
     return TextField(
       controller: textController,
       decoration: InputDecoration(
-        labelText: widget.labelText,
-        labelStyle: widget.labelStyle,
-        border: const OutlineInputBorder(),
+        // Tested done on chrome, android:
+        // labelText, labelStyle, border, fillColor, focusedBorder, fontsize
+        labelText: widget.labelText ?? 'Enter your message',
+        labelStyle: widget.labelStyle ?? const TextStyle(color: Colors.white),
+        border: widget.border ??
+            const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
         fillColor: widget.fillColor ?? Theme.of(context).colorScheme.tertiary,
         filled: true,
+        focusedBorder: widget.focusedBorder ??
+            const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
       ),
     );
   }
