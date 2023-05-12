@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../widgets/custom_button.dart';
 import '../firebase/firestore_write.dart';
 import '../firebase/firestore_read.dart';
+import '../firebase/login.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -17,13 +18,26 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
   final TextEditingController messageController = TextEditingController();
   StreamSubscription<List<Document>>? messagesSubscription;
+  late final FirestoreRead firestoreRead;
   var logger = Logger();
+
+  Future<void> signIn() async {
+    try {
+      await dotenv.load(fileName: ".env");
+      await Login.signIn(
+          dotenv.env['TEMP_TEST_EMAIL']!, dotenv.env['TEMP_TEST_PASSWORD']!);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error signing in: $e')),
+      );
+    }
+  }
 
   void sendMessage() async {
     try {
       await FirestoreWrite.sendMessage(
         message: messageController.text,
-        sender: 'userId',
+        sender: dotenv.env['TEMP_TEST_EMAIL']!,
         groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
       );
       messageController.clear();
@@ -34,30 +48,30 @@ class HomeState extends State<Home> {
     }
   }
 
-  Future<void> signInAndSetupMessagesListener() async {
+  void listenToMessages() async {    
     try {
-      await dotenv.load(fileName: ".env");
-      await FirestoreRead.signIn(dotenv.env['TEMP_TEST_EMAIL']!, dotenv.env['TEMP_TEST_PASSWORD']!);
-      messagesSubscription = FirestoreRead.listenToMessages(
-        isGroupChat: true,
-        groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
-        // isGroupChat: false,
-        // user1Id: 'user1Id',
-        // user2Id: 'user2Id',
-      ).listen((messages) {
-        logger.i('New message: $messages');
+      firestoreRead = FirestoreRead();
+      firestoreRead.collectionStream.listen((documents) {
+        // Do something with the updated documents here if needed
+        
+        setState(() {
+          // Update the UI here
+
+        });
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error reading messages: $e')),
-      );
+      logger.e('Error listening to messages: $e');
     }
   }
 
   @override
   void initState() {
     super.initState();
-    signInAndSetupMessagesListener();
+    signIn().then((_) {
+      listenToMessages();
+    }).catchError((error) {
+      logger.e('Error signing in: $error');
+    });
   }
 
   @override
@@ -134,6 +148,7 @@ class HomeState extends State<Home> {
   void dispose() {
     messagesSubscription?.cancel();
     messageController.dispose();
+    firestoreRead.cancel();
     super.dispose();
   }
 }
