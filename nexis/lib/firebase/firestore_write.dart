@@ -1,7 +1,7 @@
 import 'package:firedart/firedart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:intl/intl.dart';
+import 'dart:io' show Platform;
 
 class FirestoreWrite {
   static final Firestore firestore = Firestore.instance;
@@ -14,11 +14,9 @@ class FirestoreWrite {
     DateTime? createdAt,
   }) async {
     DateTime timestamp = createdAt ?? DateTime.now();
-    String formattedTimestamp =
-        DateFormat('dd/MM/yyyy HH:mm').format(timestamp);
 
     try {
-      if (kIsWeb) {
+      if (kIsWeb || Platform.isAndroid || Platform.isIOS) {
         await firestoreWeb
             .collection('group_chats')
             .doc(groupChatId)
@@ -26,9 +24,9 @@ class FirestoreWrite {
             .add({
           'message': message,
           'sender': sender,
-          'timestamp': formattedTimestamp,
+          'timestamp': timestamp,
         });
-      } else {
+      } else if (Platform.isWindows || Platform.isLinux) {
         await firestore
             .collection('group_chats')
             .document(groupChatId)
@@ -36,7 +34,7 @@ class FirestoreWrite {
             .add({
           'message': message,
           'sender': sender,
-          'timestamp': formattedTimestamp,
+          'timestamp': timestamp,
         });
       }
     } catch (e) {

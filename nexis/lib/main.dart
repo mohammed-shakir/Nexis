@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 import 'package:firedart/firedart.dart';
 import 'package:nexis/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,19 +12,18 @@ import 'themes/default_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  var logger = Logger();
 
   try {
-    if (kIsWeb) {
+    if (kIsWeb || Platform.isAndroid || Platform.isIOS) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-    } else {
+    } else if (Platform.isWindows || Platform.isLinux) {
       FirebaseAuth.initialize(dotenv.env['FIREBASE_API_KEY']!, VolatileStore());
       Firestore.initialize(dotenv.env['FIREBASE_PROJECT_ID']!);
     }
   } catch (e) {
-    logger.e('Failed to initialize Firebase: $e');
+    throw Exception('Failed to initialize Firebase: $e');
   }
 
   runApp(const Nexis());
