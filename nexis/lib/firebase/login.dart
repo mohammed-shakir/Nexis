@@ -5,12 +5,14 @@ import 'dart:io' show Platform;
 
 class Login {
   static final FirebaseAuth auth = FirebaseAuth.instance;
-  static final firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
+  static final firebase_auth.FirebaseAuth firebaseAuth =
+      firebase_auth.FirebaseAuth.instance;
 
   static Future<void> signIn(String email, String password) async {
     try {
-      if (kIsWeb || Platform.isAndroid || Platform.isIOS) {
-        await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      if (kIsWeb || Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+        await firebaseAuth.signInWithEmailAndPassword(
+            email: email, password: password);
       } else if (Platform.isWindows || Platform.isLinux) {
         await auth.signIn(email, password);
       }

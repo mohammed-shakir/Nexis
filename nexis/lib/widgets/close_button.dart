@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class CustomCloseButton extends StatefulWidget {
   final VoidCallback onPressed;
-  const CustomCloseButton({Key? key, required this.onPressed}) : super(key: key);
+  const CustomCloseButton({Key? key, required this.onPressed})
+      : super(key: key);
 
   @override
   CustomCloseButtonState createState() => CustomCloseButtonState();

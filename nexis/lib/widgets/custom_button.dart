@@ -32,10 +32,13 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed ?? defaultOnPress,
       style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.secondary,
-        foregroundColor: textColor ?? Theme.of(context).textTheme.labelLarge?.color,
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).colorScheme.secondary,
+        foregroundColor:
+            textColor ?? Theme.of(context).textTheme.labelLarge?.color,
         padding: padding ?? const EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(borderRadius: borderRadius ?? BorderRadius.circular(4)),
+        shape: RoundedRectangleBorder(
+            borderRadius: borderRadius ?? BorderRadius.circular(4)),
       ),
       child: icon == null
           ? Text(text ?? 'Button')

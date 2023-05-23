@@ -16,7 +16,7 @@ class FirestoreWrite {
     DateTime timestamp = createdAt ?? DateTime.now();
 
     try {
-      if (kIsWeb || Platform.isAndroid || Platform.isIOS) {
+      if (kIsWeb || Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
         await firestoreWeb
             .collection('group_chats')
             .doc(groupChatId)
