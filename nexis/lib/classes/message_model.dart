@@ -11,4 +11,15 @@ class Message {
       required this.sender,
       required this.content,
       required this.timestamp});
+
+  factory Message.fromDocument(DocumentSnapshot document) {
+    Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+
+    return Message(
+      id: document.id,
+      sender: data?['sender'] as String? ?? '',
+      content: data?['message'] as String? ?? '',
+      timestamp: data?['timestamp'] as Timestamp? ?? Timestamp.now(),
+    );
+  }
 }

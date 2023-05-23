@@ -7,6 +7,7 @@ import '../firebase/firestore_write.dart';
 import '../firebase/firestore_read.dart';
 import '../firebase/login.dart';
 import '../classes/message_model.dart';
+import '../classes/time_format.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -22,6 +23,7 @@ class HomeState extends State<Home> {
   late final FirestoreRead firestoreRead;
   List<Message> messages = [];
   bool messagesLoaded = false;
+  final FocusNode messageFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -64,7 +66,6 @@ class HomeState extends State<Home> {
           groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
         );
         messageController.clear();
-        FocusScope.of(context).unfocus();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error sending message: $e')),
@@ -85,13 +86,7 @@ class HomeState extends State<Home> {
       Timestamp? lastMessageTimestamp;
       if (documents.isNotEmpty) {
         for (var document in documents.reversed) {
-          Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
-          messages.add(Message(
-            id: document.id,
-            sender: data?['sender'] as String,
-            content: data?['message'] as String,
-            timestamp: data?['timestamp'] as Timestamp,
-          ));
+          messages.add(Message.fromDocument(document));
         }
 
         var lastMessageData = documents.last.data();
@@ -110,16 +105,9 @@ class HomeState extends State<Home> {
             if (processedIds.contains(newDocument.id)) {
               continue;
             }
-            Map<String, dynamic>? data =
-                newDocument.data() as Map<String, dynamic>?;
             setState(() {
               // Update the UI here
-              messages.add(Message(
-                id: newDocument.id,
-                sender: data?['sender'] as String,
-                content: data?['message'] as String,
-                timestamp: data?['timestamp'] as Timestamp,
-              ));
+              messages.add(Message.fromDocument(newDocument));
             });
           }
         }
@@ -168,10 +156,10 @@ class HomeState extends State<Home> {
                 style: TextStyle(color: Colors.white),
               ),
             )
-          : ListView.separated(
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               shrinkWrap: true,
               itemCount: messages.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) => buildMessageItem(index),
             ),
     );
@@ -182,6 +170,8 @@ class HomeState extends State<Home> {
     final sender = message.sender;
     final timestamp = message.timestamp.toDate();
     final content = message.content;
+
+    final formattedTimestamp = TimeFormat.formattedTimestamp(timestamp);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,7 +188,7 @@ class HomeState extends State<Home> {
             ),
             const SizedBox(width: 8),
             Text(
-              timestamp.toString(),
+              formattedTimestamp,
               style: const TextStyle(
                 color: Colors.white,
               ),
@@ -225,7 +215,11 @@ class HomeState extends State<Home> {
           Expanded(
             child: TextField(
               controller: messageController,
-              onSubmitted: (_) => sendMessage(),
+              focusNode: messageFocusNode,
+              onSubmitted: (_) {
+                sendMessage();
+                messageFocusNode.requestFocus();
+              },
               decoration: InputDecoration(
                 hintText: 'Enter your message',
                 floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -248,24 +242,30 @@ class HomeState extends State<Home> {
             ),
           ),
           const SizedBox(width: 10),
-          CustomButton(
-            icon: const Icon(Icons.send),
-            onPressed: () async {
-              try {
-                await sendMessage();
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error sending message: $e')),
-                );
-              }
-            },
+          SizedBox(
+            height: 48, // Adjust the height to match the input field's height
+            child: CustomButton(
+              icon: const Icon(Icons.send),
+              onPressed: () async {
+                try {
+                  await sendMessage();
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error sending message: $e')),
+                  );
+                }
+              },
+            ),
           ),
           const SizedBox(width: 10),
-          CustomButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.pushNamed(context, RouteNames.settingsPage);
-            },
+          SizedBox(
+            height: 48, // Adjust the height to match the input field's height
+            child: CustomButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.pushNamed(context, RouteNames.settingsPage);
+              },
+            ),
           ),
         ],
       ),
