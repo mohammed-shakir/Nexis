@@ -100,15 +100,34 @@ class HomeState extends State<Home> {
           .listenToNewMessages(lastMessageTimestamp)
           .listen((querySnapshot) {
         for (var docChange in querySnapshot.docChanges) {
-          if (docChange.type == DocumentChangeType.added) {
-            DocumentSnapshot newDocument = docChange.doc;
-            if (processedIds.contains(newDocument.id)) {
-              continue;
-            }
-            setState(() {
-              // Update the UI here
-              messages.add(Message.fromDocument(newDocument));
-            });
+          DocumentSnapshot document = docChange.doc;
+          switch (docChange.type) {
+            case DocumentChangeType.added:
+              if (processedIds.contains(document.id)) {
+                continue;
+              }
+              setState(() {
+                messages.add(Message.fromDocument(document));
+              });
+              break;
+            case DocumentChangeType.modified:
+              int indexToUpdate =
+                  messages.indexWhere((message) => message.id == document.id);
+              if (indexToUpdate != -1) {
+                setState(() {
+                  messages[indexToUpdate] = Message.fromDocument(document);
+                });
+              }
+              break;
+            case DocumentChangeType.removed:
+              int indexToRemove =
+                  messages.indexWhere((message) => message.id == document.id);
+              if (indexToRemove != -1) {
+                setState(() {
+                  messages.removeAt(indexToRemove);
+                });
+              }
+              break;
           }
         }
       });
