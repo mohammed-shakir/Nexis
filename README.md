@@ -178,7 +178,25 @@ git push origin your-branch-name
 It is important to follow good Git practices, such as committing frequently, writing descriptive commit messages, and using feature branches for new work.
 
 ## Pushing code
-When contributing to Nexis, it's important to follow a structured process for pushing your changes to the project. This helps to ensure that your changes are reviewed and merged in a timely manner, and that the project remains stable and functional.
+When contributing, it's important to follow a structured process for pushing your changes to the project. This helps to ensure that your changes are reviewed and merged in a timely manner, and that the project remains stable and functional.
+  
+We recommend pulling the "dev" branch instead of "main". The "main" branch is the "stable" version while the "dev" branch has all the latest fetures and implementations that all the devs on this project has/are working on.
+  
+To pull the dev branch and merge it with your code, follow these steps:
+1. Fetch the latest changes from the remote repository to update your local repository:
+```
+git fetch
+```
+
+2. Switch to your local branch where you want to merge the changes:
+```
+git checkout <local_branch>
+```
+
+3. Merge the changes from the remote branch into your local branch:
+```
+git merge origin/dev
+```
 
 To push your code changes, we recommend following these steps:
 1. Pull changes from the remote branch: Before making any changes to the codebase, use the
@@ -215,7 +233,7 @@ git push your-branch-name
 ```
 command to push your changes to the remote branch on Github.
 
-6. Create a pull request: Create a pull request to merge your changes into the main codebase. Assign a reviewer to your pull request to ensure that your changes are reviewed in a timely manner.
+6. Create a pull request: Create a pull request to merge your changes into the main codebase. Assign a reviewer to your pull request to ensure that your changes are reviewed in a timely manner. IMPORTANT: Make sure that you make a pull request that merges with the branch "dev" and not "main".
 
 By following this process, you can ensure that your changes are reviewed quickly and effectively, and that the project remains stable and functional.
 
