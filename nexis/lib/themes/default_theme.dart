@@ -19,4 +19,10 @@ final ThemeData appTheme = ThemeData(
       fontSize: 18,
     ),
   ),
+  scrollbarTheme: ScrollbarThemeData(
+    thumbColor: MaterialStateProperty.all(Colors.black),
+  ),
+  textSelectionTheme: const TextSelectionThemeData(
+    selectionColor: Colors.blue, // set the color for selected text
+  ),
 );

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/message_item.dart';
-import '../classes/route_names.dart';
-import '../firebase/firestore_write.dart';
-import '../firebase/firestore_read.dart';
-import '../firebase/login.dart';
-import '../models/message_model.dart';
-import '../classes/time_format.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/message_item.dart';
+import '../../classes/route_names.dart';
+import '../../firebase/firestore_write.dart';
+import '../../firebase/firestore_read.dart';
+import '../../models/message_model.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -25,17 +23,15 @@ class HomeState extends State<Home> {
   List<Message> messages = [];
   bool messagesLoaded = false;
   final FocusNode messageFocusNode = FocusNode();
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    signIn().then((_) async {
-      await listenToMessages();
+    listenToMessages().then((_) {
       setState(() {
         // Update the UI
       });
-    }).catchError((error) {
-      throw Exception('Failed to sign in: $error');
     });
   }
 
@@ -47,14 +43,12 @@ class HomeState extends State<Home> {
     super.dispose();
   }
 
-  Future<void> signIn() async {
-    try {
-      await dotenv.load(fileName: ".env");
-      await Login.signIn(
-          dotenv.env['TEMP_TEST_EMAIL']!, dotenv.env['TEMP_TEST_PASSWORD']!);
-    } catch (e) {
-      throw Exception('Error signing in: $e');
-    }
+  void scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      }
+    });
   }
 
   Future<void> sendMessage() async {
@@ -101,20 +95,41 @@ class HomeState extends State<Home> {
           .listenToNewMessages(lastMessageTimestamp)
           .listen((querySnapshot) {
         for (var docChange in querySnapshot.docChanges) {
-          if (docChange.type == DocumentChangeType.added) {
-            DocumentSnapshot newDocument = docChange.doc;
-            if (processedIds.contains(newDocument.id)) {
-              continue;
-            }
-            setState(() {
-              // Update the UI here
-              messages.add(Message.fromDocument(newDocument));
-            });
+          DocumentSnapshot document = docChange.doc;
+          switch (docChange.type) {
+            case DocumentChangeType.added:
+              if (processedIds.contains(document.id)) {
+                continue;
+              }
+              setState(() {
+                messages.add(Message.fromDocument(document));
+                scrollToBottom();
+              });
+              break;
+            case DocumentChangeType.modified:
+              int indexToUpdate =
+                  messages.indexWhere((message) => message.id == document.id);
+              if (indexToUpdate != -1) {
+                setState(() {
+                  messages[indexToUpdate] = Message.fromDocument(document);
+                });
+              }
+              break;
+            case DocumentChangeType.removed:
+              int indexToRemove =
+                  messages.indexWhere((message) => message.id == document.id);
+              if (indexToRemove != -1) {
+                setState(() {
+                  messages.removeAt(indexToRemove);
+                });
+              }
+              break;
           }
         }
       });
 
       messagesLoaded = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
     } catch (error) {
       throw Exception('Error listening to messages: $error');
     }
@@ -157,12 +172,20 @@ class HomeState extends State<Home> {
                 style: TextStyle(color: Colors.white),
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              shrinkWrap: true,
-              itemCount: messages.length,
-              itemBuilder: (context, index) =>
-                  MessageItem(message: messages[index]),
+          : Scrollbar(
+              thumbVisibility: true,
+              controller: scrollController,
+              child: ListView.separated(
+                controller: scrollController,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                shrinkWrap: true,
+                itemCount: messages.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) =>
+                    MessageItem(message: messages[index]),
+              ),
             ),
     );
   }
@@ -177,8 +200,17 @@ class HomeState extends State<Home> {
               controller: messageController,
               focusNode: messageFocusNode,
               onSubmitted: (_) {
-                sendMessage();
-                messageFocusNode.requestFocus();
+                try {
+                  if (messageController.text.isNotEmpty) {
+                    sendMessage();
+                    scrollToBottom();
+                    messageFocusNode.requestFocus();
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error sending message: $e')),
+                  );
+                }
               },
               decoration: InputDecoration(
                 hintText: 'Enter your message',
@@ -208,7 +240,11 @@ class HomeState extends State<Home> {
               icon: const Icon(Icons.send),
               onPressed: () async {
                 try {
-                  await sendMessage();
+                  if (messageController.text.isNotEmpty) {
+                    await sendMessage();
+                    scrollToBottom();
+                    messageFocusNode.requestFocus();
+                  }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error sending message: $e')),

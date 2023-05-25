@@ -44,20 +44,27 @@ Clone the Nexis repository to your local machine using the following command:
 https://github.com/mohammed-shakir/Nexis.git
 ```
 
-### Step 4: Open the Project in VSCode
+### Step 4: Add .env and google-services.json files
+Add the .env file at the root directory /nexis. This file should contain the environment variables needed for the project.
+
+Also, add the google-services.json file in the following directory /nexis/android/app/ in order for the android app to work with Firebase.
+
+You can find these files in the nexis discord server under the channel "code".
+
+### Step 5: Open the Project in VSCode
 Open the cloned Nexis repository in VSCode:
 
 1. Launch VSCode
 2. Click on 'File' > 'Open Folder...'
 3. Navigate to the 'Nexis' > 'nexis' directory and click 'Select Folder'
   
-### Step 5: Get Dependencies
+### Step 6: Get Dependencies
 In the terminal, navigate to the 'Nexis' > 'nexis' project directory and run the following command to fetch all the required dependencies:
 ```
 flutter pub get
 ```
   
-### Step 6: Run the App
+### Step 7: Run the App
 To run the Nexis app, execute the following command in the terminal:
 ```
 flutter run
@@ -73,7 +80,57 @@ https://docs.flutter.dev/
 Check the wiki: https://github.com/mohammed-shakir/Nexis/wiki/Code-writing-practices
 
 ## Emulators
-To be written.
+In this section, we will guide you through setting up Android Studio and configuring an Android emulator to test the Flutter Chat App on Visual Studio Code.
+
+### Install Android Studio
+First, you need to install Android Studio on your computer. Follow the steps below:
+
+1. Visit the official Android Studio download page: https://developer.android.com/studio
+
+2. Download the installer for your operating system (Windows, macOS, or Linux).
+
+3. Run the installer and follow the on-screen instructions to complete the installation.
+
+4. When the installation is complete, launch Android Studio.
+
+### Set up Android Virtual Device (AVD)
+To create an Android emulator, you need to set up an Android Virtual Device (AVD):
+
+1. Launch Android Studio and click "more actions" in the Welcome screen.
+
+2. Click "Create Virtual Device".
+
+3. Choose a device definition (e.g., Pixel 6) and click "Next."
+
+4. Select a system image and click "Next."
+
+5. Confirm your AVD configuration and click "Finish" to create the virtual device.
+
+### Run the Android Emulator in Visual Studio Code
+To run the Android emulator in Visual Studio Code, follow these steps:
+
+1. Open your Flutter Chat App project in Visual Studio Code.
+
+2. Open the terminal by clicking "Terminal" in the top menu and selecting "New Terminal."
+
+3. Type flutter doctor in the terminal to ensure that all dependencies are correctly set up.
+
+4. If there are any issues, follow the instructions in the terminal to resolve them.
+
+5. In the terminal, type flutter devices to list available devices.
+
+6. Locate the Android emulator (AVD) you created earlier in the list of devices.
+
+7. To run the app on the emulator, type the following command in the terminal, replacing <device_id> with the actual device ID:
+```
+flutter run -d <device_id>
+```
+
+8. The emulator will launch, and the Flutter Chat App will be installed and started on the virtual device.
+
+9. You can change the platform in the bottom-right corner (choose between win, android, web) if you dont want to use the terminal.
+
+Now you have successfully set up Android Studio and the Android emulator in Visual Studio Code.
 
 ## Git commands
 Git is a version control system that is widely used by developers to manage code changes and collaborate on projects. To contribute to Nexis, it is important to have a basic understanding of Git. Here are some useful Git commands:
@@ -121,7 +178,25 @@ git push origin your-branch-name
 It is important to follow good Git practices, such as committing frequently, writing descriptive commit messages, and using feature branches for new work.
 
 ## Pushing code
-When contributing to Nexis, it's important to follow a structured process for pushing your changes to the project. This helps to ensure that your changes are reviewed and merged in a timely manner, and that the project remains stable and functional.
+When contributing, it's important to follow a structured process for pushing your changes to the project. This helps to ensure that your changes are reviewed and merged in a timely manner, and that the project remains stable and functional.
+  
+We recommend pulling the "dev" branch instead of "main". The "main" branch is the "stable" version while the "dev" branch has all the latest fetures and implementations that all the devs on this project has/are working on.
+  
+To pull the dev branch and merge it with your code, follow these steps:
+1. Fetch the latest changes from the remote repository to update your local repository:
+```
+git fetch
+```
+
+2. Switch to your local branch where you want to merge the changes:
+```
+git checkout <local_branch>
+```
+
+3. Merge the changes from the remote branch into your local branch:
+```
+git merge origin/dev
+```
 
 To push your code changes, we recommend following these steps:
 1. Pull changes from the remote branch: Before making any changes to the codebase, use the
@@ -158,7 +233,7 @@ git push your-branch-name
 ```
 command to push your changes to the remote branch on Github.
 
-6. Create a pull request: Create a pull request to merge your changes into the main codebase. Assign a reviewer to your pull request to ensure that your changes are reviewed in a timely manner.
+6. Create a pull request: Create a pull request to merge your changes into the main codebase. Assign a reviewer to your pull request to ensure that your changes are reviewed in a timely manner. IMPORTANT: Make sure that you make a pull request that merges with the branch "dev" and not "main".
 
 By following this process, you can ensure that your changes are reviewed quickly and effectively, and that the project remains stable and functional.
 
