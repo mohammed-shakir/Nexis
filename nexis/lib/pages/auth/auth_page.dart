@@ -31,10 +31,17 @@ class AuthPageState extends State<AuthPage> {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
         await Login.signIn(email, password);
-        await Provider.of<UserProvider>(context, listen: false).login();
+
+        var userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.initialization;
+        await userProvider.login();
+
         emailController.clear();
         passwordController.clear();
-        Navigator.pushNamed(context, RouteNames.home);
+
+        if (userProvider.isLoggedIn) {
+          Navigator.pushReplacementNamed(context, RouteNames.home);
+        }
       } catch (e) {
         passwordController.clear();
         ScaffoldMessenger.of(context).showSnackBar(

@@ -4,31 +4,31 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
+  late final Future<void> initialization;
   bool _isLoggedIn = false;
+  late SharedPreferences _prefs;
 
   bool get isLoggedIn => _isLoggedIn;
 
   UserProvider() {
-    _init();
+    initialization = _init();
   }
 
   Future<void> _init() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    _prefs = await SharedPreferences.getInstance();
+    _isLoggedIn = _prefs.getBool('isLoggedIn') ?? false;
     notifyListeners();
   }
 
   Future<void> login() async {
     _isLoggedIn = true;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', _isLoggedIn);
+    await _prefs.setBool('isLoggedIn', _isLoggedIn);
     notifyListeners();
   }
 
   Future<void> logout() async {
     _isLoggedIn = false;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', _isLoggedIn);
+    await _prefs.setBool('isLoggedIn', _isLoggedIn);
     notifyListeners();
   }
 }
