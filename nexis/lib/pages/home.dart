@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/message_item.dart';
 import '../classes/route_names.dart';
 import '../firebase/firestore_write.dart';
 import '../firebase/firestore_read.dart';
 import '../firebase/login.dart';
-import '../classes/message_model.dart';
+import '../models/message_model.dart';
 import '../classes/time_format.dart';
 import 'dart:async';
 
@@ -160,50 +161,9 @@ class HomeState extends State<Home> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               shrinkWrap: true,
               itemCount: messages.length,
-              itemBuilder: (context, index) => buildMessageItem(index),
+              itemBuilder: (context, index) =>
+                  MessageItem(message: messages[index]),
             ),
-    );
-  }
-
-  Widget buildMessageItem(int index) {
-    final message = messages[index];
-    final sender = message.sender;
-    final timestamp = message.timestamp.toDate();
-    final content = message.content;
-
-    final formattedTimestamp = TimeFormat.formattedTimestamp(timestamp);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              sender,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              formattedTimestamp,
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          content,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-      ],
     );
   }
 
