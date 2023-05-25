@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../widgets/custom_button.dart';
-import '../classes/route_names.dart';
-import '../firebase/firestore_write.dart';
-import '../firebase/firestore_read.dart';
-import '../firebase/login.dart';
-import '../classes/message_model.dart';
-import '../classes/time_format.dart';
+import '../../widgets/custom_button.dart';
+import '../../classes/route_names.dart';
+import '../../firebase/firestore_write.dart';
+import '../../firebase/firestore_read.dart';
+import '../../classes/message_model.dart';
+import '../../classes/time_format.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -28,13 +27,10 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    signIn().then((_) async {
-      await listenToMessages();
+    listenToMessages().then((_) {
       setState(() {
         // Update the UI
       });
-    }).catchError((error) {
-      throw Exception('Failed to sign in: $error');
     });
   }
 
@@ -44,16 +40,6 @@ class HomeState extends State<Home> {
     subscription?.cancel();
     messageController.dispose();
     super.dispose();
-  }
-
-  Future<void> signIn() async {
-    try {
-      await dotenv.load(fileName: ".env");
-      await Login.signIn(
-          dotenv.env['TEMP_TEST_EMAIL']!, dotenv.env['TEMP_TEST_PASSWORD']!);
-    } catch (e) {
-      throw Exception('Error signing in: $e');
-    }
   }
 
   Future<void> sendMessage() async {
