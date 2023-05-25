@@ -4,7 +4,7 @@ final ThemeData appTheme = ThemeData(
   colorScheme: ColorScheme.fromSwatch().copyWith(
     primary: const Color(0xFF171c2a), // Usually used for background
     secondary: const Color(0xFF800020), // Usually used for buttons and stuff
-    tertiary: const Color(0xFF8A8697),
+    tertiary: const Color(0xFF606060),
   ),
   textTheme: const TextTheme(
     // bodyMedium

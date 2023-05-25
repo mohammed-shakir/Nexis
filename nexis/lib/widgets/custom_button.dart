@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 class CustomButton extends StatelessWidget {
-  final String text;
+  final String? text;
+  final Icon? icon;
   final VoidCallback? onPressed;
   final Color? backgroundColor;
   final Color? textColor;
@@ -12,7 +13,8 @@ class CustomButton extends StatelessWidget {
 
   CustomButton({
     Key? key,
-    this.text = 'Button',
+    this.text,
+    this.icon,
     this.onPressed,
     this.backgroundColor,
     this.padding,
@@ -30,12 +32,26 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed ?? defaultOnPress,
       style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.secondary,
-        foregroundColor: textColor ?? Theme.of(context).textTheme.labelLarge?.color,
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).colorScheme.secondary,
+        foregroundColor:
+            textColor ?? Theme.of(context).textTheme.labelLarge?.color,
         padding: padding ?? const EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(borderRadius: borderRadius ?? BorderRadius.circular(4)),
+        shape: RoundedRectangleBorder(
+            borderRadius: borderRadius ?? BorderRadius.circular(4)),
       ),
-      child: Text(text),
+      child: icon == null
+          ? Text(text ?? 'Button')
+          : text == null
+              ? icon
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon!,
+                    const SizedBox(width: 8),
+                    Text(text!),
+                  ],
+                ),
     );
   }
 }

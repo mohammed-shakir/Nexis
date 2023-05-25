@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/message_item.dart';
+import '../classes/route_names.dart';
 import '../firebase/firestore_write.dart';
+import '../firebase/firestore_read.dart';
+import '../firebase/login.dart';
+import '../models/message_model.dart';
+import '../classes/time_format.dart';
+import 'dart:async';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,59 +20,195 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   final TextEditingController messageController = TextEditingController();
+  StreamSubscription<QuerySnapshot>? subscription;
+  late final FirestoreRead firestoreRead;
+  List<Message> messages = [];
+  bool messagesLoaded = false;
+  final FocusNode messageFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    signIn().then((_) async {
+      await listenToMessages();
+      setState(() {
+        // Update the UI
+      });
+    }).catchError((error) {
+      throw Exception('Failed to sign in: $error');
+    });
+  }
+
+  // Clean up resources that are no longer needed (messageController). If it is not removed, it could cause a memory leak.
+  @override
+  void dispose() {
+    subscription?.cancel();
+    messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> signIn() async {
+    try {
+      await dotenv.load(fileName: ".env");
+      await Login.signIn(
+          dotenv.env['TEMP_TEST_EMAIL']!, dotenv.env['TEMP_TEST_PASSWORD']!);
+    } catch (e) {
+      throw Exception('Error signing in: $e');
+    }
+  }
+
+  Future<void> sendMessage() async {
+    String messageContent = messageController.text.trim();
+    if (messageContent.isNotEmpty) {
+      try {
+        await FirestoreWrite.sendMessage(
+          message: messageController.text,
+          sender: dotenv.env['TEMP_TEST_EMAIL']!,
+          groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
+        );
+        messageController.clear();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error sending message: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> listenToMessages() async {
+    FirestoreRead firestoreRead =
+        FirestoreRead(groupId: 'aNAgqEvRvtFLDmjw7Ivz');
+    try {
+      List<DocumentSnapshot> documents = await firestoreRead.initialFetch();
+      Set<String> processedIds = documents.map((doc) => doc.id).toSet();
+
+      messages.clear();
+
+      Timestamp? lastMessageTimestamp;
+      if (documents.isNotEmpty) {
+        for (var document in documents.reversed) {
+          messages.add(Message.fromDocument(document));
+        }
+
+        var lastMessageData = documents.last.data();
+        if (lastMessageData != null &&
+            lastMessageData is Map<String, dynamic>) {
+          lastMessageTimestamp = lastMessageData['timestamp'] as Timestamp?;
+        }
+      }
+
+      subscription = firestoreRead
+          .listenToNewMessages(lastMessageTimestamp)
+          .listen((querySnapshot) {
+        for (var docChange in querySnapshot.docChanges) {
+          if (docChange.type == DocumentChangeType.added) {
+            DocumentSnapshot newDocument = docChange.doc;
+            if (processedIds.contains(newDocument.id)) {
+              continue;
+            }
+            setState(() {
+              // Update the UI here
+              messages.add(Message.fromDocument(newDocument));
+            });
+          }
+        }
+      });
+
+      messagesLoaded = true;
+    } catch (error) {
+      throw Exception('Error listening to messages: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return buildHomeScreen(context);
+        }
+      },
+    );
+  }
+
+  Widget buildHomeScreen(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Nexis',
-              style: Theme.of(context).textTheme.displayMedium,
+            buildMessagesListView(),
+            buildMessageInputArea(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMessagesListView() {
+    return Expanded(
+      child: messages.isEmpty && messagesLoaded
+          ? const Center(
+              child: Text(
+                'No messages',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              shrinkWrap: true,
+              itemCount: messages.length,
+              itemBuilder: (context, index) =>
+                  MessageItem(message: messages[index]),
             ),
-            const SizedBox(height: 10),
-            // TODO: Replace this in the future with a custom text field
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  labelText: 'Enter your message',
-                  fillColor: Theme.of(context).colorScheme.tertiary,
-                  filled: true,
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  labelStyle: const TextStyle(color: Colors.white),
+    );
+  }
+
+  Widget buildMessageInputArea() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: messageController,
+              focusNode: messageFocusNode,
+              onSubmitted: (_) {
+                sendMessage();
+                messageFocusNode.requestFocus();
+              },
+              decoration: InputDecoration(
+                hintText: 'Enter your message',
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                hintStyle: const TextStyle(
+                  color: Colors.white,
                 ),
+                fillColor: Theme.of(context).colorScheme.tertiary,
+                filled: true,
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: const TextStyle(color: Colors.white),
               ),
             ),
-            const SizedBox(height: 10),
-            // TODO: Replace this in the future with a icon button
-            CustomButton(
-              text: 'Send Message',
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            height: 48, // Adjust the height to match the input field's height
+            child: CustomButton(
+              icon: const Icon(Icons.send),
               onPressed: () async {
                 try {
-                  await FirestoreWrite.sendMessage(
-                    message: messageController.text,
-                    // TODO: Replace this with the actual user's name
-                    sender: 'some user',
-                  );
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message sent successfully!')),
-                  );
-
-                  messageController.clear();
+                  await sendMessage();
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error sending message: $e')),
@@ -71,23 +216,19 @@ class HomeState extends State<Home> {
                 }
               },
             ),
-            const SizedBox(height: 10),
-            CustomButton(
-              text: 'Test Page',
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            height: 48, // Adjust the height to match the input field's height
+            child: CustomButton(
+              icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigator.pushNamed(context, '/test_page');
+                Navigator.pushNamed(context, RouteNames.settingsPage);
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
-  }
-
-  // Clean up resources that are no longer needed (messageController). If it is not removed, it could cause a memory leak.
-  @override
-  void dispose() {
-    messageController.dispose();
-    super.dispose();
   }
 }
