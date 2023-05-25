@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_button.dart';
 
-class TestPage extends StatelessWidget {
-  const TestPage({super.key});
+class Appearance extends StatelessWidget {
+  const Appearance({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,15 +12,8 @@ class TestPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Test Page',
+              'Appearance',
               style: Theme.of(context).textTheme.displayMedium,
-            ),
-            const SizedBox(height: 10),
-            CustomButton(
-              text: 'Back',
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
           ],
         ),
