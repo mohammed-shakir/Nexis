@@ -29,7 +29,7 @@ class FirestoreRead {
   Future<List<DocumentSnapshot>> initialFetch() async {
     QuerySnapshot initialSnapshot = await messagesCollection
         .orderBy('timestamp', descending: true)
-        .limit(1) //TODO: Change to something higher on release
+        .limit(2) //TODO: Change to something higher on release
         .get();
 
     return initialSnapshot.docs;

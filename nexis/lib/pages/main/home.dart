@@ -23,6 +23,7 @@ class HomeState extends State<Home> {
   List<Message> messages = [];
   bool messagesLoaded = false;
   final FocusNode messageFocusNode = FocusNode();
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -40,6 +41,14 @@ class HomeState extends State<Home> {
     subscription?.cancel();
     messageController.dispose();
     super.dispose();
+  }
+
+  void scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      }
+    });
   }
 
   Future<void> sendMessage() async {
@@ -94,6 +103,7 @@ class HomeState extends State<Home> {
               }
               setState(() {
                 messages.add(Message.fromDocument(document));
+                scrollToBottom();
               });
               break;
             case DocumentChangeType.modified:
@@ -119,6 +129,7 @@ class HomeState extends State<Home> {
       });
 
       messagesLoaded = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
     } catch (error) {
       throw Exception('Error listening to messages: $error');
     }
@@ -161,12 +172,20 @@ class HomeState extends State<Home> {
                 style: TextStyle(color: Colors.white),
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              shrinkWrap: true,
-              itemCount: messages.length,
-              itemBuilder: (context, index) =>
-                  MessageItem(message: messages[index]),
+          : Scrollbar(
+              thumbVisibility: true,
+              controller: scrollController,
+              child: ListView.separated(
+                controller: scrollController,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                shrinkWrap: true,
+                itemCount: messages.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) =>
+                    MessageItem(message: messages[index]),
+              ),
             ),
     );
   }
@@ -181,8 +200,17 @@ class HomeState extends State<Home> {
               controller: messageController,
               focusNode: messageFocusNode,
               onSubmitted: (_) {
-                sendMessage();
-                messageFocusNode.requestFocus();
+                try {
+                  if (messageController.text.isNotEmpty) {
+                    sendMessage();
+                    scrollToBottom();
+                    messageFocusNode.requestFocus();
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error sending message: $e')),
+                  );
+                }
               },
               decoration: InputDecoration(
                 hintText: 'Enter your message',
@@ -212,7 +240,11 @@ class HomeState extends State<Home> {
               icon: const Icon(Icons.send),
               onPressed: () async {
                 try {
-                  await sendMessage();
+                  if (messageController.text.isNotEmpty) {
+                    await sendMessage();
+                    scrollToBottom();
+                    messageFocusNode.requestFocus();
+                  }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error sending message: $e')),
