@@ -23,6 +23,12 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  void logout() async {
+    var navigator = Navigator.of(context);
+    await Provider.of<UserProvider>(context, listen: false).logout();
+    navigator.pushNamed(RouteNames.authPage);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,11 +39,7 @@ class SettingsPageState extends State<SettingsPage> {
               NavigationMenu(
                 onSelectProfile: () => changeContent(const UserProfile()),
                 onSelectAppearance: () => changeContent(const Appearance()),
-                onLogout: () async {
-                  await Provider.of<UserProvider>(context, listen: false)
-                      .logout();
-                  Navigator.pushNamed(context, RouteNames.authPage);
-                },
+                onLogout: logout,
               ),
               Expanded(child: selectedContent),
             ],
@@ -58,7 +60,7 @@ class SettingsPageState extends State<SettingsPage> {
 class NavigationMenu extends StatefulWidget {
   final VoidCallback onSelectProfile;
   final VoidCallback onSelectAppearance;
-  final Future<void> Function() onLogout;
+  final VoidCallback onLogout;
 
   const NavigationMenu({
     Key? key,
@@ -105,10 +107,10 @@ class NavigationMenuState extends State<NavigationMenu> {
             title: 'Logout',
             isSelected: selectedIndex == 2,
             onTap: () async {
-              await widget.onLogout();
               setState(() {
                 selectedIndex = 2;
               });
+              widget.onLogout();
             },
             color: Colors.red,
           ),

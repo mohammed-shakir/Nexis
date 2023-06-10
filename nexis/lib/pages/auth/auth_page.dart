@@ -28,12 +28,13 @@ class AuthPageState extends State<AuthPage> {
   void signIn() async {
     String email = emailController.text;
     String password = passwordController.text;
+    var navigator = Navigator.of(context);
 
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await Login.signIn(email, password);
-
         var userProvider = Provider.of<UserProvider>(context, listen: false);
+
+        await Login.signIn(email, password);
         await userProvider.init();
         await userProvider.login();
 
@@ -41,7 +42,7 @@ class AuthPageState extends State<AuthPage> {
         passwordController.clear();
 
         if (userProvider.isLoggedIn) {
-          Navigator.pushNamed(context, RouteNames.home);
+          navigator.pushNamed(RouteNames.home);
         }
       } catch (e) {
         passwordController.clear();

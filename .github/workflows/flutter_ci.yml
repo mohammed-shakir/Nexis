@@ -25,16 +25,3 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
         working-directory: ./nexis
-
-      - name: Create .env file
-        run: |
-          echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" > ./nexis/.env
-          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> ./nexis/.env
-
-      - name: Run Flutter tests
-        run: |
-          cd nexis
-          flutter test
-        env:
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}

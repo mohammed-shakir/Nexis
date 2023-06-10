@@ -238,7 +238,7 @@ class HomeState extends State<Home> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            height: 48, // Adjust the height to match the input field's height
+            height: 48,
             child: CustomButton(
               icon: const Icon(Icons.send),
               onPressed: () async {
@@ -260,7 +260,7 @@ class HomeState extends State<Home> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            height: 48, // Adjust the height to match the input field's height
+            height: 48,
             child: CustomButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
