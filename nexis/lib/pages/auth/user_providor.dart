@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'auth_page.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
   late final Future<void> initialization;
   bool _isLoggedIn = false;
-  late SharedPreferences _prefs;
 
   bool get isLoggedIn => _isLoggedIn;
 
@@ -15,20 +13,19 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> _init() async {
-    _prefs = await SharedPreferences.getInstance();
-    _isLoggedIn = _prefs.getBool('isLoggedIn') ?? false;
+    print('UserProvider init');
     notifyListeners();
   }
 
   Future<void> login() async {
+    print('UserProvider login');
     _isLoggedIn = true;
-    await _prefs.setBool('isLoggedIn', _isLoggedIn);
     notifyListeners();
   }
 
   Future<void> logout() async {
+    print('UserProvider logout');
     _isLoggedIn = false;
-    await _prefs.setBool('isLoggedIn', _isLoggedIn);
     notifyListeners();
   }
 }
@@ -39,11 +36,14 @@ class ProtectedRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("balls");
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         if (userProvider.isLoggedIn) {
+          print('UserProvider ProtectedRoute: isLoggedIn');
           return this.child;
         } else {
+          print('UserProvider ProtectedRoute: not isLoggedIn');
           return const AuthPage();
         }
       },

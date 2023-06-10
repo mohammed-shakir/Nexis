@@ -33,9 +33,9 @@ class Nexis extends StatelessWidget {
       debugShowCheckedModeBanner: false, // remove debug banner
       routes: {
         RouteNames.authPage: (context) => const AuthPage(),
-        RouteNames.home: (context) => ProtectedRoute(child: Home()),
+        RouteNames.home: (context) => const ProtectedRoute(child: Home()),
         RouteNames.settingsPage: (context) =>
-            ProtectedRoute(child: SettingsPage()),
+            const ProtectedRoute(child: SettingsPage()),
       },
     );
   }

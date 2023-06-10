@@ -11,6 +11,7 @@ class Login {
   static Future<void> signIn(String email, String password) async {
     try {
       if (kIsWeb || Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+        print('login.dart signIn');
         await firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
       } else if (Platform.isWindows || Platform.isLinux) {

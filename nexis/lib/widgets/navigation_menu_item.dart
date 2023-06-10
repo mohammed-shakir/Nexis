@@ -5,12 +5,14 @@ class NavigationMenuItem extends StatefulWidget {
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
+  final Color color;
 
   const NavigationMenuItem({
     Key? key,
     required this.title,
     required this.isSelected,
     required this.onTap,
+    this.color = Colors.transparent,
   }) : super(key: key);
 
   @override
@@ -24,7 +26,9 @@ class NavigationMenuItemState extends State<NavigationMenuItem> {
   @override
   Widget build(BuildContext context) {
     Color backgroundColor;
-    if (widget.isSelected) {
+    if (widget.title == 'Logout') {
+      backgroundColor = const Color.fromARGB(255, 181, 12, 0);
+    } else if (widget.isSelected) {
       backgroundColor = Colors.red;
     } else if (isHovered) {
       backgroundColor = Colors.grey[700]!;

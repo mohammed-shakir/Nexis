@@ -28,7 +28,11 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+
+    print('home.dart initState');
+
     listenToMessages().then((_) {
+      print('home.dart listenToMessages().then((_)');
       setState(() {
         // Update the UI
       });
@@ -137,15 +141,7 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return buildHomeScreen(context);
-        }
-      },
-    );
+    return buildHomeScreen(context);
   }
 
   Widget buildHomeScreen(BuildContext context) {

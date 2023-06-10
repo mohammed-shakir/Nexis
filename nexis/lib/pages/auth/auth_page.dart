@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nexis/widgets/custom_button.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
-import '../../pages/auth/user_providor.dart';
+import 'user_providor.dart';
 import 'package:provider/provider.dart';
 
 class AuthPage extends StatefulWidget {
@@ -33,14 +33,13 @@ class AuthPageState extends State<AuthPage> {
         await Login.signIn(email, password);
 
         var userProvider = Provider.of<UserProvider>(context, listen: false);
-        await userProvider.initialization;
         await userProvider.login();
 
         emailController.clear();
         passwordController.clear();
 
         if (userProvider.isLoggedIn) {
-          Navigator.pushReplacementNamed(context, RouteNames.home);
+          Navigator.pushNamed(context, RouteNames.home);
         }
       } catch (e) {
         passwordController.clear();
