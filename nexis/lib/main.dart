@@ -5,7 +5,7 @@ import 'pages/main/home.dart';
 import 'pages/settings/settings_page.dart';
 import 'pages/auth/auth_page.dart';
 import 'themes/default_theme.dart';
-import 'pages/auth/user_providor.dart';
+import 'providers/user_providor.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {

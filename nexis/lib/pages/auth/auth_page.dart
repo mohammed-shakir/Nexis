@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nexis/widgets/custom_button.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
-import 'user_providor.dart';
+import '../../providers/user_providor.dart';
 import 'package:provider/provider.dart';
 
 class AuthPage extends StatefulWidget {

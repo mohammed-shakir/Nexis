@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../auth/user_providor.dart';
+import '../../providers/user_providor.dart';
 import 'package:provider/provider.dart';
 import '../../classes/route_names.dart';
 import 'components/user_profile.dart';

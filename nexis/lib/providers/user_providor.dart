@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'auth_page.dart';
+import '../pages/auth/auth_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
