@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:logger/logger.dart';
-import 'pages/home.dart';
-import 'pages/test_page.dart';
-import 'pages/auth_page.dart';
+import 'firebase/firebase_init.dart';
+import 'classes/route_names.dart';
+import 'pages/main/home.dart';
+import 'pages/settings/settings_page.dart';
+import 'pages/auth/auth_page.dart';
 import 'themes/default_theme.dart';
+import 'pages/auth/user_providor.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    Logger().e('Failed to initialize Firebase: $e');
-  }
+  await initializeFirebase();
 
-  runApp(const Nexis());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => UserProvider(),
+      child: const Nexis(),
+    ),
+  );
 }
 
 class Nexis extends StatelessWidget {
@@ -26,11 +29,13 @@ class Nexis extends StatelessWidget {
     return MaterialApp(
       title: 'Nexis',
       theme: appTheme,
-      initialRoute: '/home',
+      initialRoute: RouteNames.authPage,
+      debugShowCheckedModeBanner: false, // remove debug banner
       routes: {
-        '/home': (context) => const Home(),
-        '/test_page': (context) => const TestPage(),
-        '/auth_page': (context) => AuthPage(),
+        RouteNames.authPage: (context) => const AuthPage(),
+        RouteNames.home: (context) => ProtectedRoute(child: Home()),
+        RouteNames.settingsPage: (context) =>
+            ProtectedRoute(child: SettingsPage()),
       },
     );
   }

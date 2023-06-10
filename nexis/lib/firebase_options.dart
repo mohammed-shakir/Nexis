@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '829981996033',
     projectId: 'nexis-4723a',
     storageBucket: 'nexis-4723a.appspot.com',
-    iosClientId: '829981996033-njrtk1op43vunpsvan0gd45g5bo2493j.apps.googleusercontent.com',
+    iosClientId:
+        '829981996033-njrtk1op43vunpsvan0gd45g5bo2493j.apps.googleusercontent.com',
     iosBundleId: 'com.example.nexis',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '829981996033',
     projectId: 'nexis-4723a',
     storageBucket: 'nexis-4723a.appspot.com',
-    iosClientId: '829981996033-njrtk1op43vunpsvan0gd45g5bo2493j.apps.googleusercontent.com',
+    iosClientId:
+        '829981996033-njrtk1op43vunpsvan0gd45g5bo2493j.apps.googleusercontent.com',
     iosBundleId: 'com.example.nexis',
   );
 }
