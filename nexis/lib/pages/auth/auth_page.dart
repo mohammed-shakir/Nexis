@@ -16,6 +16,7 @@ class AuthPageState extends State<AuthPage> {
   bool rememberMe = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool obscureText = true;
 
   @override
   void dispose() {
@@ -33,6 +34,7 @@ class AuthPageState extends State<AuthPage> {
         await Login.signIn(email, password);
 
         var userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.init();
         await userProvider.login();
 
         emailController.clear();
@@ -82,9 +84,19 @@ class AuthPageState extends State<AuthPage> {
                     const SizedBox(height: 20),
                     TextField(
                       controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
+                      obscureText: obscureText,
+                      decoration: InputDecoration(
                         labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
+                          },
+                        ),
                       ),
                       onSubmitted: (_) {
                         signIn();
