@@ -77,7 +77,6 @@ class AuthPageState extends State<AuthPage> {
                       ),
                       onSubmitted: (_) {
                         signIn();
-                        emailController.clear();
                       },
                     ),
                     const SizedBox(height: 20),
@@ -89,7 +88,6 @@ class AuthPageState extends State<AuthPage> {
                       ),
                       onSubmitted: (_) {
                         signIn();
-                        passwordController.clear();
                       },
                     ),
                     const SizedBox(height: 20),
