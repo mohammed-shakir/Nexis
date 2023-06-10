@@ -29,10 +29,7 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    print('home.dart initState');
-
     listenToMessages().then((_) {
-      print('home.dart listenToMessages().then((_)');
       setState(() {
         // Update the UI
       });

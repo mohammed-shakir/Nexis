@@ -27,7 +27,6 @@ class FirestoreRead {
   }
 
   Future<List<DocumentSnapshot>> initialFetch() async {
-    print('firestore_read.dart initialFetch');
     QuerySnapshot initialSnapshot = await messagesCollection
         .orderBy('timestamp', descending: true)
         .limit(2) //TODO: Change to something higher on release
@@ -37,7 +36,6 @@ class FirestoreRead {
   }
 
   Stream<QuerySnapshot> listenToNewMessages(Timestamp? lastMessageTimestamp) {
-    print('firestore_read.dart listenToNewMessages');
     if (lastMessageTimestamp != null) {
       return messagesCollection
           .orderBy('timestamp')
