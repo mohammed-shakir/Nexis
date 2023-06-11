@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nexis/widgets/custom_button.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
-import '../../pages/auth/user_providor.dart';
+import '../../providers/user_providor.dart';
 import 'package:provider/provider.dart';
 
 class AuthPage extends StatefulWidget {
@@ -16,6 +16,7 @@ class AuthPageState extends State<AuthPage> {
   bool rememberMe = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool obscureText = true;
 
   @override
   void dispose() {
@@ -27,20 +28,21 @@ class AuthPageState extends State<AuthPage> {
   void signIn() async {
     String email = emailController.text;
     String password = passwordController.text;
+    var navigator = Navigator.of(context);
 
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await Login.signIn(email, password);
-
         var userProvider = Provider.of<UserProvider>(context, listen: false);
-        await userProvider.initialization;
+
+        await Login.signIn(email, password);
+        await userProvider.init();
         await userProvider.login();
 
         emailController.clear();
         passwordController.clear();
 
         if (userProvider.isLoggedIn) {
-          Navigator.pushReplacementNamed(context, RouteNames.home);
+          navigator.pushNamed(RouteNames.home);
         }
       } catch (e) {
         passwordController.clear();
@@ -78,19 +80,27 @@ class AuthPageState extends State<AuthPage> {
                       ),
                       onSubmitted: (_) {
                         signIn();
-                        emailController.clear();
                       },
                     ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
+                      obscureText: obscureText,
+                      decoration: InputDecoration(
                         labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
+                          },
+                        ),
                       ),
                       onSubmitted: (_) {
                         signIn();
-                        passwordController.clear();
                       },
                     ),
                     const SizedBox(height: 20),

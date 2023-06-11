@@ -24,10 +24,12 @@ class HomeState extends State<Home> {
   bool messagesLoaded = false;
   final FocusNode messageFocusNode = FocusNode();
   ScrollController scrollController = ScrollController();
+  static const int maxMessageLength = 2000;
 
   @override
   void initState() {
     super.initState();
+
     listenToMessages().then((_) {
       setState(() {
         // Update the UI
@@ -53,18 +55,27 @@ class HomeState extends State<Home> {
 
   Future<void> sendMessage() async {
     String messageContent = messageController.text.trim();
-    if (messageContent.isNotEmpty) {
-      try {
-        await FirestoreWrite.sendMessage(
-          message: messageController.text,
-          sender: dotenv.env['TEMP_TEST_EMAIL']!,
-          groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
-        );
-        messageController.clear();
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sending message: $e')),
-        );
+
+    if (messageContent.isEmpty) {
+      return;
+    } else if (messageContent.length > maxMessageLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Message exceeds maximum length.')),
+      );
+    } else {
+      if (messageContent.isNotEmpty) {
+        try {
+          await FirestoreWrite.sendMessage(
+            message: messageController.text,
+            sender: dotenv.env['TEMP_TEST_EMAIL']!,
+            groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
+          );
+          messageController.clear();
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error sending message: $e')),
+          );
+        }
       }
     }
   }
@@ -137,15 +148,7 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return buildHomeScreen(context);
-        }
-      },
-    );
+    return buildHomeScreen(context);
   }
 
   Widget buildHomeScreen(BuildContext context) {
@@ -235,15 +238,17 @@ class HomeState extends State<Home> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            height: 48, // Adjust the height to match the input field's height
+            height: 48,
             child: CustomButton(
               icon: const Icon(Icons.send),
               onPressed: () async {
                 try {
                   if (messageController.text.isNotEmpty) {
                     await sendMessage();
-                    scrollToBottom();
-                    messageFocusNode.requestFocus();
+                    if (messageController.text.length <= maxMessageLength) {
+                      scrollToBottom();
+                      messageFocusNode.requestFocus();
+                    }
                   }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -255,7 +260,7 @@ class HomeState extends State<Home> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            height: 48, // Adjust the height to match the input field's height
+            height: 48,
             child: CustomButton(
               icon: const Icon(Icons.settings),
               onPressed: () {

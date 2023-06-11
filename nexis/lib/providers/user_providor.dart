@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
-import 'auth_page.dart';
+import '../pages/auth/auth_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
-  late final Future<void> initialization;
   bool _isLoggedIn = false;
-  late SharedPreferences _prefs;
-
   bool get isLoggedIn => _isLoggedIn;
+  late SharedPreferences prefs;
 
   UserProvider() {
-    initialization = _init();
+    init();
   }
 
-  Future<void> _init() async {
-    _prefs = await SharedPreferences.getInstance();
-    _isLoggedIn = _prefs.getBool('isLoggedIn') ?? false;
+  Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
+    _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     notifyListeners();
   }
 
   Future<void> login() async {
     _isLoggedIn = true;
-    await _prefs.setBool('isLoggedIn', _isLoggedIn);
+    await prefs.setBool('isLoggedIn', true);
     notifyListeners();
   }
 
   Future<void> logout() async {
     _isLoggedIn = false;
-    await _prefs.setBool('isLoggedIn', _isLoggedIn);
+    await prefs.setBool('isLoggedIn', false);
     notifyListeners();
   }
 }
