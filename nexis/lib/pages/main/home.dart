@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../widgets/custom_button.dart';
 import '../../widgets/message_item.dart';
-import '../../classes/route_names.dart';
+import '../../widgets/text_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
+import 'components/channels.dart';
+import 'components/participant_info.dart';
+import 'components/navbar.dart';
+import 'components/servers.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -163,11 +166,50 @@ class HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Row(
           children: [
-            buildMessagesListView(),
-            buildMessageInputArea(),
+            const Expanded(
+              flex: 5,
+              child: Servers(),
+            ),
+            const Expanded(
+              flex: 15,
+              child: Channels(),
+            ),
+            Expanded(
+              flex: 80,
+              child: Column(
+                children: [
+                  const Expanded(
+                    flex: 5,
+                    child: NavBar(),
+                  ),
+                  Expanded(
+                    flex: 95,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 80,
+                          child: Column(children: [
+                            buildMessagesListView(),
+                            TextInputField(
+                              messageController: messageController,
+                              messageFocusNode: messageFocusNode,
+                              sendMessage: sendMessage,
+                              scrollToBottom: scrollToBottom,
+                            ),
+                          ]),
+                        ),
+                        const Expanded(
+                          flex: 20,
+                          child: ParticipantInfo(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -198,86 +240,6 @@ class HomeState extends State<Home> {
                     MessageItem(message: messages[index]),
               ),
             ),
-    );
-  }
-
-  Widget buildMessageInputArea() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: messageController,
-              focusNode: messageFocusNode,
-              onSubmitted: (_) {
-                try {
-                  if (messageController.text.isNotEmpty) {
-                    sendMessage();
-                    scrollToBottom();
-                    messageFocusNode.requestFocus();
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error sending message: $e')),
-                  );
-                }
-              },
-              decoration: InputDecoration(
-                hintText: 'Enter your message',
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                hintStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                fillColor: Theme.of(context).colorScheme.tertiary,
-                filled: true,
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: const TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 48,
-            child: CustomButton(
-              icon: const Icon(Icons.send),
-              onPressed: () async {
-                try {
-                  if (messageController.text.isNotEmpty) {
-                    await sendMessage();
-                    if (messageController.text.length <= maxMessageLength) {
-                      scrollToBottom();
-                      messageFocusNode.requestFocus();
-                    }
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error sending message: $e')),
-                  );
-                }
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 48,
-            child: CustomButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.pushNamed(context, RouteNames.settingsPage);
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
