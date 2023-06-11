@@ -56,9 +56,7 @@ class UserProvider with ChangeNotifier {
         var value = userDoc[data];
 
         if (value is Timestamp) {
-          prefs.setString(data, value.toDate().toIso8601String());
-        } else if (value is DocumentReference) {
-          prefs.setString(data, value.path);
+          prefs.setString(data, value.toDate().toString());
         } else if (value is List<dynamic>) {
           prefs.setStringList(
               data, value.map((item) => item.toString()).toList());
