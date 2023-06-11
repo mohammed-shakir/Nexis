@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/message_item.dart';
 import '../../classes/route_names.dart';
@@ -25,10 +26,13 @@ class HomeState extends State<Home> {
   final FocusNode messageFocusNode = FocusNode();
   ScrollController scrollController = ScrollController();
   static const int maxMessageLength = 2000;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
+
+    initSharedPreferences();
 
     listenToMessages().then((_) {
       setState(() {
@@ -43,6 +47,10 @@ class HomeState extends State<Home> {
     subscription?.cancel();
     messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   void scrollToBottom() {

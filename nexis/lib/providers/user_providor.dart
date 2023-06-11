@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../pages/auth/auth_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProvider with ChangeNotifier {
   bool _isLoggedIn = false;
@@ -28,6 +29,46 @@ class UserProvider with ChangeNotifier {
     _isLoggedIn = false;
     await prefs.setBool('isLoggedIn', false);
     notifyListeners();
+  }
+
+  Future<void> fetchUserData(String email) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var doc = await firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+    List<String> userData = [
+      'avatar',
+      'bio',
+      'color',
+      'createdAt',
+      'displayName',
+      'email',
+      'friends',
+      'servers',
+      'userName'
+    ];
+    if (doc.docs.isNotEmpty) {
+      var userDoc = doc.docs.first;
+
+      for (var i = 0; i < userData.length; i++) {
+        var data = userData[i];
+        var value = userDoc[data];
+
+        if (value is Timestamp) {
+          prefs.setString(data, value.toDate().toIso8601String());
+        } else if (value is DocumentReference) {
+          prefs.setString(data, value.path);
+        } else if (value is List<dynamic>) {
+          prefs.setStringList(
+              data, value.map((item) => item.toString()).toList());
+        } else {
+          prefs.setString(data, value);
+        }
+      }
+
+      notifyListeners();
+    }
   }
 }
 
