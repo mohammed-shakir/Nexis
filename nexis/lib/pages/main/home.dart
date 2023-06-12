@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/message_item.dart';
 import '../../widgets/text_input_field.dart';
@@ -11,6 +10,7 @@ import 'components/channels.dart';
 import 'components/participant_info.dart';
 import 'components/navbar.dart';
 import 'components/servers.dart';
+import '../../enums/screen_type.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -78,8 +78,8 @@ class HomeState extends State<Home> {
         try {
           await FirestoreWrite.sendMessage(
             message: messageController.text,
-            sender: dotenv.env['TEMP_TEST_EMAIL']!,
-            groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
+            sender: prefs.getString('displayName')!,
+            groupChatId: prefs.getStringList('servers')?[0] ?? '',
           );
           messageController.clear();
         } catch (e) {
@@ -159,56 +159,143 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return buildHomeScreen(context);
+    var mediaQuery = MediaQuery.of(context);
+    var screenType = getScreenType(mediaQuery);
+
+    switch (screenType) {
+      case ScreenType.mobile:
+        return buildMobileHomeScreen(context);
+      case ScreenType.tablet:
+        return buildMobileHomeScreen(context);
+      case ScreenType.desktop:
+        return buildDesktopHomeScreen(context);
+      default:
+        return buildDesktopHomeScreen(context);
+    }
   }
 
-  Widget buildHomeScreen(BuildContext context) {
+  Widget buildDesktopHomeScreen(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
+    const double serversWidth = 75;
+    const double channelsWidth = 230;
+    const double navbarHeight = 50;
+    const double participantInfoWidth = 230;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            double maxWidth =
+                constraints.maxWidth > 2000 ? 2000 : constraints.maxWidth;
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: serversWidth,
+                      child: Servers(),
+                    ),
+                    const SizedBox(
+                      width: channelsWidth,
+                      child: Channels(),
+                    ),
+                    SizedBox(
+                      width: maxWidth - serversWidth - channelsWidth,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: navbarHeight,
+                            child: NavBar(),
+                          ),
+                          SizedBox(
+                            height: screenSize.height - navbarHeight,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(children: [
+                                    buildMessagesListView(),
+                                    TextInputField(
+                                      messageController: messageController,
+                                      messageFocusNode: messageFocusNode,
+                                      sendMessage: sendMessage,
+                                      scrollToBottom: scrollToBottom,
+                                    ),
+                                  ]),
+                                ),
+                                const SizedBox(
+                                  width: participantInfoWidth,
+                                  child: ParticipantInfo(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildMobileHomeScreen(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+        actions: <Widget>[
+          Builder(
+            builder: (BuildContext context) => IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+            ),
+          ),
+        ],
+      ),
+      drawer: const Drawer(
         child: Row(
           children: [
-            const Expanded(
-              flex: 5,
+            Expanded(
+              flex: 1,
               child: Servers(),
             ),
-            const Expanded(
-              flex: 15,
+            Expanded(
+              flex: 3,
               child: Channels(),
             ),
+          ],
+        ),
+      ),
+      endDrawer: const Drawer(
+        child: ParticipantInfo(),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
             Expanded(
-              flex: 80,
-              child: Column(
-                children: [
-                  const Expanded(
-                    flex: 5,
-                    child: NavBar(),
-                  ),
-                  Expanded(
-                    flex: 95,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 80,
-                          child: Column(children: [
-                            buildMessagesListView(),
-                            TextInputField(
-                              messageController: messageController,
-                              messageFocusNode: messageFocusNode,
-                              sendMessage: sendMessage,
-                              scrollToBottom: scrollToBottom,
-                            ),
-                          ]),
-                        ),
-                        const Expanded(
-                          flex: 20,
-                          child: ParticipantInfo(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              flex: 1,
+              child: Column(children: [
+                buildMessagesListView(),
+                TextInputField(
+                  messageController: messageController,
+                  messageFocusNode: messageFocusNode,
+                  sendMessage: sendMessage,
+                  scrollToBottom: scrollToBottom,
+                ),
+              ]),
             ),
           ],
         ),
