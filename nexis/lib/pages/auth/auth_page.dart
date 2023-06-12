@@ -35,6 +35,7 @@ class AuthPageState extends State<AuthPage> {
         var userProvider = Provider.of<UserProvider>(context, listen: false);
 
         await Login.signIn(email, password);
+        await userProvider.fetchUserData(email);
         await userProvider.init();
         await userProvider.login();
 
