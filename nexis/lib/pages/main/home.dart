@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../widgets/message_item.dart';
 import '../../widgets/text_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
@@ -10,6 +9,7 @@ import 'components/channels.dart';
 import 'components/participant_info.dart';
 import 'components/navbar.dart';
 import 'components/servers.dart';
+import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
 import 'dart:async';
 
@@ -217,7 +217,13 @@ class HomeState extends State<Home> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(children: [
-                                    buildMessagesListView(),
+                                    Expanded(
+                                      child: MessageInterface(
+                                        messages: messages,
+                                        messagesLoaded: messagesLoaded,
+                                        scrollController: scrollController,
+                                      ),
+                                    ),
                                     TextInputField(
                                       messageController: messageController,
                                       messageFocusNode: messageFocusNode,
@@ -247,23 +253,13 @@ class HomeState extends State<Home> {
   }
 
   Widget buildMobileHomeScreen(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: <Widget>[
-          Builder(
-            builder: (BuildContext context) => IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-            ),
-          ),
-        ],
+      endDrawer: const Drawer(
+        child: ParticipantInfo(),
       ),
       drawer: const Drawer(
         child: Row(
@@ -279,54 +275,26 @@ class HomeState extends State<Home> {
           ],
         ),
       ),
-      endDrawer: const Drawer(
-        child: ParticipantInfo(),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(children: [
-                buildMessagesListView(),
-                TextInputField(
-                  messageController: messageController,
-                  messageFocusNode: messageFocusNode,
-                  sendMessage: sendMessage,
-                  scrollToBottom: scrollToBottom,
-                ),
-              ]),
-            ),
-          ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0),
+        child: NavBar(
+          openDrawer: () => scaffoldKey.currentState?.openDrawer(),
+          openEndDrawer: () => scaffoldKey.currentState?.openEndDrawer(),
         ),
       ),
-    );
-  }
-
-  Widget buildMessagesListView() {
-    return Expanded(
-      child: messages.isEmpty && messagesLoaded
-          ? const Center(
-              child: Text(
-                'No messages',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          : Scrollbar(
-              thumbVisibility: true,
-              controller: scrollController,
-              child: ListView.separated(
-                controller: scrollController,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                shrinkWrap: true,
-                itemCount: messages.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) =>
-                    MessageItem(message: messages[index]),
-              ),
-            ),
+      body: SafeArea(
+        child: MessageInterface(
+          messages: messages,
+          messagesLoaded: messagesLoaded,
+          scrollController: scrollController,
+        ),
+      ),
+      bottomNavigationBar: TextInputField(
+        messageController: messageController,
+        messageFocusNode: messageFocusNode,
+        sendMessage: sendMessage,
+        scrollToBottom: scrollToBottom,
+      ),
     );
   }
 }

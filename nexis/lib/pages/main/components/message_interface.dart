@@ -1,12 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../models/message_model.dart';
+import '../../../widgets/message_item.dart';
 
-class MessageInterface extends StatelessWidget {
-  const MessageInterface({Key? key}) : super(key: key);
+class MessageInterface extends StatefulWidget {
+  final List<Message> messages;
+  final bool messagesLoaded;
+  final ScrollController scrollController;
+
+  const MessageInterface({
+    Key? key,
+    required this.messages,
+    required this.messagesLoaded,
+    required this.scrollController,
+  }) : super(key: key);
+
+  @override
+  MessageInterfaceState createState() => MessageInterfaceState();
+}
+
+class MessageInterfaceState extends State<MessageInterface> {
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+
+    initSharedPreferences();
+  }
+
+  Future<void> initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  Widget buildMessagesListView() {
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      child: widget.messages.isEmpty && widget.messagesLoaded
+          ? const Center(
+              child: Text(
+                'No messages',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          : Scrollbar(
+              thumbVisibility: true,
+              controller: widget.scrollController,
+              child: ListView.separated(
+                controller: widget.scrollController,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                shrinkWrap: true,
+                itemCount: widget.messages.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) =>
+                    MessageItem(message: widget.messages[index]),
+              ),
+            ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: Theme.of(context).colorScheme.primary,
+      child: buildMessagesListView(),
     );
   }
 }
