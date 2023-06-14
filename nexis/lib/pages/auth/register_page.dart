@@ -17,6 +17,31 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  final TextEditingController yearController = TextEditingController();
+  final TextEditingController monthController = TextEditingController();
+  final TextEditingController dayController = TextEditingController();
+
+  final List<String> months = ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
+
+  selectDate() async {
+    DateTime? newDate = await showDatePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 100, 1),
+      initialDate: DateTime.now(),
+      lastDate: DateTime.now(),
+    );
+
+    if (newDate == null) return;
+
+    // Assign new date to date controllers
+    setState(() {
+      yearController.text = '${newDate.year}';
+      monthController.text = months[(newDate.month)-1];
+      dayController.text = '${newDate.day}';
+    });
+    //print(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,30 +163,36 @@ class RegisterPageState extends State<RegisterPage> {
                               ),
                             const SizedBox(height: 5),
                             Row(
-                              children: const [
+                              children: [
                                 SizedBox(
                                   width: 160,
                                   child: CustomTextField(
                                     obscureText: false,
                                     hint: 'Month',
+                                    onTap: selectDate,
+                                    controller: monthController,
                                     readOnly: true,
                                   ),
                                 ),
-                                SizedBox(width: 25),
+                                const SizedBox(width: 25),
                                 SizedBox(
                                   width: 120,
                                   child: CustomTextField(
                                     obscureText: false,
                                     hint: 'Day',
+                                    onTap: selectDate,
+                                    controller: dayController,
                                     readOnly: true,
                                   ),
                                 ),
-                                SizedBox(width: 25),
+                                const SizedBox(width: 25),
                                 SizedBox(
                                   width: 140,
                                   child: CustomTextField(
                                     obscureText: false,
                                     hint: 'Year',
+                                    onTap: selectDate,
+                                    controller: yearController,
                                     readOnly: true,
                                   ),
                                 ),
