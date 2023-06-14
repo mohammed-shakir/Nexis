@@ -8,6 +8,7 @@ import '../../classes/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
 import '../../pages/auth/user_providor.dart';
+import 'dart:io';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -17,10 +18,14 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  // Windows || Linux || Web || MacOS
   final TextEditingController yearController = TextEditingController();
   final TextEditingController monthController = TextEditingController();
   final TextEditingController dayController = TextEditingController();
 
+  // IOS || Android
+  final TextEditingController dateController = TextEditingController();
+  
   final List<String> months = ["January","February","March","April","May","June","July",
             "August","September","October","November","December"];
 
@@ -39,6 +44,7 @@ class RegisterPageState extends State<RegisterPage> {
       yearController.text = '${newDate.year}';
       monthController.text = months[(newDate.month)-1];
       dayController.text = '${newDate.day}';
+      dateController.text = '${months[(newDate.month)-1]}-${newDate.day}-${newDate.year}';
     });
     //print(date);
   }
@@ -162,6 +168,17 @@ class RegisterPageState extends State<RegisterPage> {
                               style: Theme.of(context).textTheme.labelMedium,
                               ),
                             const SizedBox(height: 5),
+                            Platform.isAndroid || Platform.isIOS ? 
+                            SizedBox(
+                              width: 500,
+                              child: CustomTextField(
+                                obscureText: false,
+                                hint: 'Month-Day-Year',
+                                onTap: selectDate,
+                                controller: dateController,
+                                readOnly: true,
+                              ),
+                            ) :
                             Row(
                               children: [
                                 SizedBox(
