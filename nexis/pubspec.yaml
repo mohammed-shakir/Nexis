@@ -98,6 +98,7 @@ flutter:
   assets:
     - .env
     - ../logo-no-background-icon.png
+    - ./assets/logo-no-background-icon.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

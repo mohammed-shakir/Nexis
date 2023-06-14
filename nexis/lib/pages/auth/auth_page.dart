@@ -1,9 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/widgets/custom_button.dart';
+import 'package:nexis/widgets/auth/custom_input_field.dart';
+import 'package:provider/provider.dart';
+import '../../classes/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
 import '../../pages/auth/user_providor.dart';
-import 'package:provider/provider.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -13,7 +16,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  bool rememberMe = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -59,62 +61,129 @@ class AuthPageState extends State<AuthPage> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: 800,
+              maxWidth: 550,
             ),
-            child: Card(
-              margin: const EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                      ),
-                      onSubmitted: (_) {
-                        signIn();
-                        emailController.clear();
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                      ),
-                      onSubmitted: (_) {
-                        signIn();
-                        passwordController.clear();
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
+            child: ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Image.asset(
+                    "./assets/logo-no-background-icon.png",
+                    fit: BoxFit.contain,
+                    height: 200,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'NEXIS',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                ),
+                Card(
+                  margin: const EdgeInsets.all(20),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Checkbox(
-                          value: rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              rememberMe = value ?? false;
-                            });
-                          },
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome!', 
+                              style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Email', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            SizedBox(
+                              width: 500,
+                              child: CustomTextField(
+                                controller: emailController,
+                                onSubmitted: (_) {
+                                  signIn();
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        const Text('Remember Me'),
+                        const SizedBox(height: 30),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Password', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            SizedBox(
+                              width: 500,
+                              child: CustomTextField(
+                                obscureText: true,
+                                controller: passwordController,
+                                onSubmitted: (_) {
+                                  signIn();
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            RichText(
+                              text: TextSpan(
+                              text: 'Forgot your password?', 
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              recognizer: TapGestureRecognizer()..onTap = RouteChange(context, '').reDir,
+                              mouseCursor: SystemMouseCursors.click,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 500,
+                              height: 50,
+                              child: CustomButton(
+                                onPressed: signIn,
+                                text: 'Sign In',
+                              ),
+                            ), 
+                            const SizedBox(height: 5),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Need an account? ', 
+                                    style: Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                  TextSpan(
+                                    text: 'Register',
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.registerPage).reDir,
+                                    mouseCursor: SystemMouseCursors.click,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    CustomButton(
-                      onPressed: signIn,
-                      text: 'Sign In',
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ]
             ),
           ),
         ),
