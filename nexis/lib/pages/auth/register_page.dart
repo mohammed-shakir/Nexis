@@ -54,7 +54,122 @@ class RegisterPageState extends State<RegisterPage> {
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+                      children: [ 
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Create an account', 
+                              style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Email', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            const SizedBox(
+                              width: 500,
+                              child: CustomTextField(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Username', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            const SizedBox(
+                              width: 500,
+                              child: CustomTextField(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Password', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            const SizedBox(
+                              width: 500,
+                              child: CustomTextField(
+                                obscureText: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Repeat Password', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            const SizedBox(
+                              width: 500,
+                              child: CustomTextField(
+                                obscureText: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Date of birth', 
+                              style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: const [
+                                SizedBox(
+                                  width: 160,
+                                  child: CustomTextField(
+                                    obscureText: false,
+                                    hint: 'Month',
+                                    readOnly: true,
+                                  ),
+                                ),
+                                SizedBox(width: 25),
+                                SizedBox(
+                                  width: 120,
+                                  child: CustomTextField(
+                                    obscureText: false,
+                                    hint: 'Day',
+                                    readOnly: true,
+                                  ),
+                                ),
+                                SizedBox(width: 25),
+                                SizedBox(
+                                  width: 140,
+                                  child: CustomTextField(
+                                    obscureText: false,
+                                    hint: 'Year',
+                                    readOnly: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
