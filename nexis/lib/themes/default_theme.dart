@@ -7,6 +7,12 @@ final ThemeData appTheme = ThemeData(
     tertiary: const Color(0xFF606060),
   ),
   textTheme: const TextTheme(
+    // Title
+    displayLarge: TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 30,
+    ),
     // bodyMedium
     displayMedium: TextStyle(
       color: Colors.white,
@@ -18,6 +24,24 @@ final ThemeData appTheme = ThemeData(
       fontFamily: 'Arial',
       fontSize: 18,
     ),
+    labelMedium: TextStyle(
+      color: Colors.grey, 
+      fontWeight: FontWeight.bold, 
+      fontFamily: 'Arial', 
+      fontSize: 16,
+    ),
+    // Hyperlink
+    bodyMedium: TextStyle(
+      color: Color.fromARGB(255, 227, 69, 69),
+      fontWeight: FontWeight.bold,
+      fontFamily: 'Arial',
+      fontSize: 16,
+    ),
+    labelSmall: TextStyle(
+      color: Colors.grey,
+      fontFamily: 'Arial',
+      fontSize: 14,
+    ),
   ),
   scrollbarTheme: ScrollbarThemeData(
     thumbColor: MaterialStateProperty.all(Colors.black),
@@ -25,4 +49,5 @@ final ThemeData appTheme = ThemeData(
   textSelectionTheme: const TextSelectionThemeData(
     selectionColor: Colors.blue, // set the color for selected text
   ),
+  scaffoldBackgroundColor: const Color(0xFF242C40),
 );
