@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nexis/widgets/auth/custom_input_field.dart';
 import '../custom_button.dart';
 import 'column_type.dart';
+import 'size_helper.dart';
 
 class CustomColumn extends StatelessWidget {
   final ColumnType type;
@@ -18,6 +19,9 @@ class CustomColumn extends StatelessWidget {
   final void Function()? onTap;
   final void Function()? onPressed;
   final String? buttonText;
+  final TextEditingController? monthController;
+  final TextEditingController? dayController;
+  final TextEditingController? yearController;
 
   const CustomColumn(
     this.type,
@@ -33,6 +37,9 @@ class CustomColumn extends StatelessWidget {
     this.onTap,
     this.onPressed,
     this.buttonText,
+    this.monthController,
+    this.dayController,
+    this.yearController,
     super.key
     });
 
@@ -47,7 +54,8 @@ class CustomColumn extends StatelessWidget {
         sizedBox(margins[0]),
         text(type, context, mediumLabel),
         sizedBox(margins[1]),
-        textField(type, controller, onSubmitted, obscureText, hint),
+        textField(type, controller, onSubmitted, obscureText, hint, onTap),
+        rowCol(type, context, onTap, monthController, dayController, yearController),
         sizedBox(margins[2]),
         richText(type, context, mediumBody, recognizer),
         button(type, onPressed, buttonText),
@@ -65,8 +73,9 @@ class CustomColumn extends StatelessWidget {
     );
   }
 
-  textField(ColumnType type, TextEditingController? controller, void Function(String)? onSubmitted, bool? obscureText, String? hint) {
-    if (type == ColumnType.type4) { return sizedBox(0); }
+  textField(ColumnType type, TextEditingController? controller, void Function(String)? onSubmitted, bool? obscureText, 
+    String? hint, void Function()? onTap) {
+    if (type == ColumnType.type4 || type == ColumnType.type5) { return sizedBox(0); }
     return SizedBox(
       width: 500,
       child: CustomTextField(
@@ -74,6 +83,7 @@ class CustomColumn extends StatelessWidget {
         hint: hint ?? '',
         controller: controller,
         onSubmitted: onSubmitted,
+        onTap: onTap,
       ),
     );
   }
@@ -129,6 +139,50 @@ class CustomColumn extends StatelessWidget {
       child: CustomButton(
         onPressed: onPressed,
         text: buttonText ?? "",
+      ),
+    );
+  }
+
+  rowCol(ColumnType type, BuildContext? context, void Function()? selectDate, TextEditingController? monthController, 
+    TextEditingController? dayController, TextEditingController? yearController) {
+    if (type != ColumnType.type5) { return sizedBox(0); }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          SizedBox(
+            width: displayWidth(context!,160,0.275),
+            child: CustomTextField(
+              obscureText: false,
+              hint: 'Month',
+              onTap: selectDate,
+              controller: monthController,
+              readOnly: true,
+            ),
+          ),
+          SizedBox(width: displayWidth(context,25,0.039)),
+          SizedBox(
+            width: displayWidth(context,120,0.215),
+            child: CustomTextField(
+              obscureText: false,
+              hint: 'Day',
+              onTap: selectDate,
+              controller: dayController,
+              readOnly: true,
+            ),
+          ),
+          SizedBox(width: displayWidth(context,25,0.039)),
+          SizedBox(
+            width: displayWidth(context,140,0.255),
+            child: CustomTextField(
+              obscureText: false,
+              hint: 'Year',
+              onTap: selectDate,
+              controller: yearController,
+              readOnly: true,
+            ),
+          ),
+        ],
       ),
     );
   }

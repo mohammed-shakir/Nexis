@@ -1,7 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nexis/widgets/custom_button.dart';
-import 'package:nexis/widgets/auth/custom_input_field.dart';
 import 'package:nexis/widgets/auth/column_type.dart';
 import 'package:nexis/widgets/auth/custom_column.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +7,7 @@ import '../../classes/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
 import '../../pages/auth/user_providor.dart';
+import '../../enums/screen_type.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -57,6 +56,22 @@ class AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    var screenType = getScreenType(mediaQuery);
+
+    switch (screenType) {
+      case ScreenType.mobile:
+        return AuthPage(context);
+      case ScreenType.tablet:
+        return AuthPage(context);
+      case ScreenType.desktop:
+        return AuthPage(context);
+      default:
+        return AuthPage(context);
+    }
+  }
+
+  Widget AuthPage(BuildContext context) {
     return Scaffold(
       body: Container(
         color: Theme.of(context).colorScheme.primary,

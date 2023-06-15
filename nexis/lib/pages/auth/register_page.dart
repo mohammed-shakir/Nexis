@@ -1,15 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:nexis/widgets/custom_button.dart';
-import 'package:nexis/widgets/auth/custom_input_field.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
+import 'package:nexis/widgets/auth/column_type.dart';
+import 'package:nexis/widgets/auth/custom_column.dart';
 import '../../classes/route_change.dart';
-import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
-import '../../pages/auth/user_providor.dart';
-import '../../widgets/auth/size_helper.dart';
 import '../../enums/screen_type.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -51,47 +45,6 @@ class RegisterPageState extends State<RegisterPage> {
     //print(date);
   }
 
-  setWidget() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          SizedBox(
-            width: displayWidth(context,160,0.275),
-            child: CustomTextField(
-              obscureText: false,
-              hint: 'Month',
-              onTap: selectDate,
-              controller: monthController,
-              readOnly: true,
-            ),
-          ),
-          SizedBox(width: displayWidth(context,25,0.039)),
-          SizedBox(
-            width: displayWidth(context,120,0.215),
-            child: CustomTextField(
-              obscureText: false,
-              hint: 'Day',
-              onTap: selectDate,
-              controller: dayController,
-              readOnly: true,
-            ),
-          ),
-          SizedBox(width: displayWidth(context,25,0.039)),
-          SizedBox(
-            width: displayWidth(context,140,0.255),
-            child: CustomTextField(
-              obscureText: false,
-              hint: 'Year',
-              onTap: selectDate,
-              controller: yearController,
-              readOnly: true,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -145,123 +98,55 @@ class RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Create an account', 
-                              style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Email', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type1,
+                          largeLabel: 'Create an account',
+                          mediumLabel: 'Email',
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Username', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Username',
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                              ),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Password',
+                          obscureText: true,
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Repeat Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                              ),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Repeat Password',
+                          obscureText: true,
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Date of birth', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            SizedBox(
-                              width: 550,
-                              child: CustomTextField(
-                                obscureText: false,
-                                hint: 'Month-Day-Year',
-                                onTap: selectDate,
-                                controller: dateController,
-                                readOnly: true,
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Date of birth',
+                          hint: 'Month-Day-Year',
+                          monthController: dateController,
+                          onTap: selectDate,
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 500,
-                              height: 50,
-                              child: CustomButton(
-                                //onPressed: {Function},
-                                text: 'Register',
-                              ),
-                            ), 
-                            const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                text: 'Already have an account?',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
-                                mouseCursor: SystemMouseCursors.click,
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type4,
+                          buttonText: 'Register',
+                          //onPressed: {Function},
+                          mediumBody: 'Already have an account?',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
                         ),
                       ],
                     ),
@@ -311,114 +196,56 @@ class RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Create an account', 
-                              style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Email', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type1,
+                          largeLabel: 'Create an account',
+                          mediumLabel: 'Email',
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Username', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Username',
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                              ),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Password',
+                          obscureText: true,
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Repeat Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                              ),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Repeat Password',
+                          obscureText: true,
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Date of birth', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            setWidget()
-                          ],
+                        CustomColumn(
+                          ColumnType.type5,
+                          mediumLabel: 'Date of birth',
+                          monthController: monthController,
+                          dayController: dayController,
+                          yearController: yearController,
+                          onTap: selectDate,
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 500,
-                              height: 50,
-                              child: CustomButton(
-                                //onPressed: {Function},
-                                text: 'Register',
-                              ),
-                            ), 
-                            const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                text: 'Already have an account?',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
-                                mouseCursor: SystemMouseCursors.click,
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type4,
+                          buttonText: 'Register',
+                          //onPressed: {Function},
+                          mediumBody: 'Already have an account?',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
                         ),
                       ],
                     ),
@@ -431,9 +258,7 @@ class RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-
-
-
+  
   Widget RegisterPageDesktop(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -470,114 +295,56 @@ class RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Create an account', 
-                              style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Email', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type1,
+                          largeLabel: 'Create an account',
+                          mediumLabel: 'Email',
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Username', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Username',
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                              ),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Password',
+                          obscureText: true,
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Repeat Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            const SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                              ),
-                            ),
-                          ],
+                        const CustomColumn(
+                          ColumnType.type3,
+                          mediumLabel: 'Repeat Password',
+                          obscureText: true,
+                          /*
+                            Add here for further implementation
+                          */ 
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Date of birth', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            setWidget()
-                          ],
+                        CustomColumn(
+                          ColumnType.type5,
+                          mediumLabel: 'Date of birth',
+                          monthController: monthController,
+                          dayController: dayController,
+                          yearController: yearController,
+                          onTap: selectDate,
                         ),
                         const SizedBox(height: 20),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 500,
-                              height: 50,
-                              child: CustomButton(
-                                //onPressed: {Function},
-                                text: 'Register',
-                              ),
-                            ), 
-                            const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                text: 'Already have an account?',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
-                                mouseCursor: SystemMouseCursors.click,
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type4,
+                          buttonText: 'Register',
+                          //onPressed: {Function},
+                          mediumBody: 'Already have an account?',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
                         ),
                       ],
                     ),
