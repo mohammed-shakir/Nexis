@@ -22,6 +22,7 @@ class CustomColumn extends StatelessWidget {
   final TextEditingController? monthController;
   final TextEditingController? dayController;
   final TextEditingController? yearController;
+  final bool? readOnly;
 
   const CustomColumn(
     this.type,
@@ -40,6 +41,7 @@ class CustomColumn extends StatelessWidget {
     this.monthController,
     this.dayController,
     this.yearController,
+    this.readOnly,
     super.key
     });
 
@@ -54,7 +56,7 @@ class CustomColumn extends StatelessWidget {
         sizedBox(margins[0]),
         text(type, context, mediumLabel),
         sizedBox(margins[1]),
-        textField(type, controller, onSubmitted, obscureText, hint, onTap),
+        textField(type, controller, onSubmitted, obscureText, hint, onTap, readOnly),
         rowCol(type, context, onTap, monthController, dayController, yearController),
         sizedBox(margins[2]),
         richText(type, context, mediumBody, recognizer),
@@ -74,7 +76,7 @@ class CustomColumn extends StatelessWidget {
   }
 
   textField(ColumnType type, TextEditingController? controller, void Function(String)? onSubmitted, bool? obscureText, 
-    String? hint, void Function()? onTap) {
+    String? hint, void Function()? onTap, bool? readOnly) {
     if (type == ColumnType.type4 || type == ColumnType.type5) { return sizedBox(0); }
     return SizedBox(
       width: 500,
@@ -84,6 +86,7 @@ class CustomColumn extends StatelessWidget {
         controller: controller,
         onSubmitted: onSubmitted,
         onTap: onTap,
+        readOnly: readOnly ?? false,
       ),
     );
   }

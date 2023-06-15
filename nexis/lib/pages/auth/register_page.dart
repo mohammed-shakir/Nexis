@@ -137,8 +137,9 @@ class RegisterPageState extends State<RegisterPage> {
                           ColumnType.type3,
                           mediumLabel: 'Date of birth',
                           hint: 'Month-Day-Year',
-                          monthController: dateController,
+                          controller: dateController,
                           onTap: selectDate,
+                          readOnly: true,
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
