@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/widgets/custom_button.dart';
 import 'package:nexis/widgets/auth/custom_input_field.dart';
+import 'package:nexis/widgets/auth/column_type.dart';
+import 'package:nexis/widgets/auth/custom_column.dart';
 import 'package:provider/provider.dart';
 import '../../classes/route_change.dart';
 import '../../firebase/login.dart';
@@ -91,93 +93,35 @@ class AuthPageState extends State<AuthPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Welcome!', 
-                              style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Email', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                controller: emailController,
-                                onSubmitted: (_) {
-                                  signIn();
-                                },
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type1,
+                          largeLabel: 'Welcome!',
+                          mediumLabel: 'Email',
+                          controller: emailController,
+                          onSubmitted: (_) {
+                            signIn();
+                          },
                         ),
                         const SizedBox(height: 30),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Password', 
-                              style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            const SizedBox(height: 5),
-                            SizedBox(
-                              width: 500,
-                              child: CustomTextField(
-                                obscureText: true,
-                                controller: passwordController,
-                                onSubmitted: (_) {
-                                  signIn();
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                              text: 'Forgot your password?', 
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              recognizer: TapGestureRecognizer()..onTap = RouteChange(context, '').reDir,
-                              mouseCursor: SystemMouseCursors.click,
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type2,
+                          mediumLabel: 'Password',
+                          obscureText: true,
+                          controller: passwordController,
+                          onSubmitted: (_) {
+                            signIn();
+                          },
+                          mediumBody: 'Forgot your password?',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, '').reDir,
                         ),
                         const SizedBox(height: 30),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 500,
-                              height: 50,
-                              child: CustomButton(
-                                onPressed: signIn,
-                                text: 'Sign In',
-                              ),
-                            ), 
-                            const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Need an account? ', 
-                                    style: Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                  TextSpan(
-                                    text: 'Register',
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                    recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.registerPage).reDir,
-                                    mouseCursor: SystemMouseCursors.click,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        CustomColumn(
+                          ColumnType.type4,
+                          onPressed: signIn,
+                          buttonText: 'Sign In',
+                          smallLabel: 'Need an account? ',
+                          mediumBody: 'Register',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.registerPage).reDir,
                         ),
                       ],
                     ),
