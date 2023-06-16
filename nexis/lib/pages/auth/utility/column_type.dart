@@ -1,3 +1,7 @@
+/* The register_page and auth_page uses different columns that include 
+  different widgets, this file is used to name the different types of 
+  combinations of widgets in each column */
+
 // type1: heading text + descriptive text + textfield
 // type2: descriptive text + textfield + text with hyperlink
 // type3: descriptive text + textfield

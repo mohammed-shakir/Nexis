@@ -5,6 +5,7 @@ final ThemeData appTheme = ThemeData(
     primary: const Color(0xFF171c2a), // Usually used for background
     secondary: const Color(0xFF800020), // Usually used for buttons and stuff
     tertiary: const Color(0xFF606060),
+    outline: const Color(0xFF171c2a),
   ),
   textTheme: const TextTheme(
     // Title

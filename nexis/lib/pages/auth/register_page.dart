@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nexis/widgets/auth/column_type.dart';
+import 'package:nexis/pages/auth/utility/column_type.dart';
 import 'package:nexis/widgets/auth/custom_column.dart';
-import '../../classes/route_change.dart';
+import 'utility/route_change.dart';
 import '../../classes/route_names.dart';
 import '../../enums/screen_type.dart';
 
@@ -42,7 +42,6 @@ class RegisterPageState extends State<RegisterPage> {
       dayController.text = '${newDate.day}';
       dateController.text = '${months[(newDate.month)-1]}-${newDate.day}-${newDate.year}';
     });
-    //print(date);
   }
 
   @override
@@ -52,17 +51,17 @@ class RegisterPageState extends State<RegisterPage> {
 
     switch (screenType) {
       case ScreenType.mobile:
-        return RegisterPageMobile(context);
+        return registerPageMobile(context);
       case ScreenType.tablet:
-        return RegisterPageTablet(context);
+        return registerPageDesktop(context);
       case ScreenType.desktop:
-        return RegisterPageDesktop(context);
+        return registerPageDesktop(context);
       default:
-        return RegisterPageDesktop(context);
+        return registerPageDesktop(context);
     }
   }
 
-  Widget RegisterPageMobile(BuildContext context) {
+  Widget registerPageMobile(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -99,7 +98,7 @@ class RegisterPageState extends State<RegisterPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
                         const CustomColumn(
-                          ColumnType.type1,
+                          type: ColumnType.type1,
                           largeLabel: 'Create an account',
                           mediumLabel: 'Email',
                           /*
@@ -108,7 +107,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         const CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Username',
                           /*
                             Add here for further implementation
@@ -116,7 +115,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         const CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Password',
                           obscureText: true,
                           /*
@@ -125,7 +124,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         const CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Repeat Password',
                           obscureText: true,
                           /*
@@ -134,7 +133,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Date of birth',
                           hint: 'Month-Day-Year',
                           controller: dateController,
@@ -143,106 +142,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
-                          ColumnType.type4,
-                          buttonText: 'Register',
-                          //onPressed: {Function},
-                          mediumBody: 'Already have an account?',
-                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ]
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget RegisterPageTablet(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset(
-              './assets/logo-no-background-icon.png',
-              fit: BoxFit.contain,
-              height: 50,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8.0), child: const Text('NEXIS')
-            ),
-          ],
-        ),
-      ),
-      body: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 550,
-            ),
-            child: ListView(
-              children: <Widget>[
-                Card(
-                  margin: const EdgeInsets.all(20),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [ 
-                        const CustomColumn(
-                          ColumnType.type1,
-                          largeLabel: 'Create an account',
-                          mediumLabel: 'Email',
-                          /*
-                            Add here for further implementation
-                          */ 
-                        ),
-                        const SizedBox(height: 20),
-                        const CustomColumn(
-                          ColumnType.type3,
-                          mediumLabel: 'Username',
-                          /*
-                            Add here for further implementation
-                          */ 
-                        ),
-                        const SizedBox(height: 20),
-                        const CustomColumn(
-                          ColumnType.type3,
-                          mediumLabel: 'Password',
-                          obscureText: true,
-                          /*
-                            Add here for further implementation
-                          */ 
-                        ),
-                        const SizedBox(height: 20),
-                        const CustomColumn(
-                          ColumnType.type3,
-                          mediumLabel: 'Repeat Password',
-                          obscureText: true,
-                          /*
-                            Add here for further implementation
-                          */ 
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          ColumnType.type5,
-                          mediumLabel: 'Date of birth',
-                          monthController: monthController,
-                          dayController: dayController,
-                          yearController: yearController,
-                          onTap: selectDate,
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          ColumnType.type4,
+                          type: ColumnType.type4,
                           buttonText: 'Register',
                           //onPressed: {Function},
                           mediumBody: 'Already have an account?',
@@ -260,7 +160,7 @@ class RegisterPageState extends State<RegisterPage> {
     );
   }
   
-  Widget RegisterPageDesktop(BuildContext context) {
+  Widget registerPageDesktop(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -297,7 +197,7 @@ class RegisterPageState extends State<RegisterPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
                         const CustomColumn(
-                          ColumnType.type1,
+                          type: ColumnType.type1,
                           largeLabel: 'Create an account',
                           mediumLabel: 'Email',
                           /*
@@ -306,7 +206,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         const CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Username',
                           /*
                             Add here for further implementation
@@ -314,7 +214,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         const CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Password',
                           obscureText: true,
                           /*
@@ -323,7 +223,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         const CustomColumn(
-                          ColumnType.type3,
+                          type: ColumnType.type3,
                           mediumLabel: 'Repeat Password',
                           obscureText: true,
                           /*
@@ -332,7 +232,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
-                          ColumnType.type5,
+                          type: ColumnType.type5,
                           mediumLabel: 'Date of birth',
                           monthController: monthController,
                           dayController: dayController,
@@ -341,7 +241,7 @@ class RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
-                          ColumnType.type4,
+                          type: ColumnType.type4,
                           buttonText: 'Register',
                           //onPressed: {Function},
                           mediumBody: 'Already have an account?',

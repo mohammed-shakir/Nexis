@@ -9,14 +9,14 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onSubmitted;
 
   const CustomTextField({
+    Key? key,
     this.obscureText, 
     this.hint, 
     this.onTap, 
     this.controller, 
     this.readOnly, 
     this.onSubmitted, 
-    super.key
-    });
+    }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +30,8 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: Theme.of(context).textTheme.labelSmall,
-        border: buildBoarder(),
-        focusedBorder: buildBoarder(const Color(0xFF800020)),
+        border: buildBorder(Theme.of(context).colorScheme.outline, context),
+        focusedBorder: buildBorder(Theme.of(context).colorScheme.secondary, context),
         filled: true,
         fillColor: Colors.blueGrey[750],
       ),
@@ -40,11 +40,11 @@ class CustomTextField extends StatelessWidget {
     );
   }
 
-  OutlineInputBorder buildBoarder([color]) {
+  OutlineInputBorder buildBorder([color, context]) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(4),
       borderSide: BorderSide(
-        color: color ?? const Color(0xFF171c2a),
+        color: color ?? Theme.of(context).colorScheme.outline,
       ),
     );
   }

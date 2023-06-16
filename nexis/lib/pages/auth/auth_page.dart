@@ -1,13 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nexis/widgets/auth/column_type.dart';
+import 'package:nexis/pages/auth/utility/column_type.dart';
 import 'package:nexis/widgets/auth/custom_column.dart';
 import 'package:provider/provider.dart';
-import '../../classes/route_change.dart';
+import 'utility/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
 import '../../pages/auth/user_providor.dart';
-import '../../enums/screen_type.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -56,22 +55,10 @@ class AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context);
-    var screenType = getScreenType(mediaQuery);
-
-    switch (screenType) {
-      case ScreenType.mobile:
-        return AuthPage(context);
-      case ScreenType.tablet:
-        return AuthPage(context);
-      case ScreenType.desktop:
-        return AuthPage(context);
-      default:
-        return AuthPage(context);
-    }
+    return authPage(context);
   }
 
-  Widget AuthPage(BuildContext context) {
+  Widget authPage(BuildContext context) {
     return Scaffold(
       body: Container(
         color: Theme.of(context).colorScheme.primary,
@@ -109,7 +96,7 @@ class AuthPageState extends State<AuthPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CustomColumn(
-                          ColumnType.type1,
+                          type: ColumnType.type1,
                           largeLabel: 'Welcome!',
                           mediumLabel: 'Email',
                           controller: emailController,
@@ -119,7 +106,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 30),
                         CustomColumn(
-                          ColumnType.type2,
+                          type: ColumnType.type2,
                           mediumLabel: 'Password',
                           obscureText: true,
                           controller: passwordController,
@@ -131,7 +118,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 30),
                         CustomColumn(
-                          ColumnType.type4,
+                          type: ColumnType.type4,
                           onPressed: signIn,
                           buttonText: 'Sign In',
                           smallLabel: 'Need an account? ',

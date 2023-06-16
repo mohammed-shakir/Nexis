@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/widgets/auth/custom_input_field.dart';
 import '../custom_button.dart';
-import 'column_type.dart';
-import 'size_helper.dart';
+import '../../pages/auth/utility/column_type.dart';
+import 'dart:math';
 
 class CustomColumn extends StatelessWidget {
   final ColumnType type;
@@ -24,9 +24,10 @@ class CustomColumn extends StatelessWidget {
   final TextEditingController? yearController;
   final bool? readOnly;
 
-  const CustomColumn(
-    this.type,
-    {this.largeLabel,
+  const CustomColumn({
+    Key? key,
+    required this.type,
+    this.largeLabel,
     this.mediumLabel,
     this.mediumBody,
     this.smallLabel,
@@ -42,11 +43,11 @@ class CustomColumn extends StatelessWidget {
     this.dayController,
     this.yearController,
     this.readOnly,
-    super.key
-    });
+    }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Size contextSize = MediaQuery.of(context).size;
     List<double> margins = getMargins(type);
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -57,12 +58,11 @@ class CustomColumn extends StatelessWidget {
         text(type, context, mediumLabel),
         sizedBox(margins[1]),
         textField(type, controller, onSubmitted, obscureText, hint, onTap, readOnly),
-        rowCol(type, context, onTap, monthController, dayController, yearController),
+        rowCol(type, context, onTap, monthController, dayController, yearController, contextSize),
         sizedBox(margins[2]),
-        richText(type, context, mediumBody, recognizer),
         button(type, onPressed, buttonText),
         sizedBox(margins[3]),
-        richText2(type, context, smallLabel, mediumBody, recognizer),
+        richText(type, context, smallLabel, mediumBody, recognizer),
       ],
     );
   }
@@ -103,35 +103,26 @@ class CustomColumn extends StatelessWidget {
     return SizedBox(height: height);
   }
 
-  richText(ColumnType type, BuildContext? context, String? mediumBody, GestureRecognizer? recognizer) {
-    if (type != ColumnType.type2) { return sizedBox(0); }
-    return RichText(
-      text: TextSpan(
-        text: mediumBody ?? "", 
-        style: Theme.of(context!).textTheme.bodyMedium,
-        recognizer: recognizer,
-        mouseCursor: SystemMouseCursors.click,
-      ),
-    );
-  }
-  richText2(ColumnType type, BuildContext? context, String? smallLabel, String? mediumBody, GestureRecognizer? recognizer) {
-    if (type != ColumnType.type4) { return sizedBox(0); }
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: smallLabel ?? "", 
-            style: Theme.of(context!).textTheme.labelSmall,
-          ),
-          TextSpan(
-            text: mediumBody ?? "",
-            style: Theme.of(context).textTheme.bodyMedium,
-            recognizer: recognizer,
-            mouseCursor: SystemMouseCursors.click,
-          ),
-        ],
-      ),
-    );
+  richText(ColumnType type, BuildContext? context, String? smallLabel, String? mediumBody, GestureRecognizer? recognizer) {
+    if (type == ColumnType.type4 || type == ColumnType.type2) {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: smallLabel ?? "",
+              style: Theme.of(context!).textTheme.labelSmall,
+            ),
+            TextSpan(
+              text: mediumBody ?? "",
+              style: Theme.of(context).textTheme.bodyMedium,
+              recognizer: recognizer,
+              mouseCursor: SystemMouseCursors.click,
+            ),
+          ],
+        ),
+      );
+    }
+    return sizedBox(0);
   }
 
   button(ColumnType type, void Function()? onPressed, String? buttonText) {
@@ -146,15 +137,20 @@ class CustomColumn extends StatelessWidget {
     );
   }
 
+  double getDisplayWidth(Size? contextSize, double initialWidth) {
+    if (contextSize!.width < 550) { return initialWidth * pow(0.9976, 550-contextSize.width); }
+    return initialWidth;
+  }
+
   rowCol(ColumnType type, BuildContext? context, void Function()? selectDate, TextEditingController? monthController, 
-    TextEditingController? dayController, TextEditingController? yearController) {
+    TextEditingController? dayController, TextEditingController? yearController, Size? contextSize) {
     if (type != ColumnType.type5) { return sizedBox(0); }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           SizedBox(
-            width: displayWidth(context!,160,0.275),
+            width: getDisplayWidth(contextSize!,160),
             child: CustomTextField(
               obscureText: false,
               hint: 'Month',
@@ -163,9 +159,9 @@ class CustomColumn extends StatelessWidget {
               readOnly: true,
             ),
           ),
-          SizedBox(width: displayWidth(context,25,0.039)),
+          SizedBox(width: getDisplayWidth(contextSize,25)),
           SizedBox(
-            width: displayWidth(context,120,0.215),
+            width: getDisplayWidth(contextSize,120),
             child: CustomTextField(
               obscureText: false,
               hint: 'Day',
@@ -174,9 +170,9 @@ class CustomColumn extends StatelessWidget {
               readOnly: true,
             ),
           ),
-          SizedBox(width: displayWidth(context,25,0.039)),
+          SizedBox(width: getDisplayWidth(contextSize,25)),
           SizedBox(
-            width: displayWidth(context,140,0.255),
+            width: getDisplayWidth(contextSize,140),
             child: CustomTextField(
               obscureText: false,
               hint: 'Year',
