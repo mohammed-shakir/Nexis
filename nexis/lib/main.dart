@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nexis/pages/auth/register_page.dart';
 import 'firebase/firebase_init.dart';
 import 'classes/route_names.dart';
 import 'pages/main/home.dart';
@@ -33,6 +34,7 @@ class Nexis extends StatelessWidget {
       debugShowCheckedModeBanner: false, // remove debug banner
       routes: {
         RouteNames.authPage: (context) => const AuthPage(),
+        RouteNames.registerPage: (context) => const RegisterPage(),
         RouteNames.home: (context) => const ProtectedRoute(child: Home()),
         RouteNames.settingsPage: (context) =>
             const ProtectedRoute(child: SettingsPage()),

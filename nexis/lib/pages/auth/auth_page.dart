@@ -1,9 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nexis/widgets/custom_button.dart';
+import 'package:nexis/pages/auth/utility/column_type.dart';
+import 'package:nexis/widgets/auth/custom_column.dart';
+import 'package:provider/provider.dart';
+import 'utility/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
 import '../../providers/user_providor.dart';
-import 'package:provider/provider.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -13,7 +16,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  bool rememberMe = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
@@ -56,76 +58,92 @@ class AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    return authPage(context);
+  }
+
+  Widget authPage(BuildContext context) {
     return Scaffold(
       body: Container(
         color: Theme.of(context).colorScheme.primary,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: 800,
+              maxWidth: 550,
             ),
-            child: Card(
-              margin: const EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                      ),
-                      onSubmitted: (_) {
-                        signIn();
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: obscureText,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        suffixIcon: IconButton(
-                          icon: Icon(obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          onPressed: () {
-                            setState(() {
-                              obscureText = !obscureText;
-                            });
-                          },
-                        ),
-                      ),
-                      onSubmitted: (_) {
-                        signIn();
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
+            child: ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Image.asset(
+                    "./assets/logo-no-background-icon.png",
+                    fit: BoxFit.contain,
+                    height: 200,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'NEXIS',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                ),
+                Card(
+                  margin: const EdgeInsets.all(20),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Checkbox(
-                          value: rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              rememberMe = value ?? false;
-                            });
+                        CustomColumn(
+                          type: ColumnType.type1,
+                          largeLabel: 'Welcome!',
+                          mediumLabel: 'Email',
+                          controller: emailController,
+                          onSubmitted: (_) {
+                            signIn();
                           },
                         ),
-                        const Text('Remember Me'),
+                        const SizedBox(height: 30),
+                        CustomColumn(
+                          type: ColumnType.type2,
+                          mediumLabel: 'Password',
+                          controller: passwordController,
+                          suffixIcon: IconButton(
+                            icon: const Icon(true
+                                ? Icons.visibility
+                                // ignore: dead_code
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                obscureText = !obscureText;
+                              });
+                            },
+                          ),
+                          obscureText: obscureText,
+                          onSubmitted: (_) {
+                            signIn();
+                          },
+                          mediumBody: 'Forgot your password?',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, '').reDir,
+                        ),
+                        const SizedBox(height: 30),
+                        CustomColumn(
+                          type: ColumnType.type4,
+                          onPressed: signIn,
+                          buttonText: 'Sign In',
+                          smallLabel: 'Need an account? ',
+                          mediumBody: 'Register',
+                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.registerPage).reDir,
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    CustomButton(
-                      onPressed: signIn,
-                      text: 'Sign In',
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ]
             ),
           ),
         ),
