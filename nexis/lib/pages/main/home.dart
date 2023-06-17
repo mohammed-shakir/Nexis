@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../widgets/text_input_field.dart';
+import '../../widgets/basic_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
@@ -21,7 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  final TextEditingController messageController = TextEditingController();
   StreamSubscription<QuerySnapshot>? subscription;
   late final FirestoreRead firestoreRead;
   List<Message> messages = [];
@@ -48,7 +47,6 @@ class HomeState extends State<Home> {
   @override
   void dispose() {
     subscription?.cancel();
-    messageController.dispose();
     super.dispose();
   }
 
@@ -64,24 +62,21 @@ class HomeState extends State<Home> {
     });
   }
 
-  Future<void> sendMessage() async {
-    String messageContent = messageController.text.trim();
-
-    if (messageContent.isEmpty) {
+  Future<void> sendMessage(String message) async {
+    if (message.isEmpty) {
       return;
-    } else if (messageContent.length > maxMessageLength) {
+    } else if (message.length > maxMessageLength) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Message exceeds maximum length.')),
       );
     } else {
-      if (messageContent.isNotEmpty) {
+      if (message.isNotEmpty) {
         try {
           await FirestoreWrite.sendMessage(
-            message: messageController.text,
+            message: message,
             sender: prefs.getString('displayName')!,
             groupChatId: prefs.getStringList('servers')?[0] ?? '',
           );
-          messageController.clear();
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error sending message: $e')),
@@ -148,6 +143,7 @@ class HomeState extends State<Home> {
               break;
           }
         }
+        scrollToBottom();
       });
 
       messagesLoaded = true;
@@ -224,11 +220,9 @@ class HomeState extends State<Home> {
                                         scrollController: scrollController,
                                       ),
                                     ),
-                                    TextInputField(
-                                      messageController: messageController,
-                                      messageFocusNode: messageFocusNode,
-                                      sendMessage: sendMessage,
-                                      scrollToBottom: scrollToBottom,
+                                    BasicInputField(
+                                      labelText: "Message #general",
+                                      onSubmitted: sendMessage,
                                     ),
                                   ]),
                                 ),
@@ -289,11 +283,9 @@ class HomeState extends State<Home> {
           scrollController: scrollController,
         ),
       ),
-      bottomNavigationBar: TextInputField(
-        messageController: messageController,
-        messageFocusNode: messageFocusNode,
-        sendMessage: sendMessage,
-        scrollToBottom: scrollToBottom,
+      bottomNavigationBar: BasicInputField(
+        labelText: "Message #general",
+        onSubmitted: sendMessage,
       ),
     );
   }
