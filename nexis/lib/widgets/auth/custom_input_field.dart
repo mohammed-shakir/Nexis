@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool? readOnly;
   final void Function(String)? onSubmitted;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     Key? key,
@@ -16,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     this.controller, 
     this.readOnly, 
     this.onSubmitted, 
+    this.suffixIcon,
     }) : super(key: key);
 
   @override
@@ -28,6 +30,7 @@ class CustomTextField extends StatelessWidget {
       cursorHeight: 22,
       onTap: onTap,
       decoration: InputDecoration(
+        suffixIcon: suffixIcon,
         hintText: hint,
         hintStyle: Theme.of(context).textTheme.labelSmall,
         border: buildBorder(Theme.of(context).colorScheme.outline, context),

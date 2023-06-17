@@ -18,6 +18,7 @@ class AuthPage extends StatefulWidget {
 class AuthPageState extends State<AuthPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool obscureText = true;
 
   @override
   void dispose() {
@@ -108,8 +109,19 @@ class AuthPageState extends State<AuthPage> {
                         CustomColumn(
                           type: ColumnType.type2,
                           mediumLabel: 'Password',
-                          obscureText: true,
                           controller: passwordController,
+                          suffixIcon: IconButton(
+                            icon: const Icon(true
+                                ? Icons.visibility
+                                // ignore: dead_code
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                obscureText = !obscureText;
+                              });
+                            },
+                          ),
+                          obscureText: obscureText,
                           onSubmitted: (_) {
                             signIn();
                           },

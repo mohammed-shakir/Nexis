@@ -25,6 +25,9 @@ class RegisterPageState extends State<RegisterPage> {
   final List<String> months = ["January","February","March","April","May","June","July",
             "August","September","October","November","December"];
 
+  bool obscureText = true;
+  bool obscureTextRepeat = true;
+
   selectDate() async {
     DateTime? newDate = await showDatePicker(
       context: context,
@@ -114,19 +117,41 @@ class RegisterPageState extends State<RegisterPage> {
                           */ 
                         ),
                         const SizedBox(height: 20),
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
-                          obscureText: true,
+                          suffixIcon: IconButton(
+                            icon: const Icon(true
+                                ? Icons.visibility
+                                // ignore: dead_code
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                obscureText = !obscureText;
+                              });
+                            },
+                          ),
+                          obscureText: obscureText,
                           /*
                             Add here for further implementation
                           */ 
                         ),
                         const SizedBox(height: 20),
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Repeat Password',
-                          obscureText: true,
+                          suffixIcon: IconButton(
+                            icon: const Icon(true
+                                ? Icons.visibility
+                                // ignore: dead_code
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                obscureTextRepeat = !obscureTextRepeat;
+                              });
+                            },
+                          ),
+                          obscureText: obscureTextRepeat,
                           /*
                             Add here for further implementation
                           */ 
@@ -213,19 +238,41 @@ class RegisterPageState extends State<RegisterPage> {
                           */ 
                         ),
                         const SizedBox(height: 20),
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
-                          obscureText: true,
+                          suffixIcon: IconButton(
+                            icon: const Icon(true
+                                ? Icons.visibility
+                                // ignore: dead_code
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                obscureText = !obscureText;
+                              });
+                            },
+                          ),
+                          obscureText: obscureText,
                           /*
                             Add here for further implementation
                           */ 
                         ),
                         const SizedBox(height: 20),
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Repeat Password',
-                          obscureText: true,
+                          suffixIcon: IconButton(
+                            icon: const Icon(true
+                                ? Icons.visibility
+                                // ignore: dead_code
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                obscureTextRepeat = !obscureTextRepeat;
+                              });
+                            },
+                          ),
+                          obscureText: obscureTextRepeat,
                           /*
                             Add here for further implementation
                           */ 

@@ -23,6 +23,7 @@ class CustomColumn extends StatelessWidget {
   final TextEditingController? dayController;
   final TextEditingController? yearController;
   final bool? readOnly;
+  final Widget? suffixIcon;
 
   const CustomColumn({
     Key? key,
@@ -43,6 +44,7 @@ class CustomColumn extends StatelessWidget {
     this.dayController,
     this.yearController,
     this.readOnly,
+    this.suffixIcon,
     }) : super(key: key);
 
   @override
@@ -81,6 +83,7 @@ class CustomColumn extends StatelessWidget {
     return SizedBox(
       width: 500,
       child: CustomTextField(
+        suffixIcon: suffixIcon,
         obscureText: obscureText ?? false,
         hint: hint ?? '',
         controller: controller,
