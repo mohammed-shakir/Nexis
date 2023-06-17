@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../providers/user_providor.dart';
+import 'package:provider/provider.dart';
+import '../../classes/route_names.dart';
 import 'components/user_profile.dart';
 import 'components/appearance.dart';
 import '../../widgets/close_button.dart';
@@ -20,6 +23,12 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  void logout() async {
+    var navigator = Navigator.of(context);
+    await Provider.of<UserProvider>(context, listen: false).logout();
+    navigator.pushNamed(RouteNames.authPage);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +39,7 @@ class SettingsPageState extends State<SettingsPage> {
               NavigationMenu(
                 onSelectProfile: () => changeContent(const UserProfile()),
                 onSelectAppearance: () => changeContent(const Appearance()),
+                onLogout: logout,
               ),
               Expanded(child: selectedContent),
             ],
@@ -50,11 +60,13 @@ class SettingsPageState extends State<SettingsPage> {
 class NavigationMenu extends StatefulWidget {
   final VoidCallback onSelectProfile;
   final VoidCallback onSelectAppearance;
+  final VoidCallback onLogout;
 
   const NavigationMenu({
     Key? key,
     required this.onSelectProfile,
     required this.onSelectAppearance,
+    required this.onLogout,
   }) : super(key: key);
 
   @override
@@ -90,6 +102,17 @@ class NavigationMenuState extends State<NavigationMenu> {
                 selectedIndex = 1;
               });
             },
+          ),
+          NavigationMenuItem(
+            title: 'Logout',
+            isSelected: selectedIndex == 2,
+            onTap: () async {
+              setState(() {
+                selectedIndex = 2;
+              });
+              widget.onLogout();
+            },
+            color: Colors.red,
           ),
         ],
       ),

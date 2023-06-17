@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'utility/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
-import '../../pages/auth/user_providor.dart';
+import '../../providers/user_providor.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -30,20 +30,22 @@ class AuthPageState extends State<AuthPage> {
   void signIn() async {
     String email = emailController.text;
     String password = passwordController.text;
+    var navigator = Navigator.of(context);
 
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await Login.signIn(email, password);
-
         var userProvider = Provider.of<UserProvider>(context, listen: false);
-        await userProvider.initialization;
+
+        await Login.signIn(email, password);
+        await userProvider.fetchUserData(email);
+        await userProvider.init();
         await userProvider.login();
 
         emailController.clear();
         passwordController.clear();
 
         if (userProvider.isLoggedIn) {
-          Navigator.pushReplacementNamed(context, RouteNames.home);
+          navigator.pushNamed(RouteNames.home);
         }
       } catch (e) {
         passwordController.clear();

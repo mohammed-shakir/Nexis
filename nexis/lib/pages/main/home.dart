@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/message_item.dart';
-import '../../classes/route_names.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../widgets/text_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
+import 'components/channels.dart';
+import 'components/participant_info.dart';
+import 'components/navbar.dart';
+import 'components/servers.dart';
+import 'components/message_interface.dart';
+import '../../enums/screen_type.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -24,10 +28,15 @@ class HomeState extends State<Home> {
   bool messagesLoaded = false;
   final FocusNode messageFocusNode = FocusNode();
   ScrollController scrollController = ScrollController();
+  static const int maxMessageLength = 2000;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
+
+    initSharedPreferences();
+
     listenToMessages().then((_) {
       setState(() {
         // Update the UI
@@ -43,6 +52,10 @@ class HomeState extends State<Home> {
     super.dispose();
   }
 
+  Future<void> initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
   void scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollController.hasClients) {
@@ -53,18 +66,27 @@ class HomeState extends State<Home> {
 
   Future<void> sendMessage() async {
     String messageContent = messageController.text.trim();
-    if (messageContent.isNotEmpty) {
-      try {
-        await FirestoreWrite.sendMessage(
-          message: messageController.text,
-          sender: dotenv.env['TEMP_TEST_EMAIL']!,
-          groupChatId: 'aNAgqEvRvtFLDmjw7Ivz',
-        );
-        messageController.clear();
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sending message: $e')),
-        );
+
+    if (messageContent.isEmpty) {
+      return;
+    } else if (messageContent.length > maxMessageLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Message exceeds maximum length.')),
+      );
+    } else {
+      if (messageContent.isNotEmpty) {
+        try {
+          await FirestoreWrite.sendMessage(
+            message: messageController.text,
+            sender: prefs.getString('displayName')!,
+            groupChatId: prefs.getStringList('servers')?[0] ?? '',
+          );
+          messageController.clear();
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error sending message: $e')),
+          );
+        }
       }
     }
   }
@@ -137,133 +159,141 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return buildHomeScreen(context);
-        }
-      },
-    );
+    var mediaQuery = MediaQuery.of(context);
+    var screenType = getScreenType(mediaQuery);
+
+    switch (screenType) {
+      case ScreenType.mobile:
+        return buildMobileHomeScreen(context);
+      case ScreenType.tablet:
+        return buildMobileHomeScreen(context);
+      case ScreenType.desktop:
+        return buildDesktopHomeScreen(context);
+      default:
+        return buildDesktopHomeScreen(context);
+    }
   }
 
-  Widget buildHomeScreen(BuildContext context) {
+  Widget buildDesktopHomeScreen(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
+    const double serversWidth = 75;
+    const double channelsWidth = 230;
+    const double navbarHeight = 50;
+    const double participantInfoWidth = 230;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildMessagesListView(),
-            buildMessageInputArea(),
-          ],
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            double maxWidth =
+                constraints.maxWidth > 2000 ? 2000 : constraints.maxWidth;
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: serversWidth,
+                      child: Servers(),
+                    ),
+                    const SizedBox(
+                      width: channelsWidth,
+                      child: Channels(),
+                    ),
+                    SizedBox(
+                      width: maxWidth - serversWidth - channelsWidth,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: navbarHeight,
+                            child: NavBar(),
+                          ),
+                          SizedBox(
+                            height: screenSize.height - navbarHeight,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(children: [
+                                    Expanded(
+                                      child: MessageInterface(
+                                        messages: messages,
+                                        messagesLoaded: messagesLoaded,
+                                        scrollController: scrollController,
+                                      ),
+                                    ),
+                                    TextInputField(
+                                      messageController: messageController,
+                                      messageFocusNode: messageFocusNode,
+                                      sendMessage: sendMessage,
+                                      scrollToBottom: scrollToBottom,
+                                    ),
+                                  ]),
+                                ),
+                                const SizedBox(
+                                  width: participantInfoWidth,
+                                  child: ParticipantInfo(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget buildMessagesListView() {
-    return Expanded(
-      child: messages.isEmpty && messagesLoaded
-          ? const Center(
-              child: Text(
-                'No messages',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          : Scrollbar(
-              thumbVisibility: true,
-              controller: scrollController,
-              child: ListView.separated(
-                controller: scrollController,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                shrinkWrap: true,
-                itemCount: messages.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) =>
-                    MessageItem(message: messages[index]),
-              ),
-            ),
-    );
-  }
+  Widget buildMobileHomeScreen(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Widget buildMessageInputArea() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: messageController,
-              focusNode: messageFocusNode,
-              onSubmitted: (_) {
-                try {
-                  if (messageController.text.isNotEmpty) {
-                    sendMessage();
-                    scrollToBottom();
-                    messageFocusNode.requestFocus();
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error sending message: $e')),
-                  );
-                }
-              },
-              decoration: InputDecoration(
-                hintText: 'Enter your message',
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                hintStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                fillColor: Theme.of(context).colorScheme.tertiary,
-                filled: true,
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: const TextStyle(color: Colors.white),
-              ),
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      endDrawer: const Drawer(
+        child: ParticipantInfo(),
+      ),
+      drawer: const Drawer(
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Servers(),
             ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 48, // Adjust the height to match the input field's height
-            child: CustomButton(
-              icon: const Icon(Icons.send),
-              onPressed: () async {
-                try {
-                  if (messageController.text.isNotEmpty) {
-                    await sendMessage();
-                    scrollToBottom();
-                    messageFocusNode.requestFocus();
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error sending message: $e')),
-                  );
-                }
-              },
+            Expanded(
+              flex: 3,
+              child: Channels(),
             ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 48, // Adjust the height to match the input field's height
-            child: CustomButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.pushNamed(context, RouteNames.settingsPage);
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
+      ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0),
+        child: NavBar(
+          openDrawer: () => scaffoldKey.currentState?.openDrawer(),
+          openEndDrawer: () => scaffoldKey.currentState?.openEndDrawer(),
+        ),
+      ),
+      body: SafeArea(
+        child: MessageInterface(
+          messages: messages,
+          messagesLoaded: messagesLoaded,
+          scrollController: scrollController,
+        ),
+      ),
+      bottomNavigationBar: TextInputField(
+        messageController: messageController,
+        messageFocusNode: messageFocusNode,
+        sendMessage: sendMessage,
+        scrollToBottom: scrollToBottom,
       ),
     );
   }
