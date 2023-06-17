@@ -5,6 +5,8 @@ final ThemeData appTheme = ThemeData(
     primary: const Color(0xFF171c2a), // Usually used for background
     secondary: const Color(0xFF800020), // Usually used for buttons and stuff
     tertiary: const Color(0xFF606060),
+    background: const Color.fromARGB(255, 21, 25, 37),
+    onBackground: const Color.fromARGB(255, 15, 18, 28),
   ),
   textTheme: const TextTheme(
     // bodyMedium

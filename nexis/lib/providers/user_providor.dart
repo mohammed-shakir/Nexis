@@ -40,7 +40,6 @@ class UserProvider with ChangeNotifier {
     List<String> userData = [
       'avatar',
       'bio',
-      'color',
       'createdAt',
       'displayName',
       'email',
