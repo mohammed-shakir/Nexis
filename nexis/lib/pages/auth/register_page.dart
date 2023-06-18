@@ -14,6 +14,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController repeatPasswordController = TextEditingController();
+
   // Desktop || Tablet
   final TextEditingController yearController = TextEditingController();
   final TextEditingController monthController = TextEditingController();
@@ -21,12 +26,41 @@ class RegisterPageState extends State<RegisterPage> {
 
   // Mobile
   final TextEditingController dateController = TextEditingController();
-  
-  final List<String> months = ["January","February","March","April","May","June","July",
-            "August","September","October","November","December"];
+
+  final List<String> months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
 
   bool obscureText = true;
   bool obscureTextRepeat = true;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    repeatPasswordController.dispose();
+
+    yearController.dispose();
+    monthController.dispose();
+    dayController.dispose();
+    dateController.dispose();
+
+    super.dispose();
+  }
+
+  void signUp() async {}
 
   selectDate() async {
     DateTime? newDate = await showDatePicker(
@@ -100,21 +134,23 @@ class RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type1,
                           largeLabel: 'Create an account',
                           mediumLabel: 'Email',
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: emailController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Username',
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: usernameController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -132,9 +168,10 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           obscureText: obscureText,
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: passwordController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -152,9 +189,10 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           obscureText: obscureTextRepeat,
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: repeatPasswordController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -162,6 +200,9 @@ class RegisterPageState extends State<RegisterPage> {
                           mediumLabel: 'Date of birth',
                           hint: 'Month-Day-Year',
                           controller: dateController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                           onTap: selectDate,
                           readOnly: true,
                         ),
@@ -169,7 +210,7 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          //onPressed: {Function},
+                          onPressed: signUp,
                           mediumBody: 'Already have an account?',
                           recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
                         ),
@@ -221,21 +262,23 @@ class RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [ 
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type1,
                           largeLabel: 'Create an account',
                           mediumLabel: 'Email',
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: emailController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
-                        const CustomColumn(
+                        CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Username',
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: usernameController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -253,9 +296,10 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           obscureText: obscureText,
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: passwordController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -273,9 +317,10 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           obscureText: obscureTextRepeat,
-                          /*
-                            Add here for further implementation
-                          */ 
+                          controller: repeatPasswordController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -284,13 +329,16 @@ class RegisterPageState extends State<RegisterPage> {
                           monthController: monthController,
                           dayController: dayController,
                           yearController: yearController,
+                          onSubmitted: (_) {
+                            signUp();
+                          },
                           onTap: selectDate,
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          //onPressed: {Function},
+                          onPressed: signUp,
                           mediumBody: 'Already have an account?',
                           recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
                         ),
