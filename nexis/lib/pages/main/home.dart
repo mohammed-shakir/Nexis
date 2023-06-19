@@ -44,7 +44,7 @@ class HomeState extends State<Home> {
     });
   }
 
-  // Clean up resources that are no longer needed (messageController). If it is not removed, it could cause a memory leak.
+  // Clean up resources that are no longer needed. If it is not removed, it could cause a memory leak.
   @override
   void dispose() {
     subscription?.cancel();

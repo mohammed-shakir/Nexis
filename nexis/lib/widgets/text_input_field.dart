@@ -45,7 +45,7 @@ class TextInputField extends StatelessWidget {
                 hintText: 'Enter your message',
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 hintStyle: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.grey,
                 ),
                 fillColor: Theme.of(context).colorScheme.tertiary,
                 filled: true,
