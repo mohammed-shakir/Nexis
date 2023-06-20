@@ -67,10 +67,10 @@ class RegisterPageState extends State<RegisterPage> {
   }
 
   void checkFields(String email, String username, String password,
-    String confirmPassword, String date) {
+    String confirmPassword, String dateOfBirth) {
 
     if (email.isEmpty || password.isEmpty || username.isEmpty ||
-    confirmPassword.isEmpty || date.isEmpty) {
+    confirmPassword.isEmpty || dateOfBirth.isEmpty) {
       clearFields();
       throw ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All fields must be filled')),
@@ -90,14 +90,14 @@ class RegisterPageState extends State<RegisterPage> {
     String username = usernameController.text;
     String password = passwordController.text;
     String confirmPassword = confirmPasswordController.text;
-    String date = dateController.text;
+    String dateOfBirth = dateController.text;
 
     var navigator = Navigator.of(context);
 
-    checkFields(email, username, password, confirmPassword, date);
+    checkFields(email, username, password, confirmPassword, dateOfBirth);
 
     try {
-      await Register.signUp(email, password);
+      await Register.signUp(email, username, password, dateOfBirth);
       navigator.pushNamed(RouteNames.authPage);
     } catch (e) {
       clearFields();
