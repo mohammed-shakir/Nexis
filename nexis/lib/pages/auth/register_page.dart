@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nexis/pages/auth/utility/column_type.dart';
 import 'package:nexis/widgets/auth/custom_column.dart';
 import 'utility/route_change.dart';
+import '../../firebase/register.dart';
 import '../../classes/route_names.dart';
 import '../../enums/screen_type.dart';
 
@@ -17,7 +18,7 @@ class RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController repeatPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   // Desktop || Tablet
   final TextEditingController yearController = TextEditingController();
@@ -50,7 +51,7 @@ class RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     usernameController.dispose();
     passwordController.dispose();
-    repeatPasswordController.dispose();
+    confirmPasswordController.dispose();
 
     yearController.dispose();
     monthController.dispose();
@@ -60,7 +61,51 @@ class RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  void signUp() async {}
+  void clearFields() {
+    passwordController.clear();
+    confirmPasswordController.clear();
+  }
+
+  void checkFields(String email, String username, String password,
+    String confirmPassword, String date) {
+
+    if (email.isEmpty || password.isEmpty || username.isEmpty ||
+    confirmPassword.isEmpty || date.isEmpty) {
+      clearFields();
+      throw ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All fields must be filled')),
+      );
+    }
+
+    if (password != confirmPassword) {
+      clearFields();
+      throw ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Confirm password')),
+      );
+    }
+  }
+
+  void signUp() async {
+    String email = emailController.text;
+    String username = usernameController.text;
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
+    String date = dateController.text;
+
+    var navigator = Navigator.of(context);
+
+    checkFields(email, username, password, confirmPassword, date);
+
+    try {
+      await Register.signUp(email, password);
+      navigator.pushNamed(RouteNames.authPage);
+    } catch (e) {
+      clearFields();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
+    }
+  }
 
   selectDate() async {
     DateTime? newDate = await showDatePicker(
@@ -176,7 +221,7 @@ class RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 20),
                         CustomColumn(
                           type: ColumnType.type3,
-                          mediumLabel: 'Repeat Password',
+                          mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
                             icon: const Icon(true
                                 ? Icons.visibility
@@ -189,7 +234,7 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           obscureText: obscureTextRepeat,
-                          controller: repeatPasswordController,
+                          controller: confirmPasswordController,
                           onSubmitted: (_) {
                             signUp();
                           },
@@ -304,7 +349,7 @@ class RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 20),
                         CustomColumn(
                           type: ColumnType.type3,
-                          mediumLabel: 'Repeat Password',
+                          mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
                             icon: const Icon(true
                                 ? Icons.visibility
@@ -317,7 +362,7 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                           ),
                           obscureText: obscureTextRepeat,
-                          controller: repeatPasswordController,
+                          controller: confirmPasswordController,
                           onSubmitted: (_) {
                             signUp();
                           },
