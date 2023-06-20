@@ -4,12 +4,14 @@ class Message {
   final String id;
   final String sender;
   final String content;
+  final String avatar;
   final Timestamp timestamp;
 
   Message({
     required this.id,
     required this.sender,
     required this.content,
+    required this.avatar,
     required this.timestamp,
   })  : assert(sender.isNotEmpty, 'Sender must not be empty'),
         assert(content.trim().isNotEmpty,
@@ -22,6 +24,7 @@ class Message {
       id: document.id,
       sender: data?['sender'] as String? ?? '',
       content: data?['message'] as String? ?? '',
+      avatar: data?['avatar'] as String? ?? '',
       timestamp: data?['timestamp'] as Timestamp? ?? Timestamp.now(),
     );
   }

@@ -49,7 +49,7 @@ class MessageInterfaceState extends State<MessageInterface> {
               child: ListView.separated(
                 controller: widget.scrollController,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 shrinkWrap: true,
                 itemCount: widget.messages.length,
                 separatorBuilder: (context, index) =>

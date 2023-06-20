@@ -35,9 +35,9 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    initSharedPreferences();
-
-    listenToMessages().then((_) {
+    initSharedPreferences().then((_) {
+      return listenToMessages();
+    }).then((_) {
       setState(() {
         // Update the UI
       });
@@ -76,10 +76,12 @@ class HomeState extends State<Home> {
     } else {
       if (messageContent.isNotEmpty) {
         try {
+          String? avatar = prefs.getString('avatar');
           await FirestoreWrite.sendMessage(
             message: messageController.text,
             sender: prefs.getString('displayName')!,
             groupChatId: prefs.getStringList('servers')?[0] ?? '',
+            avatar: avatar ?? '',
           );
           messageController.clear();
         } catch (e) {
@@ -93,7 +95,7 @@ class HomeState extends State<Home> {
 
   Future<void> listenToMessages() async {
     FirestoreRead firestoreRead =
-        FirestoreRead(groupId: 'aNAgqEvRvtFLDmjw7Ivz');
+        FirestoreRead(groupId: prefs.getStringList('servers')?[0] ?? '');
     try {
       List<DocumentSnapshot> documents = await firestoreRead.initialFetch();
       Set<String> processedIds = documents.map((doc) => doc.id).toSet();
