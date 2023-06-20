@@ -345,6 +345,7 @@ class RegisterPageState extends State<RegisterPage> {
                           onSubmitted: (_) {
                             signUp();
                           },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
