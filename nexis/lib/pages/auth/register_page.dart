@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/pages/auth/utility/column_type.dart';
@@ -15,6 +16,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  final regKey = GlobalKey<FormState>();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -66,35 +69,16 @@ class RegisterPageState extends State<RegisterPage> {
     confirmPasswordController.clear();
   }
 
-  void checkFields(String email, String username, String password,
-    String confirmPassword, String dateOfBirth) {
-
-    if (email.isEmpty || password.isEmpty || username.isEmpty ||
-    confirmPassword.isEmpty || dateOfBirth.isEmpty) {
-      clearFields();
-      throw ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Make sure all fields are filled in properly.')),
-      );
-    }
-
-    if (password != confirmPassword) {
-      clearFields();
-      throw ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Make sure all fields are filled in properly.')),
-      );
-    }
-  }
-
   void signUp() async {
+    final isValid = regKey.currentState!.validate();
+    if (!isValid) { return; }
+
     String email = emailController.text;
     String username = usernameController.text;
     String password = passwordController.text;
-    String confirmPassword = confirmPasswordController.text;
     String dateOfBirth = dateController.text;
 
     var navigator = Navigator.of(context);
-
-    checkFields(email, username, password, confirmPassword, dateOfBirth);
 
     try {
       await Register.signUp(email, username, password, dateOfBirth);
@@ -186,97 +170,118 @@ class RegisterPageState extends State<RegisterPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [ 
-                        CustomColumn(
-                          type: ColumnType.type1,
-                          largeLabel: 'Create an account',
-                          mediumLabel: 'Email',
-                          controller: emailController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Username',
-                          controller: usernameController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Password',
-                          suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                obscureText = !obscureText;
-                              });
+                    child: Form (
+                      key: regKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [ 
+                          CustomColumn(
+                            type: ColumnType.type1,
+                            largeLabel: 'Create an account',
+                            mediumLabel: 'Email',
+                            controller: emailController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (text) =>
+                              text != null && !EmailValidator.validate(text)
+                                ? 'Invalid email format'
+                                : null,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Username',
+                            controller: usernameController,
+                            onSubmitted: (_) {
+                              signUp();
                             },
                           ),
-                          obscureText: obscureText,
-                          controller: passwordController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text) {
-                            if (!passwordCheck(text)) {
-                              return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Confirm Password',
-                          suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                obscureTextRepeat = !obscureTextRepeat;
-                              });
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Password',
+                            suffixIcon: IconButton(
+                              icon: const Icon(true
+                                  ? Icons.visibility
+                                  // ignore: dead_code
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  obscureText = !obscureText;
+                                });
+                              },
+                            ),
+                            obscureText: obscureText,
+                            controller: passwordController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (text) {
+                              if (!passwordCheck(text)) {
+                                return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
+                              }
+                              return null;
                             },
                           ),
-                          obscureText: obscureTextRepeat,
-                          controller: confirmPasswordController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Date of birth',
-                          hint: 'Month-Day-Year',
-                          controller: dateController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                          onTap: selectDate,
-                          readOnly: true,
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type4,
-                          buttonText: 'Register',
-                          onPressed: signUp,
-                          mediumBody: 'Already have an account?',
-                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
-                        ),
-                      ],
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Confirm Password',
+                            suffixIcon: IconButton(
+                              icon: const Icon(true
+                                  ? Icons.visibility
+                                  // ignore: dead_code
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  obscureTextRepeat = !obscureTextRepeat;
+                                });
+                              },
+                            ),
+                            obscureText: obscureTextRepeat,
+                            controller: confirmPasswordController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (text) {
+                              if (text != confirmPasswordController.text) {
+                                return '!';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Date of birth',
+                            hint: 'Month-Day-Year',
+                            controller: dateController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            onTap: selectDate,
+                            readOnly: true,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type4,
+                            buttonText: 'Register',
+                            onPressed: emailController.value.text.isNotEmpty && 
+                                       usernameController.value.text.isNotEmpty &&
+                                       passwordController.value.text.isNotEmpty &&
+                                       confirmPasswordController.value.text.isNotEmpty &&
+                                       dateController.value.text.isNotEmpty
+                              ? signUp
+                              : null,
+                            mediumBody: 'Already have an account?',
+                            recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -321,97 +326,118 @@ class RegisterPageState extends State<RegisterPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [ 
-                        CustomColumn(
-                          type: ColumnType.type1,
-                          largeLabel: 'Create an account',
-                          mediumLabel: 'Email',
-                          controller: emailController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Username',
-                          controller: usernameController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Password',
-                          suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                obscureText = !obscureText;
-                              });
+                    child: Form (
+                      key: regKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [ 
+                          CustomColumn(
+                            type: ColumnType.type1,
+                            largeLabel: 'Create an account',
+                            mediumLabel: 'Email',
+                            controller: emailController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (text) =>
+                              text != null && !EmailValidator.validate(text)
+                                ? 'Invalid email format'
+                                : null,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Username',
+                            controller: usernameController,
+                            onSubmitted: (_) {
+                              signUp();
                             },
                           ),
-                          obscureText: obscureText,
-                          controller: passwordController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text) {
-                            if (!passwordCheck(text)) {
-                              return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type3,
-                          mediumLabel: 'Confirm Password',
-                          suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                obscureTextRepeat = !obscureTextRepeat;
-                              });
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Password',
+                            suffixIcon: IconButton(
+                              icon: const Icon(true
+                                  ? Icons.visibility
+                                  // ignore: dead_code
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  obscureText = !obscureText;
+                                });
+                              },
+                            ),
+                            obscureText: obscureText,
+                            controller: passwordController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (text) {
+                              if (!passwordCheck(text)) {
+                                return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
+                              }
+                              return null;
                             },
                           ),
-                          obscureText: obscureTextRepeat,
-                          controller: confirmPasswordController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type5,
-                          mediumLabel: 'Date of birth',
-                          monthController: monthController,
-                          dayController: dayController,
-                          yearController: yearController,
-                          onSubmitted: (_) {
-                            signUp();
-                          },
-                          onTap: selectDate,
-                        ),
-                        const SizedBox(height: 20),
-                        CustomColumn(
-                          type: ColumnType.type4,
-                          buttonText: 'Register',
-                          onPressed: signUp,
-                          mediumBody: 'Already have an account?',
-                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
-                        ),
-                      ],
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type3,
+                            mediumLabel: 'Confirm Password',
+                            suffixIcon: IconButton(
+                              icon: const Icon(true
+                                  ? Icons.visibility
+                                  // ignore: dead_code
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  obscureTextRepeat = !obscureTextRepeat;
+                                });
+                              },
+                            ),
+                            obscureText: obscureTextRepeat,
+                            controller: confirmPasswordController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (text) {
+                              if (text != confirmPasswordController.text) {
+                                return '!';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type5,
+                            mediumLabel: 'Date of birth',
+                            monthController: monthController,
+                            dayController: dayController,
+                            yearController: yearController,
+                            onSubmitted: (_) {
+                              signUp();
+                            },
+                            onTap: selectDate,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomColumn(
+                            type: ColumnType.type4,
+                            buttonText: 'Register',
+                            onPressed: emailController.value.text.isNotEmpty && 
+                                       usernameController.value.text.isNotEmpty &&
+                                       passwordController.value.text.isNotEmpty &&
+                                       confirmPasswordController.value.text.isNotEmpty &&
+                                       dateController.value.text.isNotEmpty
+                              ? signUp
+                              : null,
+                            mediumBody: 'Already have an account?',
+                            recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.authPage).reDir,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

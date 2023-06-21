@@ -24,8 +24,8 @@ class Register {
     }
   }
 
-  static createUserDocument(String email, String username,
-    String password, String dateOfBirth) async {
+  static createUserDocument(String email, String username, String password,
+      String dateOfBirth) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     return firestore.collection('users').add({
       'avatar': '',
@@ -37,8 +37,7 @@ class Register {
       'friends': [],
       'servers': [],
       'userName': username,
-    })
-    .onError((error, stackTrace) async => await deleteUser());
+    }).onError((error, stackTrace) async => await deleteUser());
   }
 
   static deleteUser() async {
