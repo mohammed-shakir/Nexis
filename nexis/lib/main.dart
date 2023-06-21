@@ -7,6 +7,7 @@ import 'pages/settings/settings_page.dart';
 import 'pages/auth/auth_page.dart';
 import 'themes/default_theme.dart';
 import 'providers/user_providor.dart';
+import 'providers/server_providor.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -15,8 +16,11 @@ Future<void> main() async {
   await initializeFirebase();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => UserProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => ServerProvider()),
+      ],
       child: const Nexis(),
     ),
   );

@@ -17,7 +17,6 @@ class NavBar extends StatefulWidget {
 }
 
 class NavBarState extends State<NavBar> {
-  // late SharedPreferences prefs;
   Future<SharedPreferences> prefsFuture = SharedPreferences.getInstance();
   final TextEditingController searchController = TextEditingController();
   late FocusNode searchFocusNode;
@@ -26,7 +25,6 @@ class NavBarState extends State<NavBar> {
   @override
   void initState() {
     super.initState();
-    // initSharedPreferences();
     searchFocusNode = FocusNode();
     searchFocusNode.addListener(() {
       if (!searchFocusNode.hasFocus && searchController.text.isEmpty) {
@@ -36,10 +34,6 @@ class NavBarState extends State<NavBar> {
       }
     });
   }
-
-  // Future<void> initSharedPreferences() async {
-  //   prefs = await SharedPreferences.getInstance();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +48,13 @@ class NavBarState extends State<NavBar> {
           SharedPreferences? prefs = snapshot.data;
           switch (screenType) {
             case ScreenType.mobile:
-              return buildMobileServerNavbar(context);
+              return buildMobileServerNavbar(context, prefs);
             case ScreenType.tablet:
-              return buildMobileServerNavbar(context);
+              return buildMobileServerNavbar(context, prefs);
             case ScreenType.desktop:
-              return buildDesktopDMNavbar(context, prefs);
+              return buildDesktopServerNavbar(context, prefs);
             default:
-              return buildDesktopDMNavbar(context, prefs);
+              return buildDesktopServerNavbar(context, prefs);
           }
         } else {
           return const CircularProgressIndicator();
@@ -69,7 +63,8 @@ class NavBarState extends State<NavBar> {
     );
   }
 
-  Widget buildDesktopServerNavbar(BuildContext context) {
+  Widget buildDesktopServerNavbar(
+      BuildContext context, SharedPreferences? prefs) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
@@ -275,7 +270,8 @@ class NavBarState extends State<NavBar> {
     );
   }
 
-  Widget buildMobileServerNavbar(BuildContext context) {
+  Widget buildMobileServerNavbar(
+      BuildContext context, SharedPreferences? prefs) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
