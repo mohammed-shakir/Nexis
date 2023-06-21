@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onSubmitted;
   final Widget? suffixIcon;
   final AutovalidateMode? autovalidateMode;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     Key? key,
@@ -20,6 +21,7 @@ class CustomTextField extends StatelessWidget {
     this.onSubmitted, 
     this.suffixIcon,
     this.autovalidateMode,
+    this.validator,
     }) : super(key: key);
 
   @override
@@ -43,12 +45,7 @@ class CustomTextField extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       onFieldSubmitted: onSubmitted,
       autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
-      validator: (text) {
-        if (!passwordCheck(text)) {
-          return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
-        }
-        return null;
-      },
+      validator: validator,
     );
   }
 
@@ -60,15 +57,4 @@ class CustomTextField extends StatelessWidget {
       ),
     );
   }
-
-  bool passwordCheck(String? text) {
-    bool hasUppercase = text!.contains(RegExp(r'[A-Z]'));
-    bool hasDigits = text.contains(RegExp(r'[0-9]'));
-    bool hasLowercase = text.contains(RegExp(r'[a-z]'));
-    bool hasSpecialCharacters = text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-    bool hasMinLength = text.length >= 8;
-
-    return hasUppercase && hasDigits && hasLowercase && hasSpecialCharacters && hasMinLength;
-  }
-
 }

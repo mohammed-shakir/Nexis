@@ -73,14 +73,14 @@ class RegisterPageState extends State<RegisterPage> {
     confirmPassword.isEmpty || dateOfBirth.isEmpty) {
       clearFields();
       throw ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('All fields must be filled')),
+        const SnackBar(content: Text('Make sure all fields are filled in properly.')),
       );
     }
 
     if (password != confirmPassword) {
       clearFields();
       throw ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Confirm password')),
+        const SnackBar(content: Text('Make sure all fields are filled in properly.')),
       );
     }
   }
@@ -124,6 +124,16 @@ class RegisterPageState extends State<RegisterPage> {
       dayController.text = '${newDate.day}';
       dateController.text = '${months[(newDate.month)-1]}-${newDate.day}-${newDate.year}';
     });
+  }
+
+  bool passwordCheck(String? text) {
+    bool hasUppercase = text!.contains(RegExp(r'[A-Z]'));
+    bool hasDigits = text.contains(RegExp(r'[0-9]'));
+    bool hasLowercase = text.contains(RegExp(r'[a-z]'));
+    bool hasSpecialCharacters = text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+    bool hasMinLength = text.length >= 8;
+
+    return hasUppercase && hasDigits && hasLowercase && hasSpecialCharacters && hasMinLength;
   }
 
   @override
@@ -216,6 +226,13 @@ class RegisterPageState extends State<RegisterPage> {
                           controller: passwordController,
                           onSubmitted: (_) {
                             signUp();
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (text) {
+                            if (!passwordCheck(text)) {
+                              return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(height: 20),
@@ -346,6 +363,12 @@ class RegisterPageState extends State<RegisterPage> {
                             signUp();
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (text) {
+                            if (!passwordCheck(text)) {
+                              return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
