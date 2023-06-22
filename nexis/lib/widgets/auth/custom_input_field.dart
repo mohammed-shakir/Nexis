@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final bool? readOnly;
   final void Function(String)? onSubmitted;
   final Widget? suffixIcon;
+  final AutovalidateMode? autovalidateMode;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     Key? key,
@@ -18,11 +20,13 @@ class CustomTextField extends StatelessWidget {
     this.readOnly, 
     this.onSubmitted, 
     this.suffixIcon,
+    this.autovalidateMode,
+    this.validator,
     }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       readOnly: readOnly ?? false,
       obscureText: obscureText ?? false,
@@ -39,7 +43,9 @@ class CustomTextField extends StatelessWidget {
         fillColor: Colors.blueGrey[750],
       ),
       style: const TextStyle(color: Colors.white),
-      onSubmitted: onSubmitted,
+      onFieldSubmitted: onSubmitted,
+      autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+      validator: validator,
     );
   }
 
