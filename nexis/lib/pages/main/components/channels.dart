@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/channel_button.dart';
+import '../../../widgets/hover_icon_button.dart';
 
 class Channels extends StatefulWidget {
   const Channels({Key? key}) : super(key: key);
@@ -26,7 +27,53 @@ class ChannelsState extends State<Channels> {
 
   @override
   Widget build(BuildContext context) {
-    return buildServerChannels();
+    return Column(
+      children: [
+        Expanded(child: buildServerChannels()),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                backgroundImage: AssetImage("./assets/temp.png"),
+                backgroundColor: Colors.transparent,
+                radius: 15,
+              ),
+              const SizedBox(width: 5),
+              const Text(
+                'Shackman',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              const Spacer(),
+              HoverIconButton(
+                icon: const Icon(Icons.mic),
+                onPressed: () {},
+                color: Colors.grey,
+                hoverColor: Colors.white,
+                size: 20,
+              ),
+              // HoverIconButton(
+              //   icon: const Icon(Icons.headset),
+              //   onPressed: () {},
+              //   color: Colors.grey,
+              //   hoverColor: Colors.white,
+              //   size: 20,
+              // ),
+              HoverIconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {},
+                color: Colors.grey,
+                hoverColor: Colors.white,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget buildDMs() {

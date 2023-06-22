@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../enums/screen_type.dart';
+import '../../../widgets/hover_icon_button.dart';
 
 class NavBar extends StatefulWidget {
   final VoidCallback? openDrawer;
@@ -85,10 +86,11 @@ class NavBarState extends State<NavBar> {
             const Spacer(),
             Transform.rotate(
               angle: 45 * 3.14159265358979323846264338327950288 / 180,
-              child: IconButton(
+              child: HoverIconButton(
                 icon: const Icon(Icons.push_pin),
                 onPressed: () {},
                 color: Colors.grey,
+                hoverColor: Colors.white,
               ),
             ),
             const SizedBox(width: 10),
@@ -116,8 +118,9 @@ class NavBarState extends State<NavBar> {
                   suffixIcon: searchController.text.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.all(0),
-                          child: IconButton(
-                            icon: const Icon(Icons.close, color: Colors.grey),
+                          child: HoverIconButton(
+                            icon: const Icon(Icons.close),
+                            color: Colors.grey,
                             onPressed: () {
                               setState(() {
                                 searchController.clear();
@@ -125,6 +128,7 @@ class NavBarState extends State<NavBar> {
                                 isFocused = false;
                               });
                             },
+                            hoverColor: Colors.white,
                             padding: const EdgeInsets.all(0),
                           ),
                         )
@@ -184,22 +188,25 @@ class NavBarState extends State<NavBar> {
               style: const TextStyle(color: Colors.white, fontSize: 14),
             ),
             const Spacer(),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.phone_in_talk),
               onPressed: () {},
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.videocam_rounded),
               onPressed: () {},
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
             Transform.rotate(
               angle: 45 * 3.14159265358979323846264338327950288 / 180,
-              child: IconButton(
+              child: HoverIconButton(
                 icon: const Icon(Icons.push_pin),
                 onPressed: () {},
                 color: Colors.grey,
+                hoverColor: Colors.white,
               ),
             ),
             const SizedBox(width: 10),
@@ -227,8 +234,9 @@ class NavBarState extends State<NavBar> {
                   suffixIcon: searchController.text.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.all(0),
-                          child: IconButton(
-                            icon: const Icon(Icons.close, color: Colors.grey),
+                          child: HoverIconButton(
+                            icon: const Icon(Icons.close),
+                            color: Colors.grey,
                             onPressed: () {
                               setState(() {
                                 searchController.clear();
@@ -236,6 +244,7 @@ class NavBarState extends State<NavBar> {
                                 isFocused = false;
                               });
                             },
+                            hoverColor: Colors.white,
                             padding: const EdgeInsets.all(0),
                           ),
                         )
@@ -287,10 +296,11 @@ class NavBarState extends State<NavBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.menu),
-              onPressed: widget.openDrawer,
+              onPressed: widget.openDrawer!,
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
             const SizedBox(width: 20),
             const Row(
@@ -303,21 +313,24 @@ class NavBarState extends State<NavBar> {
             const Spacer(),
             Transform.rotate(
               angle: 45 * 3.14159265358979323846264338327950288 / 180,
-              child: IconButton(
+              child: HoverIconButton(
                 icon: const Icon(Icons.push_pin),
                 onPressed: () {},
                 color: Colors.grey,
+                hoverColor: Colors.white,
               ),
             ),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.search),
               onPressed: () {},
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.people_alt),
-              onPressed: widget.openEndDrawer,
+              onPressed: widget.openEndDrawer!,
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
           ],
         ),
@@ -341,10 +354,11 @@ class NavBarState extends State<NavBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.menu),
-              onPressed: widget.openDrawer,
+              onPressed: widget.openDrawer!,
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
             const SizedBox(width: 20),
             CircleAvatar(
@@ -357,20 +371,23 @@ class NavBarState extends State<NavBar> {
               style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
             const Spacer(),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.phone_in_talk),
               onPressed: () {},
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.videocam_rounded),
               onPressed: () {},
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
-            IconButton(
+            HoverIconButton(
               icon: const Icon(Icons.people_alt),
-              onPressed: widget.openEndDrawer,
+              onPressed: widget.openEndDrawer!,
               color: Colors.grey,
+              hoverColor: Colors.white,
             ),
           ],
         ),
