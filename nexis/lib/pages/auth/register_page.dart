@@ -73,6 +73,20 @@ class RegisterPageState extends State<RegisterPage> {
     final isValid = regKey.currentState!.validate();
     if (!isValid) { return; }
 
+    BuildContext dialogContext = context;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        dialogContext = context;
+        return Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.secondary,
+            strokeWidth: 4.0,
+          ));
+      }
+    );
+
     String email = emailController.text;
     String username = usernameController.text;
     String password = passwordController.text;
@@ -85,6 +99,7 @@ class RegisterPageState extends State<RegisterPage> {
       navigator.pushNamed(RouteNames.authPage);
     } catch (e) {
       clearFields();
+      Navigator.pop(dialogContext);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('$e')),
       );
@@ -248,7 +263,7 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (text) {
-                              if (text != confirmPasswordController.text) {
+                              if (text != passwordController.text) {
                                 return '!';
                               }
                               return null;
@@ -404,7 +419,7 @@ class RegisterPageState extends State<RegisterPage> {
                             },
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (text) {
-                              if (text != confirmPasswordController.text) {
+                              if (text != passwordController.text) {
                                 return '!';
                               }
                               return null;

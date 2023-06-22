@@ -37,10 +37,11 @@ class Register {
       'friends': [],
       'servers': [],
       'userName': username,
-    }).onError((error, stackTrace) async => await deleteUser());
+    }).onError((error, stackTrace) async => await deleteUser(email, password));
   }
 
-  static deleteUser() async {
-    //delete user
+  static deleteUser(String email, String password) async {
+    final user = firebaseAuth.currentUser;
+    await user?.delete();
   }
 }
