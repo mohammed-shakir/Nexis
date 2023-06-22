@@ -24,6 +24,8 @@ class CustomColumn extends StatelessWidget {
   final TextEditingController? yearController;
   final bool? readOnly;
   final Widget? suffixIcon;
+  final AutovalidateMode? autovalidateMode;
+  final String? Function(String?)? validator;
 
   const CustomColumn({
     Key? key,
@@ -45,6 +47,8 @@ class CustomColumn extends StatelessWidget {
     this.yearController,
     this.readOnly,
     this.suffixIcon,
+    this.autovalidateMode,
+    this.validator,
     }) : super(key: key);
 
   @override
@@ -59,7 +63,7 @@ class CustomColumn extends StatelessWidget {
         sizedBox(margins[0]),
         text(type, context, mediumLabel),
         sizedBox(margins[1]),
-        textField(type, controller, onSubmitted, obscureText, hint, onTap, readOnly),
+        textField(type, controller, onSubmitted, obscureText, hint, onTap, readOnly, autovalidateMode, validator),
         rowCol(type, context, onTap, monthController, dayController, yearController, contextSize),
         sizedBox(margins[2]),
         button(type, onPressed, buttonText),
@@ -78,7 +82,8 @@ class CustomColumn extends StatelessWidget {
   }
 
   textField(ColumnType type, TextEditingController? controller, void Function(String)? onSubmitted, bool? obscureText, 
-    String? hint, void Function()? onTap, bool? readOnly) {
+    String? hint, void Function()? onTap, bool? readOnly, AutovalidateMode? autovalidateMode,
+    String? Function(String?)? validator) {
     if (type == ColumnType.type4 || type == ColumnType.type5) { return sizedBox(0); }
     return SizedBox(
       width: 500,
@@ -90,6 +95,8 @@ class CustomColumn extends StatelessWidget {
         onSubmitted: onSubmitted,
         onTap: onTap,
         readOnly: readOnly ?? false,
+        autovalidateMode: autovalidateMode,
+        validator: validator,
       ),
     );
   }
