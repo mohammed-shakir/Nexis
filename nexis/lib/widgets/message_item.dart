@@ -16,19 +16,26 @@ class MessageItem extends StatelessWidget {
 
     final formattedTimestamp = TimeFormat.formattedTimestamp(timestamp);
 
+    ImageProvider imageProvider;
+    if (avatar.isNotEmpty) {
+      imageProvider = NetworkImage(avatar);
+    } else {
+      imageProvider = const AssetImage("./assets/logo-no-background-icon.png");
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (avatar.isNotEmpty) // Add this condition
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(avatar),
-                radius: 20,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CircleAvatar(
+              backgroundImage: imageProvider,
+              backgroundColor: Colors.transparent,
+              radius: 20,
             ),
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
