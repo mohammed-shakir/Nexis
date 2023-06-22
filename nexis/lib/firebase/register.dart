@@ -26,21 +26,26 @@ class Register {
 
   static createUserDocument(String email, String username, String password,
       String dateOfBirth) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    return firestore.collection('users').add({
-      'avatar': '',
-      'bio': '',
-      'createdAt': DateTime.now(),
-      'dateOfBirth': dateOfBirth,
-      'displayName': username,
-      'email': email,
-      'friends': [],
-      'servers': [],
-      'userName': username,
-    }).onError((error, stackTrace) async => await deleteUser(email, password));
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      return await firestore.collection('users').add({
+        'avatar': '',
+        'bio': '',
+        'createdAt': DateTime.now(),
+        'dateOfBirth': dateOfBirth,
+        'displayName': username,
+        'email': email,
+        'friends': [],
+        'servers': [],
+        'userName': username,
+      });
+    } catch (error) {
+      await deleteUser();
+      throw Exception('Failed to create user document: $error');
+    }
   }
 
-  static deleteUser(String email, String password) async {
+  static deleteUser() async {
     final user = firebaseAuth.currentUser;
     await user?.delete();
   }
