@@ -236,7 +236,7 @@ class RegisterPageState extends State<RegisterPage> {
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (text) {
                               if (!passwordCheck(text)) {
-                                return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
+                                return 'min 8 char. and (1) of [A-Z], [a-z], [0-9], [e.g., ! @ # ?]';
                               }
                               return null;
                             },
