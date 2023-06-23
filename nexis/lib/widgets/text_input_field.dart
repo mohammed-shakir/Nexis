@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
-import '../classes/route_names.dart';
 
 class TextInputField extends StatelessWidget {
   final TextEditingController messageController;
@@ -81,16 +80,6 @@ class TextInputField extends StatelessWidget {
                     SnackBar(content: Text('Error sending message: $e')),
                   );
                 }
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 48,
-            child: CustomButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.pushNamed(context, RouteNames.settingsPage);
               },
             ),
           ),

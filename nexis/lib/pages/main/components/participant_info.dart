@@ -14,8 +14,8 @@ class ParticipantInfoState extends State<ParticipantInfo> {
   late Future<SharedPreferences> _prefsFuture;
   late Future<Map<String, dynamic>?> _serverDataFuture;
 
-  String? displayName;
   List<String>? memberIds;
+  List<String>? friends;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class ParticipantInfoState extends State<ParticipantInfo> {
     final prefs = await _prefsFuture;
 
     setState(() {
-      displayName = prefs.getString('displayName');
+      friends = prefs.getStringList('friends');
     });
 
     List<String>? serverIds = prefs.getStringList('servers');

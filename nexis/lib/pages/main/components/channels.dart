@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/channel_button.dart';
 import '../../../widgets/hover_icon_button.dart';
+import '../../../classes/route_names.dart';
 
 class Channels extends StatefulWidget {
   const Channels({Key? key}) : super(key: key);
@@ -55,16 +56,11 @@ class ChannelsState extends State<Channels> {
                 hoverColor: Colors.white,
                 size: 20,
               ),
-              // HoverIconButton(
-              //   icon: const Icon(Icons.headset),
-              //   onPressed: () {},
-              //   color: Colors.grey,
-              //   hoverColor: Colors.white,
-              //   size: 20,
-              // ),
               HoverIconButton(
                 icon: const Icon(Icons.settings),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, RouteNames.settingsPage);
+                },
                 color: Colors.grey,
                 hoverColor: Colors.white,
                 size: 20,

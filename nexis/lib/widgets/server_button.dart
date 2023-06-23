@@ -30,32 +30,59 @@ class ServerButtonState extends State<ServerButton> {
     return MouseRegion(
       onHover: (_) => setState(() => isHovering = true),
       onExit: (_) => setState(() => isHovering = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeInOut,
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: widget.image == null
-              ? (widget.isSelected || isHovering
-                  ? Theme.of(context).colorScheme.secondary
-                  : widget.backgroundColor)
-              : widget.backgroundColor,
-          borderRadius:
-              BorderRadius.circular(widget.isSelected || isHovering ? 15 : 50),
-          image: widget.image != null
-              ? DecorationImage(
-                  image: widget.image!,
-                  fit: BoxFit.fill,
-                )
-              : null,
-        ),
-        child: IconButton(
-          onPressed: widget.onPressed,
-          color: Colors.white,
-          icon:
-              widget.icon ?? const Icon(Icons.photo, color: Colors.transparent),
-        ),
+      child: Stack(
+        children: [
+          if (isHovering || widget.isSelected)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  width: 4,
+                  height: widget.isSelected ? 40 : 20,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          Center(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeInOut,
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: widget.image == null
+                    ? (widget.isSelected || isHovering
+                        ? Theme.of(context).colorScheme.secondary
+                        : widget.backgroundColor)
+                    : widget.backgroundColor,
+                borderRadius: BorderRadius.circular(
+                    widget.isSelected || isHovering ? 15 : 50),
+                image: widget.image != null
+                    ? DecorationImage(
+                        image: widget.image!,
+                        fit: BoxFit.fill,
+                      )
+                    : null,
+              ),
+              child: IconButton(
+                onPressed: widget.onPressed,
+                color: Colors.white,
+                icon: widget.icon ??
+                    const Icon(
+                      Icons.photo,
+                      color: Colors.transparent,
+                    ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
