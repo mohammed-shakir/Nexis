@@ -14,8 +14,9 @@ class ParticipantInfoState extends State<ParticipantInfo> {
   late Future<SharedPreferences> _prefsFuture;
   late Future<Map<String, dynamic>?> _serverDataFuture;
 
-  List<String>? memberIds;
+  String? displayName;
   List<String>? friends;
+  List<String>? memberIds;
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class ParticipantInfoState extends State<ParticipantInfo> {
     final prefs = await _prefsFuture;
 
     setState(() {
+      displayName = prefs.getString('displayName');
       friends = prefs.getStringList('friends');
     });
 
@@ -51,8 +53,7 @@ class ParticipantInfoState extends State<ParticipantInfo> {
             builder: (context, serverDataSnapshot) {
               if (serverDataSnapshot.connectionState == ConnectionState.done) {
                 Map<String, dynamic>? serverData = serverDataSnapshot.data;
-                memberIds = List<String>.from(serverData?['member_ids'] ??
-                    []); // setting 'memberIds' from 'serverData'
+                memberIds = List<String>.from(serverData?['member_ids'] ?? []);
                 return buildParticipantInfo();
               } else {
                 return const CircularProgressIndicator();
@@ -89,6 +90,53 @@ class ParticipantInfoState extends State<ParticipantInfo> {
                     children: [
                       Text(
                         member,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                )
+                .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildUserInfo() {
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Members',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          const SizedBox(height: 10),
+          if (displayName != null)
+            Text(
+              displayName!,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+          const SizedBox(height: 10),
+          if (friends != null)
+            ...friends!
+                .map(
+                  (friend) => Column(
+                    children: [
+                      Text(
+                        friend,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
