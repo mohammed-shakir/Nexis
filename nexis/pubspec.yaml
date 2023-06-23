@@ -46,6 +46,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   firebase_storage: ^11.2.2
   email_validator: "^2.1.16"
+  just_the_tooltip: ^0.0.12
 
 dev_dependencies:
   flutter_test:
