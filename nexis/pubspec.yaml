@@ -45,9 +45,9 @@ dependencies:
   shared_preferences: ^2.1.1
   flutter_launcher_icons: ^0.13.1
   firebase_storage: ^11.2.2
-
-  email_validator: '^2.1.16'
-
+  email_validator: "^2.1.16"
+  http: ^0.13.3
+  cached_network_image: ^3.2.0 
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -102,7 +102,7 @@ flutter:
     - .env
     - ../logo-no-background-icon.png
     - ./assets/logo-no-background-icon.png
-  #   - images/a_dot_ham.jpeg
+      #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

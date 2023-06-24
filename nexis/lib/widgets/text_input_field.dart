@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nexis/tenor/gif_search.dart';
 import '../widgets/custom_button.dart';
 import '../classes/route_names.dart';
 
@@ -7,13 +8,16 @@ class TextInputField extends StatelessWidget {
   final FocusNode messageFocusNode;
   final Function sendMessage;
   final Function scrollToBottom;
-
+  final GlobalKey buttonKey;
+  final GifSearchDialog gifSearchDialog;
   const TextInputField({
     super.key,
     required this.messageController,
     required this.messageFocusNode,
     required this.sendMessage,
     required this.scrollToBottom,
+    required this.buttonKey,
+    required this.gifSearchDialog,
   });
 
   static const int maxMessageLength = 2000;
@@ -91,6 +95,35 @@ class TextInputField extends StatelessWidget {
               icon: const Icon(Icons.settings),
               onPressed: () {
                 Navigator.pushNamed(context, RouteNames.settingsPage);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            height: 48, // Adjust the height to match the input field's height
+            child: CustomButton(
+              key: buttonKey,
+              icon: const Icon(null),
+              text: "GIF",
+              onPressed: () async {
+                final buttonRenderBox =
+                    buttonKey.currentContext!.findRenderObject() as RenderBox;
+                final buttonPosition =
+                    buttonRenderBox.localToGlobal(Offset.zero);
+
+                final gifUrl = await Navigator.of(context).push<String>(
+                  PageRouteBuilder(
+                    opaque:
+                        false, // set to false so that the main screen can be seen beneath
+                    pageBuilder: (_, __, ___) =>
+                        GifSearchDialog(buttonPosition),
+                  ),
+                );
+
+                if (gifUrl != null) {
+                  messageController.text = gifUrl;
+                  sendMessage();
+                }
               },
             ),
           ),

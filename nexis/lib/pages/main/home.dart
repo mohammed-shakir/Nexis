@@ -12,6 +12,7 @@ import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
 import 'dart:async';
+import '../../tenor/gif_search.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -30,7 +31,8 @@ class HomeState extends State<Home> {
   ScrollController scrollController = ScrollController();
   static const int maxMessageLength = 2000;
   late SharedPreferences prefs;
-
+  final buttonKey = GlobalKey();
+  final gifSearchDialog = GifSearchDialog(Offset.zero);
   @override
   void initState() {
     super.initState();
@@ -229,6 +231,8 @@ class HomeState extends State<Home> {
                                       messageFocusNode: messageFocusNode,
                                       sendMessage: sendMessage,
                                       scrollToBottom: scrollToBottom,
+                                      buttonKey: buttonKey,
+                                      gifSearchDialog: gifSearchDialog,
                                     ),
                                   ]),
                                 ),
@@ -258,10 +262,10 @@ class HomeState extends State<Home> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.primary,
-      endDrawer: const Drawer(
+      endDrawer: Drawer(
         child: ParticipantInfo(),
       ),
-      drawer: const Drawer(
+      drawer: Drawer(
         child: Row(
           children: [
             Expanded(
@@ -294,6 +298,8 @@ class HomeState extends State<Home> {
         messageFocusNode: messageFocusNode,
         sendMessage: sendMessage,
         scrollToBottom: scrollToBottom,
+        buttonKey: buttonKey,
+        gifSearchDialog: gifSearchDialog,
       ),
     );
   }

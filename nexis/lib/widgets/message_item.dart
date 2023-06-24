@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/message_model.dart';
 import '../classes/time_format.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MessageItem extends StatelessWidget {
   final Message message;
@@ -38,12 +39,16 @@ class MessageItem extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 4),
-        Text(
-          content,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        content.startsWith("https://media.tenor.com")
+            ? CachedNetworkImage(
+                imageUrl: content,
+              )
+            : Text(
+                content,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
         const SizedBox(height: 8),
       ],
     );
