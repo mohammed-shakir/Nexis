@@ -42,6 +42,8 @@ class MessageItem extends StatelessWidget {
         content.startsWith("https://media.tenor.com")
             ? CachedNetworkImage(
                 imageUrl: content,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
               )
             : Text(
                 content,

@@ -103,7 +103,6 @@ class TextInputField extends StatelessWidget {
             height: 48, // Adjust the height to match the input field's height
             child: CustomButton(
               key: buttonKey,
-              icon: const Icon(null),
               text: "GIF",
               onPressed: () async {
                 final buttonRenderBox =

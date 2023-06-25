@@ -1,6 +1,4 @@
-import 'dart:html';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,7 +7,7 @@ import 'dart:convert';
 
 class GifSearchDialog extends StatefulWidget {
   final Offset buttonPosition;
-  GifSearchDialog(this.buttonPosition);
+  const GifSearchDialog(this.buttonPosition, {super.key});
   @override
   GifSearchDialogState createState() => GifSearchDialogState();
 }
@@ -92,23 +90,26 @@ class GifSearchDialogState extends State<GifSearchDialog> {
             ),
             child: Material(
               child: Container(
+                color: Theme.of(context).colorScheme.background,
                 width: 500,
                 height: 600,
                 child: Column(
                   children: [
                     TextField(
                       controller: searchController,
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
                         labelText: 'Search in Tenor',
+                        labelStyle: TextStyle(color: Colors.white),
                       ),
                       onSubmitted: (value) {
                         fetchGifs(value);
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     GridView.count(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       crossAxisCount: 3,
                       children: List.generate(
                         9,
@@ -124,12 +125,12 @@ class GifSearchDialogState extends State<GifSearchDialog> {
                                 child: Container(
                                   width: 100,
                                   height: 75,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                  ),
                                   child: CachedNetworkImage(
                                     imageUrl: gifUrls[index],
                                     fit: BoxFit.cover,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -152,6 +153,6 @@ class GifSearchDialogState extends State<GifSearchDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 }
