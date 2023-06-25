@@ -88,9 +88,8 @@ class TextInputField extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          const SizedBox(width: 10),
           SizedBox(
-            height: 48, // Adjust the height to match the input field's height
+            height: 48,
             child: CustomButton(
               key: buttonKey,
               text: "GIF",
@@ -102,8 +101,7 @@ class TextInputField extends StatelessWidget {
 
                 final gifUrl = await Navigator.of(context).push<String>(
                   PageRouteBuilder(
-                    opaque:
-                        false, // set to false so that the main screen can be seen beneath
+                    opaque: false,
                     pageBuilder: (_, __, ___) =>
                         GifSearchDialog(buttonPosition),
                   ),
