@@ -37,9 +37,9 @@ class AuthPageState extends State<AuthPage> {
         var userProvider = Provider.of<UserProvider>(context, listen: false);
 
         await Login.signIn(email, password);
-        await userProvider.fetchUserData(email);
         await userProvider.init();
         await userProvider.login();
+        await userProvider.fetchUserData(email);
 
         emailController.clear();
         passwordController.clear();
@@ -70,81 +70,83 @@ class AuthPageState extends State<AuthPage> {
             constraints: const BoxConstraints(
               maxWidth: 550,
             ),
-            child: ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Image.asset(
-                    "./assets/logo-no-background-icon.png",
-                    fit: BoxFit.contain,
-                    height: 200,
-                  ),
+            child: ListView(children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Image.asset(
+                  "./assets/logo-no-background-icon.png",
+                  fit: BoxFit.contain,
+                  height: 200,
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'NEXIS',
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Text(
+                  'NEXIS',
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
-                Card(
-                  margin: const EdgeInsets.all(20),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomColumn(
-                          type: ColumnType.type1,
-                          largeLabel: 'Welcome!',
-                          mediumLabel: 'Email',
-                          controller: emailController,
-                          onSubmitted: (_) {
-                            signIn();
+              ),
+              Card(
+                margin: const EdgeInsets.all(20),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomColumn(
+                        type: ColumnType.type1,
+                        largeLabel: 'Welcome!',
+                        mediumLabel: 'Email',
+                        controller: emailController,
+                        onSubmitted: (_) {
+                          signIn();
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      CustomColumn(
+                        type: ColumnType.type2,
+                        mediumLabel: 'Password',
+                        controller: passwordController,
+                        suffixIcon: IconButton(
+                          icon: const Icon(true
+                              ? Icons.visibility
+                              // ignore: dead_code
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
                           },
                         ),
-                        const SizedBox(height: 30),
-                        CustomColumn(
-                          type: ColumnType.type2,
-                          mediumLabel: 'Password',
-                          controller: passwordController,
-                          suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                obscureText = !obscureText;
-                              });
-                            },
-                          ),
-                          obscureText: obscureText,
-                          onSubmitted: (_) {
-                            signIn();
-                          },
-                          mediumBody: 'Forgot your password?',
-                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, '').reDir,
-                        ),
-                        const SizedBox(height: 30),
-                        CustomColumn(
-                          type: ColumnType.type4,
-                          onPressed: signIn,
-                          buttonText: 'Sign In',
-                          smallLabel: 'Need an account? ',
-                          mediumBody: 'Register',
-                          recognizer: TapGestureRecognizer()..onTap = RouteChange(context, RouteNames.registerPage).reDir,
-                        ),
-                      ],
-                    ),
+                        obscureText: obscureText,
+                        onSubmitted: (_) {
+                          signIn();
+                        },
+                        mediumBody: 'Forgot your password?',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = RouteChange(context, '').reDir,
+                      ),
+                      const SizedBox(height: 30),
+                      CustomColumn(
+                        type: ColumnType.type4,
+                        onPressed: signIn,
+                        buttonText: 'Sign In',
+                        smallLabel: 'Need an account? ',
+                        mediumBody: 'Register',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap =
+                              RouteChange(context, RouteNames.registerPage)
+                                  .reDir,
+                      ),
+                    ],
                   ),
                 ),
-              ]
-            ),
+              ),
+            ]),
           ),
         ),
       ),
