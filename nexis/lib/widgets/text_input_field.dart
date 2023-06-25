@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nexis/tenor/gif_search.dart';
 import '../widgets/custom_button.dart';
-import '../classes/route_names.dart';
 
 class TextInputField extends StatelessWidget {
   final TextEditingController messageController;
@@ -49,7 +48,7 @@ class TextInputField extends StatelessWidget {
                 hintText: 'Enter your message',
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 hintStyle: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.grey,
                 ),
                 fillColor: Theme.of(context).colorScheme.tertiary,
                 filled: true,
@@ -89,15 +88,6 @@ class TextInputField extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          SizedBox(
-            height: 48,
-            child: CustomButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.pushNamed(context, RouteNames.settingsPage);
-              },
-            ),
-          ),
           const SizedBox(width: 10),
           SizedBox(
             height: 48, // Adjust the height to match the input field's height

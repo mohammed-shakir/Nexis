@@ -41,6 +41,7 @@ class UserProvider with ChangeNotifier {
       'avatar',
       'bio',
       'createdAt',
+      'dateOfBirth',
       'displayName',
       'email',
       'friends',

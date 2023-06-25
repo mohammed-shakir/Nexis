@@ -36,7 +36,7 @@ class Register {
         'displayName': username,
         'email': email,
         'friends': [],
-        'servers': [],
+        'servers': ['aNAgqEvRvtFLDmjw7Ivz'],
         'userName': username,
       });
     } catch (error) {
