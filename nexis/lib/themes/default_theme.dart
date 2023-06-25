@@ -28,9 +28,9 @@ final ThemeData appTheme = ThemeData(
       fontSize: 18,
     ),
     labelMedium: TextStyle(
-      color: Colors.grey, 
-      fontWeight: FontWeight.bold, 
-      fontFamily: 'Arial', 
+      color: Colors.grey,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'Arial',
       fontSize: 16,
     ),
     // Hyperlink

@@ -47,7 +47,7 @@ dependencies:
   firebase_storage: ^11.2.2
   email_validator: "^2.1.16"
   http: ^0.13.3
-  cached_network_image: ^3.2.0 
+  cached_network_image: ^3.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

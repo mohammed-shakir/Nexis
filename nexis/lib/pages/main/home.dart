@@ -153,7 +153,9 @@ class HomeState extends State<Home> {
       });
 
       messagesLoaded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      if (messages.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      }
     } catch (error) {
       throw Exception('Error listening to messages: $error');
     }
