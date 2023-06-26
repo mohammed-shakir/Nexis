@@ -16,9 +16,10 @@ class GifSearchDialog extends StatefulWidget {
 class GifSearchDialogState extends State<GifSearchDialog> {
   final TextEditingController searchController = TextEditingController();
   OverlayEntry? overlayEntry;
-  List<String> gifUrls = [];
+  ValueNotifier<List<String>> gifUrls = ValueNotifier([]);
   late String tenorapiKey;
   bool isHovering = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class GifSearchDialogState extends State<GifSearchDialog> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     if (overlayEntry?.mounted ?? false) {
       overlayEntry?.remove();
     }
@@ -41,12 +43,19 @@ class GifSearchDialogState extends State<GifSearchDialog> {
     Overlay.of(context).insert(overlayEntry!);
   }
 
-  Future<void> fetchGifs(String term) async {
-    if (term.isEmpty || term.trim().isEmpty) {
-      return;
-    }
+  void _onChange(String value) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      fetchGifs(value);
+    });
+  }
 
+  Future<void> fetchGifs(String term) async {
     try {
+      if (term.isEmpty || term.trim().isEmpty) {
+        term = 'nexis';
+      }
+
       final response = await http.get(
         Uri.parse(
             'https://tenor.googleapis.com/v2/search?q=$term&key=$tenorapiKey&media_filter=gif&limit=100'),
@@ -55,19 +64,18 @@ class GifSearchDialogState extends State<GifSearchDialog> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         List<dynamic> results = jsonResponse['results'];
-        setState(() {
-          gifUrls = results
-              .map((result) {
-                return result['media_formats'] != null &&
-                        result['media_formats']['gif'] != null &&
-                        result['media_formats']['gif']['url'] != null
-                    ? result['media_formats']['gif']['url']
-                    : null;
-              })
-              .where((url) => url != null)
-              .toList()
-              .cast<String>();
-        });
+        List<String> fetchedGifs = results
+            .map((result) {
+              return result['media_formats'] != null &&
+                      result['media_formats']['gif'] != null &&
+                      result['media_formats']['gif']['url'] != null
+                  ? result['media_formats']['gif']['url']
+                  : null;
+            })
+            .where((url) => url != null)
+            .toList()
+            .cast<String>();
+        gifUrls.value = fetchedGifs;
       } else {
         throw Exception('Failed to load GIFs from Tenor');
       }
@@ -130,73 +138,79 @@ class GifSearchDialogState extends State<GifSearchDialog> {
                               BorderSide(color: Colors.grey, width: 1.0),
                         ),
                       ),
-                      onChanged: (value) {
-                        fetchGifs(value);
-                      },
+                      onChanged: _onChange,
                     ),
                   ),
                   const SizedBox(height: 20),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        children: List.generate(
-                          100,
-                          (index) {
-                            if (gifUrls.length > index) {
-                              ValueNotifier<bool> isHovering =
-                                  ValueNotifier(false);
-                              return MouseRegion(
-                                onHover: (event) {
-                                  isHovering.value = true;
-                                },
-                                onExit: (event) {
-                                  isHovering.value = false;
-                                },
-                                child: ValueListenableBuilder<bool>(
-                                  valueListenable: isHovering,
-                                  builder: (context, isHoveringValue, child) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.pop(context, gifUrls[index]);
+                      child: ValueListenableBuilder<List<String>>(
+                        valueListenable: gifUrls,
+                        builder: (context, value, child) {
+                          return GridView.count(
+                            shrinkWrap: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            crossAxisCount: 2,
+                            children: List.generate(
+                              value.length,
+                              (index) {
+                                if (value.length > index) {
+                                  ValueNotifier<bool> isHovering =
+                                      ValueNotifier(false);
+                                  return MouseRegion(
+                                    onHover: (event) {
+                                      isHovering.value = true;
+                                    },
+                                    onExit: (event) {
+                                      isHovering.value = false;
+                                    },
+                                    child: ValueListenableBuilder<bool>(
+                                      valueListenable: isHovering,
+                                      builder:
+                                          (context, isHoveringValue, child) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(
+                                                context, value[index]);
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(2),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                  color: isHoveringValue
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .secondary
+                                                      : Colors.transparent,
+                                                  width: 3.0,
+                                                ),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                child: CachedNetworkImage(
+                                                  key: UniqueKey(),
+                                                  imageUrl: value[index],
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
                                       },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: isHoveringValue
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary
-                                                  : Colors.transparent,
-                                              width: 3.0,
-                                            ),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: CachedNetworkImage(
-                                              imageUrl: gifUrls[index],
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
+                                    ),
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
