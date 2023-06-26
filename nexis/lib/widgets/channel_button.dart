@@ -46,10 +46,8 @@ class ChannelButtonState extends State<ChannelButton> {
               }
             },
           ),
-          side: MaterialStateProperty.resolveWith(
-              (states) => BorderSide.none), // add this line to remove border
-          elevation: MaterialStateProperty.all(
-              0), // add this line to remove shadow or elevation
+          side: MaterialStateProperty.resolveWith((states) => BorderSide.none),
+          elevation: MaterialStateProperty.all(0),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

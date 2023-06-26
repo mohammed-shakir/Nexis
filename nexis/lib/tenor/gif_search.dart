@@ -31,7 +31,9 @@ class GifSearchDialogState extends State<GifSearchDialog> {
 
   @override
   void dispose() {
-    overlayEntry?.remove();
+    if (overlayEntry?.mounted ?? false) {
+      overlayEntry?.remove();
+    }
     super.dispose();
   }
 
@@ -83,7 +85,9 @@ class GifSearchDialogState extends State<GifSearchDialog> {
         Positioned.fill(
           child: GestureDetector(
             onTap: () {
-              overlayEntry?.remove();
+              if (overlayEntry?.mounted ?? false) {
+                overlayEntry?.remove();
+              }
               Navigator.pop(context);
             },
             child: Container(
@@ -93,7 +97,6 @@ class GifSearchDialogState extends State<GifSearchDialog> {
         ),
         Positioned(
           right: screenType == ScreenType.desktop ? 240.0 : 15,
-          //top: screenType == ScreenType.desktop ? 70 : 50,
           bottom: 80,
           child: Material(
             borderRadius: BorderRadius.circular(10),

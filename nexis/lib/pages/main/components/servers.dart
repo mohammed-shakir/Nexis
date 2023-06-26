@@ -20,8 +20,7 @@ class ServersState extends State<Servers> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          Align(
-            alignment: Alignment.topCenter,
+          Expanded(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
