@@ -9,6 +9,7 @@ class TextInputField extends StatelessWidget {
   final Function scrollToBottom;
   final GlobalKey buttonKey;
   final GifSearchDialog gifSearchDialog;
+
   const TextInputField({
     super.key,
     required this.messageController,
@@ -94,16 +95,10 @@ class TextInputField extends StatelessWidget {
               key: buttonKey,
               text: "GIF",
               onPressed: () async {
-                final buttonRenderBox =
-                    buttonKey.currentContext!.findRenderObject() as RenderBox;
-                final buttonPosition =
-                    buttonRenderBox.localToGlobal(Offset.zero);
-
                 final gifUrl = await Navigator.of(context).push<String>(
                   PageRouteBuilder(
                     opaque: false,
-                    pageBuilder: (_, __, ___) =>
-                        GifSearchDialog(buttonPosition),
+                    pageBuilder: (_, __, ___) => const GifSearchDialog(),
                   ),
                 );
 

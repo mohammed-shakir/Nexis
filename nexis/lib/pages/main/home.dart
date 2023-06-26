@@ -32,7 +32,8 @@ class HomeState extends State<Home> {
   static const int maxMessageLength = 2000;
   late SharedPreferences prefs;
   final buttonKey = GlobalKey();
-  final gifSearchDialog = GifSearchDialog(Offset.zero);
+  final gifSearchDialog = const GifSearchDialog();
+
   @override
   void initState() {
     super.initState();
@@ -194,7 +195,7 @@ class HomeState extends State<Home> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             double maxWidth =
-                constraints.maxWidth > 2000 ? 2000 : constraints.maxWidth;
+                constraints.maxWidth > 2560 ? 2560 : constraints.maxWidth;
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxWidth),
@@ -266,10 +267,10 @@ class HomeState extends State<Home> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.primary,
-      endDrawer: Drawer(
+      endDrawer: const Drawer(
         child: ParticipantInfo(),
       ),
-      drawer: Drawer(
+      drawer: const Drawer(
         child: Row(
           children: [
             Expanded(
