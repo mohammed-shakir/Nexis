@@ -12,6 +12,7 @@ import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
 import 'dart:async';
+import '../../tenor/gif_search.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -30,6 +31,8 @@ class HomeState extends State<Home> {
   ScrollController scrollController = ScrollController();
   static const int maxMessageLength = 2000;
   late SharedPreferences prefs;
+  final buttonKey = GlobalKey();
+  final gifSearchDialog = const GifSearchDialog();
 
   @override
   void initState() {
@@ -153,7 +156,9 @@ class HomeState extends State<Home> {
       });
 
       messagesLoaded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      if (messages.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      }
     } catch (error) {
       throw Exception('Error listening to messages: $error');
     }
@@ -190,7 +195,7 @@ class HomeState extends State<Home> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             double maxWidth =
-                constraints.maxWidth > 2000 ? 2000 : constraints.maxWidth;
+                constraints.maxWidth > 2560 ? 2560 : constraints.maxWidth;
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxWidth),
@@ -231,6 +236,8 @@ class HomeState extends State<Home> {
                                       messageFocusNode: messageFocusNode,
                                       sendMessage: sendMessage,
                                       scrollToBottom: scrollToBottom,
+                                      buttonKey: buttonKey,
+                                      gifSearchDialog: gifSearchDialog,
                                     ),
                                   ]),
                                 ),
@@ -296,6 +303,8 @@ class HomeState extends State<Home> {
         messageFocusNode: messageFocusNode,
         sendMessage: sendMessage,
         scrollToBottom: scrollToBottom,
+        buttonKey: buttonKey,
+        gifSearchDialog: gifSearchDialog,
       ),
     );
   }
