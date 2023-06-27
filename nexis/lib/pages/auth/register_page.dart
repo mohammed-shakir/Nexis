@@ -97,8 +97,6 @@ class RegisterPageState extends State<RegisterPage> {
     String password = passwordController.text;
     String dateOfBirth = dateController.text;
 
-    //var navigator = Navigator.of(context);
-
     try {
       await Register.signUp(email, username, password, dateOfBirth);
       setState(() {
@@ -161,7 +159,7 @@ class RegisterPageState extends State<RegisterPage> {
   }
 
   Widget registerPageMobile(BuildContext context) => isRegistered
-    ? const EmailVerificationPage()
+    ? const EmailVerificationPage(route: RouteNames.authPage)
     : Scaffold(
       appBar: AppBar(
         title: Row(
@@ -317,7 +315,7 @@ class RegisterPageState extends State<RegisterPage> {
     );
   
   Widget registerPageDesktop(BuildContext context) => isRegistered
-    ? const EmailVerificationPage()
+    ? const EmailVerificationPage(route: RouteNames.authPage)
     : Scaffold(
       appBar: AppBar(
         title: Row(

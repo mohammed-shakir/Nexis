@@ -1,20 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:nexis/classes/route_names.dart';
+import 'package:nexis/pages/auth/auth_page.dart';
 import 'package:nexis/pages/auth/utility/route_change.dart';
+import 'package:nexis/pages/main/home.dart';
 import '../../widgets/custom_button.dart';
 import 'dart:async';
 
 class EmailVerificationPage extends StatefulWidget {
-  const EmailVerificationPage({super.key});
+  final String route;
+
+  const EmailVerificationPage({
+    Key? key,
+    required this.route,
+  }) : super(key: key);
 
   @override
-  EmailVerificationState createState() => EmailVerificationState();
+  EmailVerificationState createState() => EmailVerificationState(route);
 }
 
 class EmailVerificationState extends State<EmailVerificationPage> {
-  static final FirebaseAuth auth = FirebaseAuth.instance;
   static final firebase_auth.FirebaseAuth firebaseAuth =
       firebase_auth.FirebaseAuth.instance;
 
@@ -22,12 +29,16 @@ class EmailVerificationState extends State<EmailVerificationPage> {
   bool canResendEmail = false;
   Timer? timer;
 
+  final String route;
+
+  EmailVerificationState(this.route);
+
   @override
   void initState() {
     super.initState();
-    isEmailVerified.value = firebaseAuth.currentUser!.emailVerified;
 
-    isEmailVerified.addListener(RouteChange(context, RouteNames.authPage).reDir);
+    isEmailVerified.value = firebaseAuth.currentUser!.emailVerified;
+    updateUserData();
 
     if (!isEmailVerified.value) {
       sendVerificationEmail();
@@ -36,6 +47,21 @@ class EmailVerificationState extends State<EmailVerificationPage> {
         const Duration(seconds: 3),
         (_) => checkEmailVerified(),
       );
+    }
+  }
+
+  Future<void> updateUserData() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var doc = await firestore
+        .collection('users')
+        .where('email', isEqualTo: firebaseAuth.currentUser?.email)
+        .get();
+    if (doc.docs.isNotEmpty) {
+      var userDocId = doc.docs.first.id;
+      await firestore
+          .collection('users')
+          .doc(userDocId)
+          .update({'isVerified': isEmailVerified.value});
     }
   }
 
@@ -73,8 +99,23 @@ class EmailVerificationState extends State<EmailVerificationPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => isEmailVerified.value
+    ? FutureBuilder<void>(
+      future: updateUserData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (route == RouteNames.authPage) {
+            firebaseAuth.signOut();
+            return const AuthPage();
+          } else {
+            return const Home();
+          }
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    )
+    : Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Row(
@@ -135,6 +176,15 @@ class EmailVerificationState extends State<EmailVerificationPage> {
                           text: "Resend Email",
                         ),
                       ),
+                      const SizedBox(height: 10),
+                      RichText(
+                        text: TextSpan(
+                          text: "Back",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = RouteChange(context, route).reDir,
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -144,5 +194,4 @@ class EmailVerificationState extends State<EmailVerificationPage> {
         ),
       ),
     );
-  }
 }

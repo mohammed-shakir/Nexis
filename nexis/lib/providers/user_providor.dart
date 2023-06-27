@@ -41,11 +41,13 @@ class UserProvider with ChangeNotifier {
       'avatar',
       'bio',
       'createdAt',
+      'dateOfBirth',
       'displayName',
       'email',
       'friends',
       'servers',
-      'userName'
+      'userName',
+      'isVerified',
     ];
     if (doc.docs.isNotEmpty) {
       var userDoc = doc.docs.first;
@@ -56,6 +58,8 @@ class UserProvider with ChangeNotifier {
 
         if (value is Timestamp) {
           prefs.setString(data, value.toDate().toString());
+        } else if (value is bool) {
+          prefs.setBool(data, value);
         } else if (value is List<dynamic>) {
           prefs.setStringList(
               data, value.map((item) => item.toString()).toList());
