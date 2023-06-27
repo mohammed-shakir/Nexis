@@ -13,16 +13,16 @@ class CustomTextField extends StatelessWidget {
 
   const CustomTextField({
     Key? key,
-    this.obscureText, 
-    this.hint, 
-    this.onTap, 
-    this.controller, 
-    this.readOnly, 
-    this.onSubmitted, 
+    this.obscureText,
+    this.hint,
+    this.onTap,
+    this.controller,
+    this.readOnly,
+    this.onSubmitted,
     this.suffixIcon,
     this.autovalidateMode,
     this.validator,
-    }) : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,8 @@ class CustomTextField extends StatelessWidget {
         hintText: hint,
         hintStyle: Theme.of(context).textTheme.labelSmall,
         border: buildBorder(Theme.of(context).colorScheme.outline, context),
-        focusedBorder: buildBorder(Theme.of(context).colorScheme.secondary, context),
+        focusedBorder:
+            buildBorder(Theme.of(context).colorScheme.secondary, context),
         filled: true,
         fillColor: Colors.blueGrey[750],
       ),
