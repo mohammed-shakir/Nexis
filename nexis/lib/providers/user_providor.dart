@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../pages/auth/auth_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../pages/auth/auth_page.dart';
 
 class UserProvider with ChangeNotifier {
   bool _isLoggedIn = false;

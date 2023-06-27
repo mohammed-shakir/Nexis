@@ -224,10 +224,9 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 obscureText = !obscureText;
@@ -252,13 +251,12 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
-                                obscureTextRepeat = !obscureTextRepeat;
+                                obscureText = !obscureText;
                               });
                             },
                           ),
@@ -380,10 +378,9 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 obscureText = !obscureText;
@@ -408,13 +405,12 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
-                                obscureTextRepeat = !obscureTextRepeat;
+                                obscureText = !obscureText;
                               });
                             },
                           ),
