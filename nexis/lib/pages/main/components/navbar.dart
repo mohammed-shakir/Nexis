@@ -109,7 +109,7 @@ class NavBarState extends State<NavBar> {
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                  isCollapsed: true, // Prevent vertical padding changes
+                  isCollapsed: true,
                   hintText: 'Search',
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,

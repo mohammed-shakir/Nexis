@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
 import 'package:firedart/firedart.dart';
 import 'package:nexis/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io' show Platform;
 
 Future<void> initializeFirebase() async {
   try {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/message_model.dart';
 import '../classes/time_format.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class MessageItem extends StatelessWidget {
   final Message message;
