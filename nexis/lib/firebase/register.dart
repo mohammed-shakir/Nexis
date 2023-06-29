@@ -38,6 +38,7 @@ class Register {
         'friends': [],
         'servers': ['aNAgqEvRvtFLDmjw7Ivz'],
         'userName': username,
+        'isVerified': false,
       });
     } catch (error) {
       await deleteUser();

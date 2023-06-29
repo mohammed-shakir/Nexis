@@ -7,6 +7,7 @@ import 'utility/route_change.dart';
 import '../../firebase/register.dart';
 import '../../classes/route_names.dart';
 import '../../enums/screen_type.dart';
+import 'email_verification_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -50,6 +51,8 @@ class RegisterPageState extends State<RegisterPage> {
   bool obscureText = true;
   bool obscureTextRepeat = true;
 
+  bool isRegistered = false;
+
   @override
   void dispose() {
     emailController.dispose();
@@ -72,8 +75,8 @@ class RegisterPageState extends State<RegisterPage> {
 
   void signUp() async {
     final isValid = regKey.currentState!.validate();
-    if (!isValid) {
-      return;
+    if (!isValid) { 
+      return; 
     }
 
     BuildContext dialogContext = context;
@@ -94,11 +97,12 @@ class RegisterPageState extends State<RegisterPage> {
     String password = passwordController.text;
     String dateOfBirth = dateController.text;
 
-    var navigator = Navigator.of(context);
-
     try {
       await Register.signUp(email, username, password, dateOfBirth);
-      navigator.pushNamed(RouteNames.authPage);
+      setState(() {
+        Navigator.pop(dialogContext);
+        isRegistered = true;
+      });
     } catch (e) {
       clearFields();
       Navigator.pop(dialogContext);
@@ -160,8 +164,9 @@ class RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Widget registerPageMobile(BuildContext context) {
-    return Scaffold(
+  Widget registerPageMobile(BuildContext context) => isRegistered
+    ? const EmailVerificationPage()
+    : Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
@@ -206,9 +211,9 @@ class RegisterPageState extends State<RegisterPage> {
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) =>
-                              text != null && !EmailValidator.validate(text)
-                                  ? 'Invalid email format'
-                                  : null,
+                            text != null && !EmailValidator.validate(text)
+                              ? 'Invalid email format'
+                              : null,
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -256,7 +261,7 @@ class RegisterPageState extends State<RegisterPage> {
                                 : Icons.visibility),
                             onPressed: () {
                               setState(() {
-                                obscureText = !obscureText;
+                                obscureTextRepeat = !obscureTextRepeat;
                               });
                             },
                           ),
@@ -289,18 +294,17 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          onPressed: emailController.value.text.isNotEmpty &&
-                                  usernameController.value.text.isNotEmpty &&
-                                  passwordController.value.text.isNotEmpty &&
-                                  confirmPasswordController
-                                      .value.text.isNotEmpty &&
-                                  dateController.value.text.isNotEmpty
-                              ? signUp
-                              : null,
+                          onPressed: emailController.value.text.isNotEmpty && 
+                                      usernameController.value.text.isNotEmpty &&
+                                      passwordController.value.text.isNotEmpty &&
+                                      confirmPasswordController.value.text.isNotEmpty &&
+                                      dateController.value.text.isNotEmpty
+                            ? signUp
+                            : null,
                           mediumBody: 'Already have an account?',
                           recognizer: TapGestureRecognizer()
-                            ..onTap =
-                                RouteChange(context, RouteNames.authPage).reDir,
+                            ..onTap = 
+                              RouteChange(context, RouteNames.authPage).reDir,
                         ),
                       ],
                     ),
@@ -312,10 +316,10 @@ class RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  Widget registerPageDesktop(BuildContext context) {
-    return Scaffold(
+  
+  Widget registerPageDesktop(BuildContext context) => isRegistered
+    ? const EmailVerificationPage()
+    : Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
@@ -360,9 +364,9 @@ class RegisterPageState extends State<RegisterPage> {
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) =>
-                              text != null && !EmailValidator.validate(text)
-                                  ? 'Invalid email format'
-                                  : null,
+                            text != null && !EmailValidator.validate(text)
+                              ? 'Invalid email format'
+                              : null,
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
@@ -410,7 +414,7 @@ class RegisterPageState extends State<RegisterPage> {
                                 : Icons.visibility),
                             onPressed: () {
                               setState(() {
-                                obscureText = !obscureText;
+                                obscureTextRepeat = !obscureTextRepeat;
                               });
                             },
                           ),
@@ -443,18 +447,17 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          onPressed: emailController.value.text.isNotEmpty &&
-                                  usernameController.value.text.isNotEmpty &&
-                                  passwordController.value.text.isNotEmpty &&
-                                  confirmPasswordController
-                                      .value.text.isNotEmpty &&
-                                  dateController.value.text.isNotEmpty
-                              ? signUp
-                              : null,
+                          onPressed: emailController.value.text.isNotEmpty && 
+                                      usernameController.value.text.isNotEmpty &&
+                                      passwordController.value.text.isNotEmpty &&
+                                      confirmPasswordController.value.text.isNotEmpty &&
+                                      dateController.value.text.isNotEmpty
+                            ? signUp
+                            : null,
                           mediumBody: 'Already have an account?',
                           recognizer: TapGestureRecognizer()
-                            ..onTap =
-                                RouteChange(context, RouteNames.authPage).reDir,
+                            ..onTap = 
+                              RouteChange(context, RouteNames.authPage).reDir,
                         ),
                       ],
                     ),
@@ -466,5 +469,4 @@ class RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
 }

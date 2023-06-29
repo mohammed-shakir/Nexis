@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/pages/auth/utility/column_type.dart';
@@ -20,6 +21,9 @@ class AuthPageState extends State<AuthPage> {
   final TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
 
+  static final firebase_auth.FirebaseAuth firebaseAuth =
+    firebase_auth.FirebaseAuth.instance;
+
   @override
   void dispose() {
     emailController.dispose();
@@ -28,6 +32,19 @@ class AuthPageState extends State<AuthPage> {
   }
 
   void signIn() async {
+    BuildContext dialogContext = context;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          dialogContext = context;
+          return Center(
+              child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.secondary,
+            strokeWidth: 4.0,
+          ));
+        });
+
     String email = emailController.text;
     String password = passwordController.text;
     var navigator = Navigator.of(context);
@@ -35,20 +52,30 @@ class AuthPageState extends State<AuthPage> {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
         var userProvider = Provider.of<UserProvider>(context, listen: false);
-
         await Login.signIn(email, password);
+        await userProvider.fetchUserData(email);
         await userProvider.init();
         await userProvider.login();
-        await userProvider.fetchUserData(email);
 
         emailController.clear();
         passwordController.clear();
 
         if (userProvider.isLoggedIn) {
-          navigator.pushNamed(RouteNames.home);
+          if (!userProvider.isVerified) {
+            await userProvider.logout();
+            setState(() {
+              Navigator.pop(dialogContext);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Awaiting email verification for email: $email')),
+              );
+            });
+          } else {
+            navigator.pushNamed(RouteNames.home);
+          }
         }
       } catch (e) {
         passwordController.clear();
+        Navigator.pop(dialogContext);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Wrong email or password: $e')),
         );
