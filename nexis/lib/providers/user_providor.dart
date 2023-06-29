@@ -19,18 +19,22 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> updateUserData(String email) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    var user = firebaseAuth.currentUser;
-    var doc = await firestore
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-    if (doc.docs.isNotEmpty) {
-      var userDocId = doc.docs.first.id;
-      await firestore
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      var user = firebaseAuth.currentUser;
+      var doc = await firestore
           .collection('users')
-          .doc(userDocId)
-          .update({'isVerified': user?.emailVerified ?? false});
+          .where('email', isEqualTo: email)
+          .get();
+      if (doc.docs.isNotEmpty) {
+        var userDocId = doc.docs.first.id;
+        await firestore
+            .collection('users')
+            .doc(userDocId)
+            .update({'isVerified': user?.emailVerified ?? false});
+      }
+    } catch (e) {
+      throw Exception('Failed to verify email: $e');
     }
   }
 

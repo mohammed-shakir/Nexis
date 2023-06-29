@@ -43,17 +43,23 @@ class EmailVerificationState extends State<EmailVerificationPage> {
   }
 
   Future<void> updateUserData() async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    var doc = await firestore
-        .collection('users')
-        .where('email', isEqualTo: firebaseAuth.currentUser?.email)
-        .get();
-    if (doc.docs.isNotEmpty) {
-      var userDocId = doc.docs.first.id;
-      await firestore
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      var doc = await firestore
           .collection('users')
-          .doc(userDocId)
-          .update({'isVerified': isEmailVerified.value});
+          .where('email', isEqualTo: firebaseAuth.currentUser?.email)
+          .get();
+      if (doc.docs.isNotEmpty) {
+        var userDocId = doc.docs.first.id;
+        await firestore
+            .collection('users')
+            .doc(userDocId)
+            .update({'isVerified': isEmailVerified.value});
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
     }
   }
 
@@ -72,14 +78,20 @@ class EmailVerificationState extends State<EmailVerificationPage> {
   }
 
   Future<void> checkEmailVerified() async {
-    await firebaseAuth.currentUser!.reload();
+    try {
+      await firebaseAuth.currentUser!.reload();
 
-    setState(() {
-      isEmailVerified.value = firebaseAuth.currentUser!.emailVerified;
-    });
+      setState(() {
+        isEmailVerified.value = firebaseAuth.currentUser!.emailVerified;
+      });
 
-    if (isEmailVerified.value) {
-      timer?.cancel();
+      if (isEmailVerified.value) {
+        timer?.cancel();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
     }
   }
 
