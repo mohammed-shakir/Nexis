@@ -159,7 +159,7 @@ class RegisterPageState extends State<RegisterPage> {
   }
 
   Widget registerPageMobile(BuildContext context) => isRegistered
-    ? const EmailVerificationPage(route: RouteNames.authPage)
+    ? const EmailVerificationPage()
     : Scaffold(
       appBar: AppBar(
         title: Row(
@@ -315,7 +315,7 @@ class RegisterPageState extends State<RegisterPage> {
     );
   
   Widget registerPageDesktop(BuildContext context) => isRegistered
-    ? const EmailVerificationPage(route: RouteNames.authPage)
+    ? const EmailVerificationPage()
     : Scaffold(
       appBar: AppBar(
         title: Row(

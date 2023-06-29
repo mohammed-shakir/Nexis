@@ -5,20 +5,16 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:nexis/classes/route_names.dart';
 import 'package:nexis/pages/auth/auth_page.dart';
 import 'package:nexis/pages/auth/utility/route_change.dart';
-import 'package:nexis/pages/main/home.dart';
 import '../../widgets/custom_button.dart';
 import 'dart:async';
 
 class EmailVerificationPage extends StatefulWidget {
-  final String route;
-
   const EmailVerificationPage({
     Key? key,
-    required this.route,
   }) : super(key: key);
 
   @override
-  EmailVerificationState createState() => EmailVerificationState(route);
+  EmailVerificationState createState() => EmailVerificationState();
 }
 
 class EmailVerificationState extends State<EmailVerificationPage> {
@@ -28,11 +24,7 @@ class EmailVerificationState extends State<EmailVerificationPage> {
   ValueNotifier<bool> isEmailVerified = ValueNotifier(false);
   bool canResendEmail = false;
   Timer? timer;
-
-  final String route;
-
-  EmailVerificationState(this.route);
-
+  
   @override
   void initState() {
     super.initState();
@@ -104,12 +96,8 @@ class EmailVerificationState extends State<EmailVerificationPage> {
       future: updateUserData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          if (route == RouteNames.authPage) {
             firebaseAuth.signOut();
             return const AuthPage();
-          } else {
-            return const Home();
-          }
         } else {
           return const CircularProgressIndicator();
         }
@@ -182,7 +170,7 @@ class EmailVerificationState extends State<EmailVerificationPage> {
                           text: "Back",
                           style: Theme.of(context).textTheme.bodyMedium,
                           recognizer: TapGestureRecognizer()
-                            ..onTap = RouteChange(context, route).reDir,
+                            ..onTap = RouteChange(context, RouteNames.authPage).reDir
                         ),
                       )
                     ],
