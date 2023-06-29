@@ -12,6 +12,7 @@ import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
 import 'dart:async';
+import '../../tenor/gif_search.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -30,21 +31,23 @@ class HomeState extends State<Home> {
   ScrollController scrollController = ScrollController();
   static const int maxMessageLength = 2000;
   late SharedPreferences prefs;
+  final buttonKey = GlobalKey();
+  final gifSearchDialog = const GifSearchDialog();
 
   @override
   void initState() {
     super.initState();
 
-    initSharedPreferences();
-
-    listenToMessages().then((_) {
+    initSharedPreferences().then((_) {
+      return listenToMessages();
+    }).then((_) {
       setState(() {
         // Update the UI
       });
     });
   }
 
-  // Clean up resources that are no longer needed (messageController). If it is not removed, it could cause a memory leak.
+  // Clean up resources that are no longer needed. If it is not removed, it could cause a memory leak.
   @override
   void dispose() {
     subscription?.cancel();
@@ -76,10 +79,12 @@ class HomeState extends State<Home> {
     } else {
       if (messageContent.isNotEmpty) {
         try {
+          String? avatar = prefs.getString('avatar');
           await FirestoreWrite.sendMessage(
             message: messageController.text,
             sender: prefs.getString('displayName')!,
             groupChatId: prefs.getStringList('servers')?[0] ?? '',
+            avatar: avatar ?? '',
           );
           messageController.clear();
         } catch (e) {
@@ -93,7 +98,7 @@ class HomeState extends State<Home> {
 
   Future<void> listenToMessages() async {
     FirestoreRead firestoreRead =
-        FirestoreRead(groupId: 'aNAgqEvRvtFLDmjw7Ivz');
+        FirestoreRead(groupId: prefs.getStringList('servers')?[0] ?? '');
     try {
       List<DocumentSnapshot> documents = await firestoreRead.initialFetch();
       Set<String> processedIds = documents.map((doc) => doc.id).toSet();
@@ -151,7 +156,9 @@ class HomeState extends State<Home> {
       });
 
       messagesLoaded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      if (messages.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      }
     } catch (error) {
       throw Exception('Error listening to messages: $error');
     }
@@ -188,7 +195,7 @@ class HomeState extends State<Home> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             double maxWidth =
-                constraints.maxWidth > 2000 ? 2000 : constraints.maxWidth;
+                constraints.maxWidth > 2560 ? 2560 : constraints.maxWidth;
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxWidth),
@@ -229,6 +236,8 @@ class HomeState extends State<Home> {
                                       messageFocusNode: messageFocusNode,
                                       sendMessage: sendMessage,
                                       scrollToBottom: scrollToBottom,
+                                      buttonKey: buttonKey,
+                                      gifSearchDialog: gifSearchDialog,
                                     ),
                                   ]),
                                 ),
@@ -294,6 +303,8 @@ class HomeState extends State<Home> {
         messageFocusNode: messageFocusNode,
         sendMessage: sendMessage,
         scrollToBottom: scrollToBottom,
+        buttonKey: buttonKey,
+        gifSearchDialog: gifSearchDialog,
       ),
     );
   }

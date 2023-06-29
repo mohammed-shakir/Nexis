@@ -49,7 +49,7 @@ class CustomColumn extends StatelessWidget {
     this.suffixIcon,
     this.autovalidateMode,
     this.validator,
-    }) : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +63,10 @@ class CustomColumn extends StatelessWidget {
         sizedBox(margins[0]),
         text(type, context, mediumLabel),
         sizedBox(margins[1]),
-        textField(type, controller, onSubmitted, obscureText, hint, onTap, readOnly, autovalidateMode, validator),
-        rowCol(type, context, onTap, monthController, dayController, yearController, contextSize),
+        textField(type, controller, onSubmitted, obscureText, hint, onTap,
+            readOnly, autovalidateMode, validator),
+        rowCol(type, context, onTap, monthController, dayController,
+            yearController, contextSize),
         sizedBox(margins[2]),
         button(type, onPressed, buttonText),
         sizedBox(margins[3]),
@@ -74,17 +76,28 @@ class CustomColumn extends StatelessWidget {
   }
 
   heading(ColumnType type, BuildContext? context, String? largeLabel) {
-    if (type != ColumnType.type1) { return sizedBox(0); }
+    if (type != ColumnType.type1) {
+      return sizedBox(0);
+    }
     return Text(
-      largeLabel ?? "", 
+      largeLabel ?? "",
       style: Theme.of(context!).textTheme.labelLarge,
     );
   }
 
-  textField(ColumnType type, TextEditingController? controller, void Function(String)? onSubmitted, bool? obscureText, 
-    String? hint, void Function()? onTap, bool? readOnly, AutovalidateMode? autovalidateMode,
-    String? Function(String?)? validator) {
-    if (type == ColumnType.type4 || type == ColumnType.type5) { return sizedBox(0); }
+  textField(
+      ColumnType type,
+      TextEditingController? controller,
+      void Function(String)? onSubmitted,
+      bool? obscureText,
+      String? hint,
+      void Function()? onTap,
+      bool? readOnly,
+      AutovalidateMode? autovalidateMode,
+      String? Function(String?)? validator) {
+    if (type == ColumnType.type4 || type == ColumnType.type5) {
+      return sizedBox(0);
+    }
     return SizedBox(
       width: 500,
       child: CustomTextField(
@@ -101,10 +114,12 @@ class CustomColumn extends StatelessWidget {
     );
   }
 
-  text(ColumnType type, BuildContext? context, String? mediumLabel){
-    if (type == ColumnType.type4) { return sizedBox(0); }
+  text(ColumnType type, BuildContext? context, String? mediumLabel) {
+    if (type == ColumnType.type4) {
+      return sizedBox(0);
+    }
     return Text(
-      mediumLabel ?? "", 
+      mediumLabel ?? "",
       style: Theme.of(context!).textTheme.labelMedium,
     );
   }
@@ -113,7 +128,8 @@ class CustomColumn extends StatelessWidget {
     return SizedBox(height: height);
   }
 
-  richText(ColumnType type, BuildContext? context, String? smallLabel, String? mediumBody, GestureRecognizer? recognizer) {
+  richText(ColumnType type, BuildContext? context, String? smallLabel,
+      String? mediumBody, GestureRecognizer? recognizer) {
     if (type == ColumnType.type4 || type == ColumnType.type2) {
       return RichText(
         text: TextSpan(
@@ -136,7 +152,9 @@ class CustomColumn extends StatelessWidget {
   }
 
   button(ColumnType type, void Function()? onPressed, String? buttonText) {
-    if (type != ColumnType.type4) { return sizedBox(0); }
+    if (type != ColumnType.type4) {
+      return sizedBox(0);
+    }
     return SizedBox(
       width: 500,
       height: 50,
@@ -148,19 +166,29 @@ class CustomColumn extends StatelessWidget {
   }
 
   double getDisplayWidth(Size? contextSize, double initialWidth) {
-    if (contextSize!.width < 550) { return initialWidth * pow(0.9976, 550-contextSize.width); }
+    if (contextSize!.width < 550) {
+      return initialWidth * pow(0.9976, 550 - contextSize.width);
+    }
     return initialWidth;
   }
 
-  rowCol(ColumnType type, BuildContext? context, void Function()? selectDate, TextEditingController? monthController, 
-    TextEditingController? dayController, TextEditingController? yearController, Size? contextSize) {
-    if (type != ColumnType.type5) { return sizedBox(0); }
+  rowCol(
+      ColumnType type,
+      BuildContext? context,
+      void Function()? selectDate,
+      TextEditingController? monthController,
+      TextEditingController? dayController,
+      TextEditingController? yearController,
+      Size? contextSize) {
+    if (type != ColumnType.type5) {
+      return sizedBox(0);
+    }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           SizedBox(
-            width: getDisplayWidth(contextSize!,160),
+            width: getDisplayWidth(contextSize!, 160),
             child: CustomTextField(
               obscureText: false,
               hint: 'Month',
@@ -169,9 +197,9 @@ class CustomColumn extends StatelessWidget {
               readOnly: true,
             ),
           ),
-          SizedBox(width: getDisplayWidth(contextSize,25)),
+          SizedBox(width: getDisplayWidth(contextSize, 25)),
           SizedBox(
-            width: getDisplayWidth(contextSize,120),
+            width: getDisplayWidth(contextSize, 120),
             child: CustomTextField(
               obscureText: false,
               hint: 'Day',
@@ -180,9 +208,9 @@ class CustomColumn extends StatelessWidget {
               readOnly: true,
             ),
           ),
-          SizedBox(width: getDisplayWidth(contextSize,25)),
+          SizedBox(width: getDisplayWidth(contextSize, 25)),
           SizedBox(
-            width: getDisplayWidth(contextSize,140),
+            width: getDisplayWidth(contextSize, 140),
             child: CustomTextField(
               obscureText: false,
               hint: 'Year',

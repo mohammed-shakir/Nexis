@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:nexis/tenor/gif_search.dart';
 import '../widgets/custom_button.dart';
-import '../classes/route_names.dart';
 
 class TextInputField extends StatelessWidget {
   final TextEditingController messageController;
   final FocusNode messageFocusNode;
   final Function sendMessage;
   final Function scrollToBottom;
+  final GlobalKey buttonKey;
+  final GifSearchDialog gifSearchDialog;
 
   const TextInputField({
     super.key,
@@ -14,6 +16,8 @@ class TextInputField extends StatelessWidget {
     required this.messageFocusNode,
     required this.sendMessage,
     required this.scrollToBottom,
+    required this.buttonKey,
+    required this.gifSearchDialog,
   });
 
   static const int maxMessageLength = 2000;
@@ -45,7 +49,7 @@ class TextInputField extends StatelessWidget {
                 hintText: 'Enter your message',
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 hintStyle: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.grey,
                 ),
                 fillColor: Theme.of(context).colorScheme.tertiary,
                 filled: true,
@@ -88,9 +92,20 @@ class TextInputField extends StatelessWidget {
           SizedBox(
             height: 48,
             child: CustomButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.pushNamed(context, RouteNames.settingsPage);
+              key: buttonKey,
+              text: "GIF",
+              onPressed: () async {
+                final gifUrl = await Navigator.of(context).push<String>(
+                  PageRouteBuilder(
+                    opaque: false,
+                    pageBuilder: (_, __, ___) => const GifSearchDialog(),
+                  ),
+                );
+
+                if (gifUrl != null) {
+                  messageController.text = gifUrl;
+                  sendMessage();
+                }
               },
             ),
           ),

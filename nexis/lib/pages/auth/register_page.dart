@@ -22,7 +22,8 @@ class RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   // Desktop || Tablet
   final TextEditingController yearController = TextEditingController();
@@ -80,17 +81,16 @@ class RegisterPageState extends State<RegisterPage> {
 
     BuildContext dialogContext = context;
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        dialogContext = context;
-        return Center(
-          child: CircularProgressIndicator(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          dialogContext = context;
+          return Center(
+              child: CircularProgressIndicator(
             color: Theme.of(context).colorScheme.secondary,
             strokeWidth: 4.0,
           ));
-      }
-    );
+        });
 
     String email = emailController.text;
     String username = usernameController.text;
@@ -125,9 +125,10 @@ class RegisterPageState extends State<RegisterPage> {
     // Assign new date to date controllers
     setState(() {
       yearController.text = '${newDate.year}';
-      monthController.text = months[(newDate.month)-1];
+      monthController.text = months[(newDate.month) - 1];
       dayController.text = '${newDate.day}';
-      dateController.text = '${months[(newDate.month)-1]}-${newDate.day}-${newDate.year}';
+      dateController.text =
+          '${months[(newDate.month) - 1]}-${newDate.day}-${newDate.year}';
     });
   }
 
@@ -135,10 +136,15 @@ class RegisterPageState extends State<RegisterPage> {
     bool hasUppercase = text!.contains(RegExp(r'[A-Z]'));
     bool hasDigits = text.contains(RegExp(r'[0-9]'));
     bool hasLowercase = text.contains(RegExp(r'[a-z]'));
-    bool hasSpecialCharacters = text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+    bool hasSpecialCharacters =
+        text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
     bool hasMinLength = text.length >= 8;
 
-    return hasUppercase && hasDigits && hasLowercase && hasSpecialCharacters && hasMinLength;
+    return hasUppercase &&
+        hasDigits &&
+        hasLowercase &&
+        hasSpecialCharacters &&
+        hasMinLength;
   }
 
   @override
@@ -170,8 +176,7 @@ class RegisterPageState extends State<RegisterPage> {
               height: 50,
             ),
             Container(
-              padding: const EdgeInsets.all(8.0), child: const Text('NEXIS')
-            ),
+                padding: const EdgeInsets.all(8.0), child: const Text('NEXIS')),
           ],
         ),
       ),
@@ -191,11 +196,11 @@ class RegisterPageState extends State<RegisterPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Form (
+                  child: Form(
                     key: regKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [ 
+                      children: [
                         CustomColumn(
                           type: ColumnType.type1,
                           largeLabel: 'Create an account',
@@ -224,10 +229,9 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 obscureText = !obscureText;
@@ -252,10 +256,9 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 obscureTextRepeat = !obscureTextRepeat;
@@ -326,8 +329,7 @@ class RegisterPageState extends State<RegisterPage> {
               height: 50,
             ),
             Container(
-              padding: const EdgeInsets.all(8.0), child: const Text('NEXIS')
-            ),
+                padding: const EdgeInsets.all(8.0), child: const Text('NEXIS')),
           ],
         ),
       ),
@@ -347,11 +349,11 @@ class RegisterPageState extends State<RegisterPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Form (
+                  child: Form(
                     key: regKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [ 
+                      children: [
                         CustomColumn(
                           type: ColumnType.type1,
                           largeLabel: 'Create an account',
@@ -380,10 +382,9 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 obscureText = !obscureText;
@@ -408,10 +409,9 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
-                            icon: const Icon(true
-                                ? Icons.visibility
-                                // ignore: dead_code
-                                : Icons.visibility_off),
+                            icon: Icon(obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 obscureTextRepeat = !obscureTextRepeat;

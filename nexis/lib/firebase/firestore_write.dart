@@ -11,6 +11,7 @@ class FirestoreWrite {
     required String message,
     required String sender,
     required String groupChatId,
+    required String avatar,
     DateTime? createdAt,
   }) async {
     DateTime timestamp = createdAt ?? DateTime.now();
@@ -25,6 +26,7 @@ class FirestoreWrite {
           'message': message,
           'sender': sender,
           'timestamp': timestamp,
+          'avatar': avatar,
         });
       } else if (Platform.isWindows || Platform.isLinux) {
         await firestore
@@ -35,6 +37,7 @@ class FirestoreWrite {
           'message': message,
           'sender': sender,
           'timestamp': timestamp,
+          'avatar': avatar,
         });
       }
     } catch (e) {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 final ThemeData appTheme = ThemeData(
   colorScheme: ColorScheme.fromSwatch().copyWith(
-    primary: const Color(0xFF171c2a), // Usually used for background
-    secondary: const Color(0xFF800020), // Usually used for buttons and stuff
+    primary: const Color(0xFF171c2a),
+    secondary: const Color(0xFF800020),
     tertiary: const Color(0xFF606060),
     outline: const Color(0xFF171c2a),
     background: const Color.fromARGB(255, 21, 25, 37),
@@ -28,9 +28,9 @@ final ThemeData appTheme = ThemeData(
       fontSize: 18,
     ),
     labelMedium: TextStyle(
-      color: Colors.grey, 
-      fontWeight: FontWeight.bold, 
-      fontFamily: 'Arial', 
+      color: Colors.grey,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'Arial',
       fontSize: 16,
     ),
     // Hyperlink
@@ -50,7 +50,7 @@ final ThemeData appTheme = ThemeData(
     thumbColor: MaterialStateProperty.all(Colors.black),
   ),
   textSelectionTheme: const TextSelectionThemeData(
-    selectionColor: Colors.blue, // set the color for selected text
+    selectionColor: Colors.blue,
   ),
   scaffoldBackgroundColor: const Color(0xFF242C40),
 );
