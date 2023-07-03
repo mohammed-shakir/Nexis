@@ -34,12 +34,15 @@ class Nexis extends StatelessWidget {
     return MaterialApp(
       title: 'Nexis',
       theme: appTheme,
-      initialRoute: RouteNames.authPage,
+      initialRoute: RouteNames.home,
       debugShowCheckedModeBanner: false, // remove debug banner
       routes: {
-        RouteNames.authPage: (context) => const AuthPage(),
-        RouteNames.registerPage: (context) => const RegisterPage(),
-        RouteNames.home: (context) => const ProtectedRoute(child: Home()),
+        RouteNames.authPage: (context) =>
+            const AuthRoute(child: AuthPage()),
+        RouteNames.registerPage: (context) =>
+            const AuthRoute(child: RegisterPage()),
+        RouteNames.home: (context) =>
+            const ProtectedRoute(child: Home()),
         RouteNames.settingsPage: (context) =>
             const ProtectedRoute(child: SettingsPage()),
       },

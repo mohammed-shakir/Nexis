@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nexis/pages/main/home.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -120,6 +121,24 @@ class ProtectedRoute extends StatelessWidget {
           return const AuthPage();
         }
       },
+    );
+  }
+}
+
+class AuthRoute extends StatelessWidget {
+  final Widget child;
+  const AuthRoute({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        if (!userProvider.isLoggedIn || !userProvider.isVerified) {
+          return this.child;
+        } else {
+          return const Home();
+        }
+      }
     );
   }
 }
