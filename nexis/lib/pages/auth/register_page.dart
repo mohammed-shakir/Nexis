@@ -137,7 +137,7 @@ class RegisterPageState extends State<RegisterPage> {
     bool hasDigits = text.contains(RegExp(r'[0-9]'));
     bool hasLowercase = text.contains(RegExp(r'[a-z]'));
     bool hasSpecialCharacters =
-        text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+        text.contains(RegExp(r'[*.!@#$%^&(){}[]:;<>,.?/~_+-=|\]'));
     bool hasMinLength = text.length >= 8;
 
     return hasUppercase &&
