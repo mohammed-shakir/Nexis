@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../widgets/basic_input_field.dart';
+import '../../widgets/text_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
@@ -11,6 +11,8 @@ import 'components/navbar.dart';
 import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
+import '../../tenor/gif_search.dart';
+import '../../widgets/basic_input_field.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -21,6 +23,7 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  final TextEditingController messageController = TextEditingController();
   StreamSubscription<QuerySnapshot>? subscription;
   late final FirestoreRead firestoreRead;
   List<Message> messages = [];
@@ -29,24 +32,27 @@ class HomeState extends State<Home> {
   ScrollController scrollController = ScrollController();
   static const int maxMessageLength = 2000;
   late SharedPreferences prefs;
+  final buttonKey = GlobalKey();
+  final gifSearchDialog = const GifSearchDialog();
 
   @override
   void initState() {
     super.initState();
 
-    initSharedPreferences();
-
-    listenToMessages().then((_) {
+    initSharedPreferences().then((_) {
+      return listenToMessages();
+    }).then((_) {
       setState(() {
         // Update the UI
       });
     });
   }
 
-  // Clean up resources that are no longer needed (messageController). If it is not removed, it could cause a memory leak.
+  // Clean up resources that are no longer needed. If it is not removed, it could cause a memory leak.
   @override
   void dispose() {
     subscription?.cancel();
+    messageController.dispose();
     super.dispose();
   }
 
@@ -62,21 +68,26 @@ class HomeState extends State<Home> {
     });
   }
 
-  Future<void> sendMessage(String message) async {
-    if (message.isEmpty) {
+  Future<void> sendMessage() async {
+    String messageContent = messageController.text.trim();
+
+    if (messageContent.isEmpty) {
       return;
-    } else if (message.length > maxMessageLength) {
+    } else if (messageContent.length > maxMessageLength) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Message exceeds maximum length.')),
       );
     } else {
-      if (message.isNotEmpty) {
+      if (messageContent.isNotEmpty) {
         try {
+          String? avatar = prefs.getString('avatar');
           await FirestoreWrite.sendMessage(
-            message: message,
+            message: messageController.text,
             sender: prefs.getString('displayName')!,
             groupChatId: prefs.getStringList('servers')?[0] ?? '',
+            avatar: avatar ?? '',
           );
+          messageController.clear();
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error sending message: $e')),
@@ -88,7 +99,7 @@ class HomeState extends State<Home> {
 
   Future<void> listenToMessages() async {
     FirestoreRead firestoreRead =
-        FirestoreRead(groupId: 'aNAgqEvRvtFLDmjw7Ivz');
+        FirestoreRead(groupId: prefs.getStringList('servers')?[0] ?? '');
     try {
       List<DocumentSnapshot> documents = await firestoreRead.initialFetch();
       Set<String> processedIds = documents.map((doc) => doc.id).toSet();
@@ -143,11 +154,12 @@ class HomeState extends State<Home> {
               break;
           }
         }
-        scrollToBottom();
       });
 
       messagesLoaded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      if (messages.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+      }
     } catch (error) {
       throw Exception('Error listening to messages: $error');
     }
@@ -184,7 +196,7 @@ class HomeState extends State<Home> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             double maxWidth =
-                constraints.maxWidth > 2000 ? 2000 : constraints.maxWidth;
+                constraints.maxWidth > 2560 ? 2560 : constraints.maxWidth;
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxWidth),
@@ -220,9 +232,13 @@ class HomeState extends State<Home> {
                                         scrollController: scrollController,
                                       ),
                                     ),
-                                    BasicInputField(
-                                      labelText: "Message #general",
-                                      onSubmitted: sendMessage,
+                                    TextInputField(
+                                      messageController: messageController,
+                                      messageFocusNode: messageFocusNode,
+                                      sendMessage: sendMessage,
+                                      scrollToBottom: scrollToBottom,
+                                      buttonKey: buttonKey,
+                                      gifSearchDialog: gifSearchDialog,
                                     ),
                                   ]),
                                 ),
@@ -283,9 +299,13 @@ class HomeState extends State<Home> {
           scrollController: scrollController,
         ),
       ),
-      bottomNavigationBar: BasicInputField(
-        labelText: "Message #general",
-        onSubmitted: sendMessage,
+      bottomNavigationBar: TextInputField(
+        messageController: messageController,
+        messageFocusNode: messageFocusNode,
+        sendMessage: sendMessage,
+        scrollToBottom: scrollToBottom,
+        buttonKey: buttonKey,
+        gifSearchDialog: gifSearchDialog,
       ),
     );
   }

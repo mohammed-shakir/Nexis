@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nexis/pages/auth/register_page.dart';
 import 'firebase/firebase_init.dart';
 import 'classes/route_names.dart';
 import 'pages/main/home.dart';
@@ -6,6 +7,7 @@ import 'pages/settings/settings_page.dart';
 import 'pages/auth/auth_page.dart';
 import 'themes/default_theme.dart';
 import 'providers/user_providor.dart';
+import 'providers/server_providor.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -14,8 +16,11 @@ Future<void> main() async {
   await initializeFirebase();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => UserProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => ServerProvider()),
+      ],
       child: const Nexis(),
     ),
   );
@@ -29,11 +34,15 @@ class Nexis extends StatelessWidget {
     return MaterialApp(
       title: 'Nexis',
       theme: appTheme,
-      initialRoute: RouteNames.authPage,
+      initialRoute: RouteNames.home,
       debugShowCheckedModeBanner: false, // remove debug banner
       routes: {
-        RouteNames.authPage: (context) => const AuthPage(),
-        RouteNames.home: (context) => const ProtectedRoute(child: Home()),
+        RouteNames.authPage: (context) =>
+            const AuthRoute(child: AuthPage()),
+        RouteNames.registerPage: (context) =>
+            const AuthRoute(child: RegisterPage()),
+        RouteNames.home: (context) =>
+            const ProtectedRoute(child: Home()),
         RouteNames.settingsPage: (context) =>
             const ProtectedRoute(child: SettingsPage()),
       },

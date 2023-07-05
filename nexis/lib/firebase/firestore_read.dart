@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
 import 'package:logger/logger.dart';
+import 'dart:io' show Platform;
 import 'dart:async';
 
 class FirestoreRead {
@@ -29,7 +29,7 @@ class FirestoreRead {
   Future<List<DocumentSnapshot>> initialFetch() async {
     QuerySnapshot initialSnapshot = await messagesCollection
         .orderBy('timestamp', descending: true)
-        .limit(2) // TODO: Change to something higher on release
+        .limit(2)
         .get();
 
     return initialSnapshot.docs;
