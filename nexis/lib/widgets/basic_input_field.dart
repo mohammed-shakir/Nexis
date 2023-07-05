@@ -1,55 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:nexis/tenor/gif_search.dart';
 
-class BasicInputField extends StatefulWidget {
-  final String? labelText;
+class InputField extends StatefulWidget {
+
+  /* Functioning */
+  final TextEditingController controller;
+  final Function(String text)? controllerListenerFunction;
+  final FocusNode? focusNode;
+  final void Function(String)? onSubmitted;
+  final Logger logger;
+  final AutovalidateMode? autovalidateMode;
+  final String? Function(String?)? validator;
+  final GlobalKey? buttonKey;
+  final GifSearchDialog? gifSearchDialog;
+
+  /* Usability */
+  final bool? readOnly;
+  final int? maxLength;
+  final bool? obscureText;
+
+  final Widget? sendIcon;
+  final Widget? emojiIcon;
+  final Widget? gifIcon;
+
+  final bool? includeSend;
+  final bool? includeEmoji;
+  final bool? includeGif;
+
+  /* Styling */
+  final String? hint;
+
   final Color? fillColor;
-  final TextStyle? labelStyle;
+
+  final bool? includeBorder;
+  final double? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+
   final TextStyle? fontStyle;
   final double? fontSize;
-  final InputBorder? border;
-  final InputBorder? focusedBorder;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadius? borderRadius;
-  final Color? borderColor;
-  final Function(String text)? textControllerListenerFunction;
-  final Function(String)? onSubmitted;
-  final Logger logger;
-  final TextEditingController textController;
-  final FocusNode focusNode = FocusNode();
 
-  BasicInputField(
-      {Key? key,
-      this.labelText,
-      this.fillColor,
-      this.labelStyle,
-      this.fontSize,
-      this.border,
-      this.focusedBorder,
-      this.padding,
-      this.borderRadius,
-      this.borderColor,
-      this.fontStyle,
-      this.onSubmitted,
-      this.textControllerListenerFunction})
-      : logger = Logger(),
-        textController = TextEditingController(),
+  final EdgeInsetsGeometry? padding;
+
+  InputField({
+    Key? key,
+    required this.controller,
+    this.controllerListenerFunction,
+    this.focusNode,
+    this.onSubmitted,
+    this.autovalidateMode,
+    this.validator,
+    this.buttonKey,
+    this.gifSearchDialog,
+    this.readOnly,
+    this.maxLength,
+    this.obscureText,
+    this.sendIcon,
+    this.emojiIcon,
+    this.gifIcon,
+    this.includeSend,
+    this.includeEmoji,
+    this.includeGif,
+    this.hint,
+    this.fillColor,
+    this.includeBorder,
+    this.borderRadius,
+    this.borderColor,
+    this.focusedBorderColor,
+    this.fontStyle,
+    this.fontSize,
+    this.padding,
+    }) : logger = Logger(),
         super(key: key);
 
   @override
-  State<BasicInputField> createState() => _BasicInputField();
+  State<InputField> createState() => InputFieldState();
 }
 
-class _BasicInputField extends State<BasicInputField> {
+class InputFieldState extends State<InputField> {
   @override
   void initState() {
     super.initState();
-    widget.textController.addListener(onChanged);
+    widget.controller.addListener(onChanged);
   }
 
   void onChanged() {
-    if (widget.textControllerListenerFunction != null) {
-      widget.textControllerListenerFunction?.call(widget.textController.text);
+    if (widget.controllerListenerFunction != null) {
+      widget.controllerListenerFunction?.call(widget.controller.text);
     } else {
       defaultListenerFunction();
     }
@@ -57,48 +95,55 @@ class _BasicInputField extends State<BasicInputField> {
 
   @override
   void dispose() {
-    widget.textController.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 
   void defaultListenerFunction() {
-    widget.logger.i(widget.textController.text);
+    widget.logger.i(widget.controller.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       focusNode: widget.focusNode,
-      controller: widget.textController,
-      onSubmitted: (value) {
-        widget.onSubmitted?.call(value);
-        widget.textController.clear();
-        setState(() {});
-        widget.focusNode.requestFocus();
-      },
+      controller: widget.controller,
+      onFieldSubmitted: widget.onSubmitted,
       style: widget.fontStyle ?? Theme.of(context).textTheme.displayMedium,
       cursorColor: Theme.of(context).colorScheme.secondary,
       decoration: InputDecoration(
-        // Tested done on chrome, android:
-        // labelText, labelStyle, border, fillColor, focusedBorder, fontsize
-        labelText: widget.labelText ?? 'Enter your message',
-        labelStyle:
-            widget.labelStyle ?? Theme.of(context).textTheme.displayMedium,
-
-        border: widget.border ??
-            const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
+        hintText: widget.hint,
+        hintStyle: Theme.of(context).textTheme.labelSmall,
+        border: 
+            buildBorder(
+              widget.includeBorder,
+              widget.borderRadius,
+              widget.borderColor,
+              context
             ),
-        fillColor: widget.fillColor ?? Theme.of(context).colorScheme.tertiary,
+        focusedBorder:
+            buildBorder(
+              widget.includeBorder,
+              widget.borderRadius,
+              widget.focusedBorderColor,
+              context
+            ),
         filled: true,
-        focusedBorder: widget.focusedBorder ??
-            const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
+        fillColor: widget.fillColor ?? Colors.blueGrey[750],
       ),
     );
+  }
+
+  OutlineInputBorder buildBorder([include, size, color, context]) {
+    bool includeBorder = include ?? false;
+    if (includeBorder) {
+      return OutlineInputBorder(
+        borderRadius: BorderRadius.circular(size ?? 4),
+        borderSide: BorderSide(
+          color: color ?? Theme.of(context).colorScheme.outline,
+        ),
+      );
+    }
+    return const OutlineInputBorder(borderSide: BorderSide(width: 0.0));
   }
 }
