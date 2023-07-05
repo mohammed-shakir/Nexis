@@ -17,4 +17,26 @@ class ServerProvider with ChangeNotifier {
     }
     return {};
   }
+
+  Future<Map<String, dynamic>> fetchServerDataUsingId(String id) async {
+    int index = int.parse(id);
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    QuerySnapshot querySnapshot = await firestore
+        .collection('group_chats')
+        .where('id', isEqualTo: index)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var doc = querySnapshot.docs.first;
+      var data = doc.data() as Map<String, dynamic>;
+      serverData[doc.id] = data;
+      notifyListeners();
+
+      return data;
+    }
+
+    return {};
+  }
 }
