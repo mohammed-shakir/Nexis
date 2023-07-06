@@ -159,6 +159,11 @@ class ChannelsState extends State<Channels> {
             //   size: 18,
             //   name: "Balls",
             // ),
+            Text(
+              '''
+              ${Provider.of<ServerProvider>(context).getServerChannels}!
+              ''',
+            ),
             const SizedBox(height: 20),
             const Padding(
               padding: EdgeInsets.only(left: 8.0),

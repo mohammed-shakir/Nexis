@@ -5,6 +5,8 @@ class ServerProvider with ChangeNotifier {
   Map<String, Map<String, dynamic>> serverData = {};
   String? _selectedServerId;
   String? get selectedServerId => _selectedServerId;
+  List<String>? serverChannels = [];
+  List<String>? get getServerChannels => serverChannels;
 
   void setSelectServer(String id) {
     _selectedServerId = id;
@@ -68,5 +70,25 @@ class ServerProvider with ChangeNotifier {
     }
 
     return [];
+  }
+
+  void setChannels(String id) async {
+    int index = int.parse(id);
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    QuerySnapshot querySnapshot = await firestore
+        .collection('group_chats')
+        .where('id', isEqualTo: index)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var doc = querySnapshot.docs.first;
+      var data = doc.data() as Map<String, dynamic>;
+      serverData[doc.id] = data;
+      notifyListeners();
+
+      serverChannels = data['channels']?.cast<String>();
+    }
   }
 }

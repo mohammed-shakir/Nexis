@@ -5,19 +5,7 @@ import '../../../providers/server_providor.dart';
 import '../../../widgets/server_button.dart';
 
 class Servers extends StatefulWidget {
-  final void Function() onPressed;
-  late int selectedIndex;
-  late int i;
-  late List<Map<String, dynamic>> serversData;
-  late ServerProvider serverProvider;
-  Servers(
-      {Key? key,
-      required this.onPressed,
-      required this.selectedIndex,
-      required this.i,
-      required this.serversData,
-      required this.serverProvider})
-      : super(key: key);
+  const Servers({Key? key}) : super(key: key);
 
   @override
   ServersState createState() => ServersState();
@@ -25,16 +13,18 @@ class Servers extends StatefulWidget {
 
 class ServersState extends State<Servers> {
   late SharedPreferences? prefs;
+  int selectedIndex = 0;
   late Future<SharedPreferences> prefsFuture;
   late Future<List<Map<String, dynamic>>> serversDataFuture;
+  late ServerProvider serverProvider;
 
   @override
   void initState() {
     super.initState();
 
     prefsFuture = SharedPreferences.getInstance();
-    widget.serverProvider = Provider.of<ServerProvider>(context, listen: false);
-    serversDataFuture = initSharedPreferences(widget.serverProvider);
+    serverProvider = Provider.of<ServerProvider>(context, listen: false);
+    serversDataFuture = initSharedPreferences(serverProvider);
   }
 
   Future<List<Map<String, dynamic>>> initSharedPreferences(
@@ -54,8 +44,8 @@ class ServersState extends State<Servers> {
       future: serversDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          widget.serversData = snapshot.data ?? [];
-          return buildServers(widget.serversData);
+          List<Map<String, dynamic>> serversData = snapshot.data ?? [];
+          return buildServers(serversData);
         } else {
           return const CircularProgressIndicator();
         }
@@ -75,48 +65,46 @@ class ServersState extends State<Servers> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   ServerButton(
-                    onPressed: () => setState(() => widget.selectedIndex = 0),
+                    onPressed: () => setState(() => selectedIndex = 0),
                     image: const AssetImage(
                         "./assets/logo-no-background-icon.png"),
-                    isSelected: widget.selectedIndex == 0,
+                    isSelected: selectedIndex == 0,
                     name: "Direct Messages",
                   ),
                   const SizedBox(height: 10),
-                  for (widget.i = 0; widget.i < serversData.length; widget.i++)
+                  for (int i = 0; i < serversData.length; i++)
                     Column(
                       children: [
                         ServerButton(
-                          /*
                           onPressed: () {
                             setState(() => selectedIndex = i + 1);
                             prefs?.setString('selectedServer',
                                 serversData[i]['id'].toString());
                             serverProvider.setSelectServer(
                                 serversData[i]['id'].toString());
+                            serverProvider
+                                .setChannels(serversData[i]['id'].toString());
                           },
-                          */
-                          onPressed: widget.onPressed,
-                          image: (serversData[widget.i]['photo'] != null &&
-                                  serversData[widget.i]['photo'] != '' &&
-                                  (serversData[widget.i]['photo'] as String)
+                          image: (serversData[i]['photo'] != null &&
+                                  serversData[i]['photo'] != '' &&
+                                  (serversData[i]['photo'] as String)
                                       .isNotEmpty)
-                              ? NetworkImage(
-                                      serversData[widget.i]['photo'] as String)
+                              ? NetworkImage(serversData[i]['photo'] as String)
                                   as ImageProvider<Object>
                               : const AssetImage(
                                   "./assets/logo-no-background-icon.png"),
-                          isSelected: widget.selectedIndex == widget.i + 1,
-                          name: serversData[widget.i]['name'] ?? "Server Name",
+                          isSelected: selectedIndex == i + 1,
+                          name: serversData[i]['name'] ?? "Server Name",
                         ),
                         const SizedBox(height: 10),
                       ],
                     ),
                   ServerButton(
-                    onPressed: () => setState(
-                        () => widget.selectedIndex = serversData.length + 1),
+                    onPressed: () =>
+                        setState(() => selectedIndex = serversData.length + 1),
                     icon: const Icon(Icons.add),
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    isSelected: widget.selectedIndex == serversData.length + 1,
+                    isSelected: selectedIndex == serversData.length + 1,
                     name: "Add A Server",
                   ),
                 ],

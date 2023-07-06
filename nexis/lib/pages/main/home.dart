@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../providers/server_providor.dart';
 import '../../widgets/text_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
@@ -34,10 +33,6 @@ class HomeState extends State<Home> {
   late SharedPreferences prefs;
   final buttonKey = GlobalKey();
   final gifSearchDialog = const GifSearchDialog();
-  int selectedIndex = 0;
-  int i = 0;
-  List<Map<String, dynamic>> serversData = [];
-  late ServerProvider serverProvider;
 
   @override
   void initState() {
@@ -206,21 +201,9 @@ class HomeState extends State<Home> {
                 constraints: BoxConstraints(maxWidth: maxWidth),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: serversWidth,
-                      child: Servers(
-                        onPressed: () {
-                          setState(() => selectedIndex = i + 1);
-                          prefs.setString('selectedServer',
-                              serversData[i]['id'].toString());
-                          serverProvider
-                              .setSelectServer(serversData[i]['id'].toString());
-                        },
-                        i: i,
-                        selectedIndex: selectedIndex,
-                        serversData: serversData,
-                        serverProvider: serverProvider,
-                      ),
+                      child: Servers(),
                     ),
                     const SizedBox(
                       width: channelsWidth,
@@ -287,26 +270,14 @@ class HomeState extends State<Home> {
       endDrawer: const Drawer(
         child: ParticipantInfo(),
       ),
-      drawer: Drawer(
+      drawer: const Drawer(
         child: Row(
           children: [
             Expanded(
               flex: 1,
-              child: Servers(
-                onPressed: () {
-                  setState(() => selectedIndex = i + 1);
-                  prefs.setString(
-                      'selectedServer', serversData[i]['id'].toString());
-                  serverProvider
-                      .setSelectServer(serversData[i]['id'].toString());
-                },
-                i: i,
-                selectedIndex: selectedIndex,
-                serversData: serversData,
-                serverProvider: serverProvider,
-              ),
+              child: Servers(),
             ),
-            const Expanded(
+            Expanded(
               flex: 3,
               child: Channels(),
             ),
