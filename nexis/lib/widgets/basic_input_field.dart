@@ -8,12 +8,13 @@ class InputField extends StatefulWidget {
   final TextEditingController controller;
   final Function(String text)? controllerListenerFunction;
   final FocusNode? focusNode;
-  final void Function(String)? onSubmitted;
+  final Function(String)? onSubmitted;
   final Logger logger;
   final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
   final GlobalKey? buttonKey;
   final GifSearchDialog? gifSearchDialog;
+  final void Function()? onTap;
 
   /* Usability */
   final bool? readOnly;
@@ -32,6 +33,11 @@ class InputField extends StatefulWidget {
   final String? hint;
 
   final Color? fillColor;
+  final Color? hoverColor;
+
+  final double? cursorHeight;
+  final double? cursorWidth;
+  final Color? cursorColor;
 
   final bool? includeBorder;
   final double? borderRadius;
@@ -53,6 +59,7 @@ class InputField extends StatefulWidget {
     this.validator,
     this.buttonKey,
     this.gifSearchDialog,
+    this.onTap,
     this.readOnly,
     this.maxLength,
     this.obscureText,
@@ -64,6 +71,10 @@ class InputField extends StatefulWidget {
     this.includeGif,
     this.hint,
     this.fillColor,
+    this.hoverColor,
+    this.cursorHeight,
+    this.cursorWidth,
+    this.cursorColor,
     this.includeBorder,
     this.borderRadius,
     this.borderColor,
@@ -95,7 +106,6 @@ class InputFieldState extends State<InputField> {
 
   @override
   void dispose() {
-    widget.controller.dispose();
     super.dispose();
   }
 
@@ -106,44 +116,48 @@ class InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      focusNode: widget.focusNode,
       controller: widget.controller,
+      focusNode: widget.focusNode,
       onFieldSubmitted: widget.onSubmitted,
       style: widget.fontStyle ?? Theme.of(context).textTheme.displayMedium,
-      cursorColor: Theme.of(context).colorScheme.secondary,
+      cursorColor: widget.cursorColor ?? Colors.white,
+      cursorHeight: widget.cursorHeight ?? 20.0,
+      cursorWidth: widget.cursorWidth ?? 1.2,
       decoration: InputDecoration(
+        hoverColor: widget.hoverColor ?? Colors.transparent,
         hintText: widget.hint,
         hintStyle: Theme.of(context).textTheme.labelSmall,
-        border: 
-            buildBorder(
-              widget.includeBorder,
-              widget.borderRadius,
-              widget.borderColor,
-              context
-            ),
-        focusedBorder:
-            buildBorder(
-              widget.includeBorder,
-              widget.borderRadius,
-              widget.focusedBorderColor,
-              context
-            ),
+        border: buildBorder(
+            widget.includeBorder,
+            widget.borderRadius,
+            widget.borderColor,
+            context
+          ),
+        focusedBorder: buildBorder(
+            widget.includeBorder,
+            widget.borderRadius,
+            widget.focusedBorderColor,
+            context
+          ),
         filled: true,
         fillColor: widget.fillColor ?? Colors.blueGrey[750],
+        contentPadding: widget.padding,
       ),
+      onTap: widget.onTap,
+      autovalidateMode: widget.autovalidateMode ?? AutovalidateMode.disabled,
+      validator: widget.validator,
     );
   }
 
   OutlineInputBorder buildBorder([include, size, color, context]) {
-    bool includeBorder = include ?? false;
-    if (includeBorder) {
-      return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(size ?? 4),
-        borderSide: BorderSide(
+    include ??= false;
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(size ?? 8),
+      borderSide: include?
+        BorderSide(
           color: color ?? Theme.of(context).colorScheme.outline,
-        ),
-      );
-    }
-    return const OutlineInputBorder(borderSide: BorderSide(width: 0.0));
+        )
+        : BorderSide.none,
+    );
   }
 }
