@@ -3,6 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServerProvider with ChangeNotifier {
   Map<String, Map<String, dynamic>> serverData = {};
+  String? _selectedServerId;
+  String? get selectedServerId => _selectedServerId;
+
+  void setSelectServer(String id) {
+    _selectedServerId = id;
+    notifyListeners();
+  }
 
   Future<Map<String, dynamic>> fetchServerData(String serverId) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -38,5 +45,28 @@ class ServerProvider with ChangeNotifier {
     }
 
     return {};
+  }
+
+  Future<List<String>> fetchServerChannels(String id) async {
+    int index = int.parse(id);
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    QuerySnapshot querySnapshot = await firestore
+        .collection('group_chats')
+        .where('id', isEqualTo: index)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var doc = querySnapshot.docs.first;
+      var data = doc.data() as Map<String, dynamic>;
+      serverData[doc.id] = data;
+      notifyListeners();
+
+      List<String>? channels = data['channels']?.cast<String>();
+      return channels ?? [];
+    }
+
+    return [];
   }
 }
