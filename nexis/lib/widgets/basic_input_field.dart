@@ -5,7 +5,7 @@ import 'package:logger/logger.dart';
 /// If [multiline] then choose [onSubmittedMultiline] else [onSubmitted]
 /// NOTE! [onSubmittedMultiline] and [onSubmitted] have different types
 
-/// Icons will show when appropriate onSubmit functions are given, i.e.
+/// Icons will show when appropriate onPressed functions are given, i.e.
 /// [onPressedEmoji], [onPressedGif], [onPressedObscureText]
 ///
 /// if [onPressedObscureText] then include [obscureText] otherwise Icon won't show
