@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+/// If [multiline] then choose [onSubmittedMultiline] else [onSubmitted]
+/// NOTE! [onSubmittedMultiline] and [onSubmitted] have different types
+
+/// Icons will show when appropriate onSubmit functions are given, i.e.
+/// [onPressedEmoji], [onPressedGif], [onPressedObscureText]
+///
+/// if [onPressedObscureText] then include [obscureText] otherwise Icon won't show
+
 class InputField extends StatefulWidget {
   /* Functioning */
   final TextEditingController controller;
   final Function(String text)? controllerListenerFunction;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
   final void Function()? onSubmittedMultiline;
   final Function(String)? onSubmitted;
   final void Function()? onPressedEmoji;
@@ -26,8 +34,11 @@ class InputField extends StatefulWidget {
   final bool? multiline;
   final int? maxLines;
 
+  final TextInputType? keyBoardType;
+
   /* Styling */
   final String? hint;
+  final TextStyle? hintStyle;
 
   final Color? fillColor;
   final Color? hoverColor;
@@ -36,6 +47,7 @@ class InputField extends StatefulWidget {
   final double? cursorWidth;
   final Color? cursorColor;
 
+  /// if [Border], set [includeBorder]
   final bool? includeBorder;
   final double? borderRadius;
   final Color? borderColor;
@@ -44,11 +56,14 @@ class InputField extends StatefulWidget {
   final TextStyle? fontStyle;
   final double? fontSize;
 
+  /// [padding] to [Container]
+  final EdgeInsets? padding;
+
   InputField({
     Key? key,
     required this.controller,
     this.controllerListenerFunction,
-    required this.focusNode,
+    this.focusNode,
     this.onSubmittedMultiline,
     this.onSubmitted,
     this.onPressedEmoji,
@@ -63,7 +78,9 @@ class InputField extends StatefulWidget {
     this.obscureText,
     this.multiline,
     this.maxLines,
+    this.keyBoardType,
     this.hint,
+    this.hintStyle,
     this.fillColor,
     this.hoverColor,
     this.cursorHeight,
@@ -75,6 +92,7 @@ class InputField extends StatefulWidget {
     this.focusedBorderColor,
     this.fontStyle,
     this.fontSize,
+    this.padding,
   })  : logger = Logger(),
         super(key: key);
 
@@ -142,7 +160,7 @@ class InputFieldState extends State<InputField> {
       focusNode: FocusNode(),
       onKey: (widget.multiline ?? false)? multilineKeyEvent : (event) {},
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 15),
         decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
@@ -159,12 +177,13 @@ class InputFieldState extends State<InputField> {
             obscureText: widget.obscureText ?? false,
             minLines: 1,
             maxLines: (widget.multiline ?? false)? (widget.maxLines ?? 1) : 1,
-            keyboardType: (widget.multiline ?? false)? TextInputType.multiline : TextInputType.text,
-            //textInputAction: TextInputAction.,
+            keyboardType: widget.keyBoardType ??
+              ((widget.multiline ?? false)? TextInputType.multiline : TextInputType.text),
+            //textInputAction: TextInputAction.send,
             decoration: InputDecoration(
               hoverColor: widget.hoverColor ?? Colors.transparent,
               hintText: widget.hint,
-              hintStyle: Theme.of(context).textTheme.labelSmall,
+              hintStyle: widget.hintStyle ?? Theme.of(context).textTheme.labelSmall,
               border: buildBorder(
                 widget.includeBorder,
                 widget.borderRadius,
@@ -211,6 +230,8 @@ class InputFieldState extends State<InputField> {
                           onPressed: widget.onPressedGif,
                           hoverColor: Colors.transparent,
                           splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           icon: Icon(
                             Icons.gif_box_rounded,
                             color: setColor(gifIconHover),
@@ -237,6 +258,8 @@ class InputFieldState extends State<InputField> {
                           onPressed: widget.onPressedEmoji,
                           hoverColor: Colors.transparent,
                           splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           icon: Icon(
                             Icons.emoji_emotions,
                             color: setColor(emojiIconHover),
@@ -263,6 +286,8 @@ class InputFieldState extends State<InputField> {
                           onPressed: widget.onPressedObscureText,
                           hoverColor: Colors.transparent,
                           splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           icon: Icon(
                             widget.obscureText!
                                 ? Icons.visibility_off
