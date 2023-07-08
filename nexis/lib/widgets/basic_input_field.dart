@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 class InputField extends StatefulWidget {
-
   /* Functioning */
   final TextEditingController controller;
   final Function(String text)? controllerListenerFunction;
-  final FocusNode? focusNode;
+  final FocusNode focusNode;
+  final void Function()? onSubmittedMultiline;
   final Function(String)? onSubmitted;
   final void Function()? onPressedEmoji;
   final void Function()? onPressedGif;
@@ -21,6 +22,9 @@ class InputField extends StatefulWidget {
   final bool? readOnly;
   final int? maxLength;
   final bool? obscureText;
+
+  final bool? multiline;
+  final int? maxLines;
 
   /* Styling */
   final String? hint;
@@ -40,13 +44,12 @@ class InputField extends StatefulWidget {
   final TextStyle? fontStyle;
   final double? fontSize;
 
-  final EdgeInsetsGeometry? padding;
-
   InputField({
     Key? key,
     required this.controller,
     this.controllerListenerFunction,
-    this.focusNode,
+    required this.focusNode,
+    this.onSubmittedMultiline,
     this.onSubmitted,
     this.onPressedEmoji,
     this.onPressedGif,
@@ -58,6 +61,8 @@ class InputField extends StatefulWidget {
     this.readOnly,
     this.maxLength,
     this.obscureText,
+    this.multiline,
+    this.maxLines,
     this.hint,
     this.fillColor,
     this.hoverColor,
@@ -70,8 +75,7 @@ class InputField extends StatefulWidget {
     this.focusedBorderColor,
     this.fontStyle,
     this.fontSize,
-    this.padding,
-    }) : logger = Logger(),
+  })  : logger = Logger(),
         super(key: key);
 
   @override
@@ -114,128 +118,165 @@ class InputFieldState extends State<InputField> {
     }
   }
 
+  void multilineKeyEvent(event) {
+    if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+      if (!event.isShiftPressed) {
+        setState(() {
+          widget.onSubmittedMultiline!();
+        });
+      }
+    }
+  }
+
+  EdgeInsets getContentPadding() {
+    bool gif = (widget.onPressedGif != null? true : false);
+    bool emoji = (widget.onPressedEmoji != null? true : false);
+    bool obscure = (widget.onPressedObscureText != null? true : false);
+    double rightPadding = 0.0 + (gif? 40 : 0) + (emoji? 40 : 0) + (obscure? 40 : 0);
+    return EdgeInsets.only(right: rightPadding, left: 10, top: 10, bottom: 10);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      focusNode: widget.focusNode,
-      onFieldSubmitted: widget.onSubmitted,
-      style: widget.fontStyle ?? Theme.of(context).textTheme.displayMedium,
-      cursorColor: widget.cursorColor ?? Colors.white,
-      cursorHeight: widget.cursorHeight ?? 20.0,
-      cursorWidth: widget.cursorWidth ?? 1.2,
-      readOnly: widget.readOnly ?? false,
-      obscureText: widget.obscureText ?? false,
-      decoration: InputDecoration(
-        hoverColor: widget.hoverColor ?? Colors.transparent,
-        hintText: widget.hint,
-        hintStyle: Theme.of(context).textTheme.labelSmall,
-        border: buildBorder(
-            widget.includeBorder,
-            widget.borderRadius,
-            widget.borderColor,
-            context
-          ),
-        focusedBorder: buildBorder(
-            widget.includeBorder,
-            widget.borderRadius,
-            widget.focusedBorderColor,
-            context
-          ),
-        filled: true,
-        fillColor: widget.fillColor ?? Colors.blueGrey[750],
-        contentPadding: widget.padding,
-        suffixIcon: SizedBox(
-          width: 150,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              widget.onPressedGif != null
-                ? MouseRegion(
-                  onEnter: (event) {
-                    setState(() {
-                      gifIconHover = true;
-                    });
-                  },
-                  onExit: (event) {
-                    setState(() {
-                      gifIconHover = false;
-                    });
-                  },
-                  child: IconButton(
-                    padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                    constraints: const BoxConstraints(),
-                    iconSize: 30.0,
-                    onPressed: widget.onPressedGif,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    icon: Icon(
-                      Icons.gif_box_rounded,
-                      color: setColor(gifIconHover),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-              widget.onPressedEmoji != null
-                ? MouseRegion(
-                  onEnter: (event) {
-                    setState(() {
-                      emojiIconHover = true;
-                    });
-                  },
-                  onExit: (event) {
-                    setState(() {
-                      emojiIconHover = false;
-                    });
-                  },
-                  child: IconButton(
-                    padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                    constraints: const BoxConstraints(),
-                    iconSize: 30.0,
-                    onPressed: widget.onPressedEmoji,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    icon: Icon(
-                      Icons.emoji_emotions,
-                      color: setColor(emojiIconHover),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-              widget.onPressedObscureText != null
-                ? MouseRegion(
-                  onEnter: (event) {
-                    setState(() {
-                      obscureTextIconHover = true;
-                    });
-                  },
-                  onExit: (event) {
-                    setState(() {
-                      obscureTextIconHover = false;
-                    });
-                  },
-                  child: IconButton(
-                    padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                    constraints: const BoxConstraints(),
-                    iconSize: 30.0,
-                    onPressed: widget.onPressedObscureText,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    icon: Icon(widget.obscureText!
-                      ? Icons.visibility_off
-                      : Icons.visibility,
-                      color: setColor(obscureTextIconHover),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-            ],
-          ),
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: (widget.multiline ?? false)? multilineKeyEvent : (event) {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
         ),
+        child: Stack(children: [
+          TextFormField(
+            controller: widget.controller,
+            focusNode: widget.focusNode,
+            onFieldSubmitted: widget.onSubmitted,
+            style: widget.fontStyle ?? Theme.of(context).textTheme.displayMedium,
+            cursorColor: widget.cursorColor ?? Colors.white,
+            cursorHeight: widget.cursorHeight ?? 20.0,
+            cursorWidth: widget.cursorWidth ?? 1.2,
+            readOnly: widget.readOnly ?? false,
+            obscureText: widget.obscureText ?? false,
+            minLines: 1,
+            maxLines: (widget.multiline ?? false)? (widget.maxLines ?? 1) : 1,
+            keyboardType: (widget.multiline ?? false)? TextInputType.multiline : TextInputType.text,
+            //textInputAction: TextInputAction.,
+            decoration: InputDecoration(
+              hoverColor: widget.hoverColor ?? Colors.transparent,
+              hintText: widget.hint,
+              hintStyle: Theme.of(context).textTheme.labelSmall,
+              border: buildBorder(
+                widget.includeBorder,
+                widget.borderRadius,
+                widget.borderColor,
+                context
+              ),
+              focusedBorder: buildBorder(
+                widget.includeBorder,
+                widget.borderRadius,
+                widget.focusedBorderColor,
+                context
+              ),
+              filled: true,
+              fillColor: widget.fillColor ?? Colors.blueGrey[750],
+              contentPadding: getContentPadding(),
+            ),
+            onTap: widget.onTap,
+            autovalidateMode: widget.autovalidateMode ?? AutovalidateMode.disabled,
+            validator: widget.validator,
+          ),
+          Positioned(
+              bottom: 9,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  widget.onPressedGif != null
+                    ? MouseRegion(
+                        onEnter: (event) {
+                          setState(() {
+                            gifIconHover = true;
+                          });
+                        },
+                        onExit: (event) {
+                          setState(() {
+                            gifIconHover = false;
+                          });
+                        },
+                        child: IconButton(
+                          padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                          constraints: const BoxConstraints(maxWidth: 40.0),
+                          iconSize: 30.0,
+                          onPressed: widget.onPressedGif,
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          icon: Icon(
+                            Icons.gif_box_rounded,
+                            color: setColor(gifIconHover),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                  widget.onPressedEmoji != null
+                    ? MouseRegion(
+                        onEnter: (event) {
+                          setState(() {
+                            emojiIconHover = true;
+                          });
+                        },
+                        onExit: (event) {
+                          setState(() {
+                            emojiIconHover = false;
+                          });
+                        },
+                        child: IconButton(
+                          padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                          constraints: const BoxConstraints(maxWidth: 40.0),
+                          iconSize: 30.0,
+                          onPressed: widget.onPressedEmoji,
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          icon: Icon(
+                            Icons.emoji_emotions,
+                            color: setColor(emojiIconHover),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                  widget.onPressedObscureText != null && widget.obscureText != null
+                    ? MouseRegion(
+                        onEnter: (event) {
+                          setState(() {
+                            obscureTextIconHover = true;
+                          });
+                        },
+                        onExit: (event) {
+                          setState(() {
+                            obscureTextIconHover = false;
+                          });
+                        },
+                        child: IconButton(
+                          padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                          constraints: const BoxConstraints(maxWidth: 40.0),
+                          iconSize: 30.0,
+                          onPressed: widget.onPressedObscureText,
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          icon: Icon(
+                            widget.obscureText!
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: setColor(obscureTextIconHover),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                ],
+              ),
+          )
+        ]),
       ),
-      onTap: widget.onTap,
-      autovalidateMode: widget.autovalidateMode ?? AutovalidateMode.disabled,
-      validator: widget.validator,
     );
   }
 
@@ -243,11 +284,11 @@ class InputFieldState extends State<InputField> {
     include ??= false;
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(size ?? 8),
-      borderSide: include?
-        BorderSide(
-          color: color ?? Theme.of(context).colorScheme.outline,
-        )
-        : BorderSide.none,
+      borderSide: include
+          ? BorderSide(
+              color: color ?? Theme.of(context).colorScheme.outline,
+            )
+          : BorderSide.none,
     );
   }
 }
