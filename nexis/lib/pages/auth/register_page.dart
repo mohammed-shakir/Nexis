@@ -75,8 +75,8 @@ class RegisterPageState extends State<RegisterPage> {
 
   void signUp() async {
     final isValid = regKey.currentState!.validate();
-    if (!isValid) { 
-      return; 
+    if (!isValid) {
+      return;
     }
 
     BuildContext dialogContext = context;
@@ -147,6 +147,14 @@ class RegisterPageState extends State<RegisterPage> {
         hasMinLength;
   }
 
+  bool emptyFieldCheck() {
+    return emailController.value.text.isNotEmpty &&
+        usernameController.value.text.isNotEmpty &&
+        passwordController.value.text.isNotEmpty &&
+        confirmPasswordController.value.text.isNotEmpty &&
+        dateController.value.text.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -207,7 +215,9 @@ class RegisterPageState extends State<RegisterPage> {
                           mediumLabel: 'Email',
                           controller: emailController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) =>
@@ -221,32 +231,31 @@ class RegisterPageState extends State<RegisterPage> {
                           mediumLabel: 'Username',
                           controller: usernameController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
-                          suffixIcon: IconButton(
-                            icon: Icon(obscureText
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () {
-                              setState(() {
-                                obscureText = !obscureText;
-                              });
-                            },
-                          ),
+                          onPressedObscureText: () {
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
+                          },
                           obscureText: obscureText,
                           controller: passwordController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) {
                             if (!passwordCheck(text)) {
-                              return 'min 8 char. and (1) of [A-Z], [a-z], [0-9], [e.g., ! @ # ?]';
+                              return 'Invalid format. Needs to contain a minimum of 8 characters,\n and (1) of each: [A-Z], [a-z], [0-9] and [e.g., ! @ # ?]';
                             }
                             return null;
                           },
@@ -255,20 +264,17 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
-                          suffixIcon: IconButton(
-                            icon: Icon(obscureTextRepeat
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () {
-                              setState(() {
-                                obscureTextRepeat = !obscureTextRepeat;
-                              });
-                            },
-                          ),
+                          onPressedObscureText: () {
+                            setState(() {
+                              obscureTextRepeat = !obscureTextRepeat;
+                            });
+                          },
                           obscureText: obscureTextRepeat,
                           controller: confirmPasswordController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) {
@@ -285,7 +291,9 @@ class RegisterPageState extends State<RegisterPage> {
                           hint: 'Month-Day-Year',
                           controller: dateController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           onTap: selectDate,
                           readOnly: true,
@@ -294,11 +302,7 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          onPressed: emailController.value.text.isNotEmpty && 
-                                      usernameController.value.text.isNotEmpty &&
-                                      passwordController.value.text.isNotEmpty &&
-                                      confirmPasswordController.value.text.isNotEmpty &&
-                                      dateController.value.text.isNotEmpty
+                          onPressed: emptyFieldCheck()
                             ? signUp
                             : null,
                           mediumBody: 'Already have an account?',
@@ -360,7 +364,9 @@ class RegisterPageState extends State<RegisterPage> {
                           mediumLabel: 'Email',
                           controller: emailController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) =>
@@ -374,32 +380,32 @@ class RegisterPageState extends State<RegisterPage> {
                           mediumLabel: 'Username',
                           controller: usernameController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                         ),
                         const SizedBox(height: 20),
                         CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Password',
-                          suffixIcon: IconButton(
-                            icon: Icon(obscureText
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () {
-                              setState(() {
-                                obscureText = !obscureText;
-                              });
-                            },
-                          ),
+                          onPressedObscureText: () {
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
+                          },
                           obscureText: obscureText,
                           controller: passwordController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) {
                             if (!passwordCheck(text)) {
-                              return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';
+                              return 'Invalid format. Needs to contain a minimum of 8 characters, \nand (1) of each: [A-Z], [a-z], [0-9] and [e.g., ! @ # ?]';
+                              /*return 'Password needs to contain a minimum of 8 characters and at least one (1) of each:\nUppercase [A-Z], lowercase [a-z], number [0-9], special char. [e.g., ! @ # ?]';*/
                             }
                             return null;
                           },
@@ -408,20 +414,17 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
-                          suffixIcon: IconButton(
-                            icon: Icon(obscureTextRepeat
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () {
-                              setState(() {
-                                obscureTextRepeat = !obscureTextRepeat;
-                              });
-                            },
-                          ),
+                          onPressedObscureText: () {
+                            setState(() {
+                              obscureTextRepeat = !obscureTextRepeat;
+                            });
+                          },
                           obscureText: obscureTextRepeat,
                           controller: confirmPasswordController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (text) {
@@ -439,7 +442,9 @@ class RegisterPageState extends State<RegisterPage> {
                           dayController: dayController,
                           yearController: yearController,
                           onSubmitted: (_) {
-                            signUp();
+                            emptyFieldCheck()
+                            ? signUp
+                            : null;
                           },
                           onTap: selectDate,
                         ),
@@ -447,11 +452,7 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          onPressed: emailController.value.text.isNotEmpty && 
-                                      usernameController.value.text.isNotEmpty &&
-                                      passwordController.value.text.isNotEmpty &&
-                                      confirmPasswordController.value.text.isNotEmpty &&
-                                      dateController.value.text.isNotEmpty
+                          onPressed: emptyFieldCheck()
                             ? signUp
                             : null,
                           mediumBody: 'Already have an account?',
