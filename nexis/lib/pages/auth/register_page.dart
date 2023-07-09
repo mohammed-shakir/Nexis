@@ -256,7 +256,7 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
-                            icon: Icon(obscureText
+                            icon: Icon(obscureTextRepeat
                                 ? Icons.visibility_off
                                 : Icons.visibility),
                             onPressed: () {
@@ -409,7 +409,7 @@ class RegisterPageState extends State<RegisterPage> {
                           type: ColumnType.type3,
                           mediumLabel: 'Confirm Password',
                           suffixIcon: IconButton(
-                            icon: Icon(obscureText
+                            icon: Icon(obscureTextRepeat
                                 ? Icons.visibility_off
                                 : Icons.visibility),
                             onPressed: () {

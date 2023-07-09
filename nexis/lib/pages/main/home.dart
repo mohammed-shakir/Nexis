@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../widgets/text_input_field.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
@@ -11,8 +10,9 @@ import 'components/navbar.dart';
 import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
-import 'dart:async';
 import '../../tenor/gif_search.dart';
+import '../../widgets/basic_input_field.dart';
+import 'dart:async';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -69,7 +69,7 @@ class HomeState extends State<Home> {
 
   Future<void> sendMessage() async {
     String messageContent = messageController.text.trim();
-
+    messageController.clear();
     if (messageContent.isEmpty) {
       return;
     } else if (messageContent.length > maxMessageLength) {
@@ -81,13 +81,14 @@ class HomeState extends State<Home> {
         try {
           String? avatar = prefs.getString('avatar');
           await FirestoreWrite.sendMessage(
-            message: messageController.text,
+            message: messageContent,
             sender: prefs.getString('displayName')!,
             groupChatId: prefs.getStringList('servers')?[0] ?? '',
             avatar: avatar ?? '',
           );
           messageController.clear();
         } catch (e) {
+          messageController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error sending message: $e')),
           );
@@ -164,6 +165,22 @@ class HomeState extends State<Home> {
     }
   }
 
+  onSubmittedMultiline() async {
+    try {
+      if (messageController.text.isNotEmpty) {
+        await sendMessage();
+        if (messageController.text.length <= maxMessageLength) {
+          scrollToBottom();
+          messageFocusNode.requestFocus();
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending message: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -231,13 +248,29 @@ class HomeState extends State<Home> {
                                         scrollController: scrollController,
                                       ),
                                     ),
-                                    TextInputField(
-                                      messageController: messageController,
-                                      messageFocusNode: messageFocusNode,
-                                      sendMessage: sendMessage,
-                                      scrollToBottom: scrollToBottom,
+                                    InputField(
+                                      controller: messageController,
+                                      focusNode: messageFocusNode,
+                                      hint: 'Message #{send to}',
+                                      onPressedGif: () async {
+                                        final gifUrl = await Navigator.of(context).push<String>(
+                                          PageRouteBuilder(
+                                            opaque: false,
+                                            pageBuilder: (_, __, ___) => const GifSearchDialog(),
+                                          ),
+                                        );
+
+                                        if (gifUrl != null) {
+                                          messageController.text = gifUrl;
+                                          sendMessage();
+                                        }
+                                      },
+                                      onPressedEmoji: () {},
                                       buttonKey: buttonKey,
-                                      gifSearchDialog: gifSearchDialog,
+                                      onSubmittedMultiline: onSubmittedMultiline,
+                                      multiline: true,
+                                      maxLines: 15,
+                                      padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
                                     ),
                                   ]),
                                 ),
@@ -298,13 +331,29 @@ class HomeState extends State<Home> {
           scrollController: scrollController,
         ),
       ),
-      bottomNavigationBar: TextInputField(
-        messageController: messageController,
-        messageFocusNode: messageFocusNode,
-        sendMessage: sendMessage,
-        scrollToBottom: scrollToBottom,
+      bottomNavigationBar: InputField(
+        controller: messageController,
+        focusNode: messageFocusNode,
+        hint: 'Message #{send to}',
+        onPressedGif: () async {
+          final gifUrl = await Navigator.of(context).push<String>(
+            PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => const GifSearchDialog(),
+            ),
+          );
+
+          if (gifUrl != null) {
+            messageController.text = gifUrl;
+            sendMessage();
+          }
+        },
+        onPressedEmoji: () {},
         buttonKey: buttonKey,
-        gifSearchDialog: gifSearchDialog,
+        onSubmittedMultiline: onSubmittedMultiline,
+        multiline: true,
+        maxLines: 15,
+        padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
       ),
     );
   }
