@@ -6,7 +6,7 @@ import 'package:logger/logger.dart';
 /// NOTE! [onSubmittedMultiline] and [onSubmitted] have different types
 
 /// Icons will show when appropriate onPressed functions are given, i.e.
-/// [onPressedEmoji], [onPressedGif], [onPressedObscureText]
+/// [onPressedEmoji], [onPressedGif], [onPressedObscureText], [onPressedMedia]
 ///
 /// if [onPressedObscureText] then include [obscureText] otherwise Icon won't show
 
@@ -20,6 +20,7 @@ class InputField extends StatefulWidget {
   final void Function()? onPressedEmoji;
   final void Function()? onPressedGif;
   final void Function()? onPressedObscureText;
+  final void Function()? onPressedMedia;
   final Logger logger;
   final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
@@ -70,6 +71,7 @@ class InputField extends StatefulWidget {
     this.onPressedEmoji,
     this.onPressedGif,
     this.onPressedObscureText,
+    this.onPressedMedia,
     this.autovalidateMode,
     this.validator,
     this.buttonKey,
@@ -106,6 +108,7 @@ class InputFieldState extends State<InputField> {
   late bool gifIconHover = false;
   late bool emojiIconHover = false;
   late bool obscureTextIconHover = false;
+  late bool mediaIconHover = false;
 
   @override
   void initState() {
@@ -152,8 +155,10 @@ class InputFieldState extends State<InputField> {
     bool gif = (widget.onPressedGif != null? true : false);
     bool emoji = (widget.onPressedEmoji != null? true : false);
     bool obscure = (widget.onPressedObscureText != null? true : false);
+    bool media = (widget.onPressedMedia != null? true : false);
     double rightPadding = 0.0 + (gif? 40 : 0) + (emoji? 40 : 0) + (obscure? 40 : 0);
-    return EdgeInsets.only(right: rightPadding, left: 10, top: 10, bottom: 10);
+    double leftPadding = 5.0 + (media? 40 : 5.0);
+    return EdgeInsets.only(right: rightPadding, left: leftPadding, top: 10, bottom: 10);
   }
 
   @override
@@ -302,7 +307,39 @@ class InputFieldState extends State<InputField> {
                   : const SizedBox(),
               ],
             ),
-          )
+          ),
+          widget.onPressedMedia != null
+            ? Positioned(
+                bottom: (widget.multiline ?? false)? 8.5 : null,
+                left: 0,
+                child: MouseRegion(
+                  onEnter: (event) {
+                    setState(() {
+                      mediaIconHover = true;
+                    });
+                  },
+                  onExit: (event) {
+                    setState(() {
+                      mediaIconHover = false;
+                    });
+                  },
+                  child: IconButton(
+                    padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                    constraints: const BoxConstraints(maxWidth: 40.0),
+                    iconSize: 30.0,
+                    onPressed: widget.onPressedMedia,
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    icon: Icon(
+                      Icons.add_box_rounded,
+                      color: setColor(mediaIconHover),
+                    ),
+                  ),
+                ),
+              )
+            : const SizedBox(),
         ]),
       ),
     );
