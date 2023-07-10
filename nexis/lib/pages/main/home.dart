@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
@@ -13,6 +15,7 @@ import '../../enums/screen_type.dart';
 import '../../tenor/gif_search.dart';
 import '../../widgets/basic_input_field.dart';
 import 'dart:async';
+import 'dart:typed_data';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -33,6 +36,10 @@ class HomeState extends State<Home> {
   late SharedPreferences prefs;
   final buttonKey = GlobalKey();
   final gifSearchDialog = const GifSearchDialog();
+  //PlatformFile? pickedFile;
+  Uint8List? pickedFile;
+  late FilePickerResult? result;
+  late UploadTask? uploadTask;
 
   @override
   void initState() {
@@ -167,6 +174,7 @@ class HomeState extends State<Home> {
 
   onSubmittedMultiline() async {
     try {
+      await uploadFile();
       if (messageController.text.isNotEmpty) {
         await sendMessage();
         if (messageController.text.length <= maxMessageLength) {
@@ -179,6 +187,29 @@ class HomeState extends State<Home> {
         SnackBar(content: Text('Error sending message: $e')),
       );
     }
+  }
+
+  Future uploadFile() async {
+    String? fileName = result?.files.single.name;
+    final ref = FirebaseStorage.instance.ref().child('files/$fileName');
+
+    uploadTask = ref.putData(pickedFile!, SettableMetadata(
+      contentType: 'image/png',
+    ));
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    final downloadURL = await snapshot.ref.getDownloadURL();
+    print(downloadURL);
+  }
+
+  Future selectFile() async {
+    result = await FilePicker.platform.pickFiles(type: FileType.any);
+    if (result == null) return null;
+
+    setState(() {
+      //pickedFile = result.files.first;
+      pickedFile = result?.files.single.bytes;
+    });
   }
 
   @override
@@ -266,6 +297,10 @@ class HomeState extends State<Home> {
                                         }
                                       },
                                       onPressedEmoji: () {},
+                                      onPressedMedia: () async {
+                                        await selectFile();
+                                        messageController.text += '[${result?.files.single.name}]';
+                                      },
                                       buttonKey: buttonKey,
                                       onSubmittedMultiline: onSubmittedMultiline,
                                       multiline: true,
@@ -349,6 +384,7 @@ class HomeState extends State<Home> {
           }
         },
         onPressedEmoji: () {},
+        onPressedMedia: () {},
         buttonKey: buttonKey,
         onSubmittedMultiline: onSubmittedMultiline,
         multiline: true,
