@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../classes/media_share.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
 import '../../models/message_model.dart';
@@ -14,7 +13,6 @@ import '../../enums/screen_type.dart';
 import '../../tenor/gif_search.dart';
 import '../../widgets/basic_input_field.dart';
 import 'dart:async';
-import 'dart:typed_data';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -35,9 +33,6 @@ class HomeState extends State<Home> {
   late SharedPreferences prefs;
   final buttonKey = GlobalKey();
   final gifSearchDialog = const GifSearchDialog();
-  //PlatformFile? pickedFile;
-  Uint8List? pickedFile;
-  String? fileName;
 
   @override
   void initState() {
@@ -172,7 +167,7 @@ class HomeState extends State<Home> {
 
   onSubmittedMultiline() async {
     try {
-      messageController.text = (await MediaShare().uploadFile(pickedFile!, fileName!))!;
+      //messageController.text = (await MediaShare().uploadFile(pickedFile!, fileName!))!;
       if (messageController.text.isNotEmpty) {
         await sendMessage();
         if (messageController.text.length <= maxMessageLength) {
@@ -259,10 +254,13 @@ class HomeState extends State<Home> {
                                       focusNode: messageFocusNode,
                                       hint: 'Message #{send to}',
                                       onPressedGif: () async {
-                                        final gifUrl = await Navigator.of(context).push<String>(
+                                        final gifUrl =
+                                            await Navigator.of(context)
+                                                .push<String>(
                                           PageRouteBuilder(
                                             opaque: false,
-                                            pageBuilder: (_, __, ___) => const GifSearchDialog(),
+                                            pageBuilder: (_, __, ___) =>
+                                                const GifSearchDialog(),
                                           ),
                                         );
 
@@ -272,14 +270,7 @@ class HomeState extends State<Home> {
                                         }
                                       },
                                       onPressedEmoji: () {},
-                                      onPressedMedia: () async {
-                                        final file = await MediaShare().selectFile();
-                                        setState(() {
-                                          fileName = file?.name;
-                                          pickedFile = file?.bytes;
-                                        });
-                                        //messageController.text += '[${result?.files.single.name}]';
-                                      },
+                                      onPressedMedia: () {},
                                       buttonKey: buttonKey,
                                       onSubmittedMultiline: onSubmittedMultiline,
                                       multiline: true,

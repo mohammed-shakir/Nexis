@@ -1,6 +1,10 @@
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
+import '../media/media_attachment.dart';
+import '../media/media_share.dart';
 
 /// If [multiline] then choose [onSubmittedMultiline] else [onSubmitted]
 /// NOTE! [onSubmittedMultiline] and [onSubmitted] have different types
@@ -110,6 +114,9 @@ class InputFieldState extends State<InputField> {
   late bool obscureTextIconHover = false;
   late bool mediaIconHover = false;
 
+  List<PlatformFile> files = [];
+  final formKey = GlobalKey<FormBuilderState>();
+
   @override
   void initState() {
     super.initState();
@@ -146,6 +153,14 @@ class InputFieldState extends State<InputField> {
       if (!event.isShiftPressed) {
         setState(() {
           widget.onSubmittedMultiline!();
+          try {
+            MediaShare().uploadFiles(files);
+            files.clear();
+          } catch (e){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('$e')),
+            );
+          }
         });
       }
     }
@@ -161,6 +176,10 @@ class InputFieldState extends State<InputField> {
     return EdgeInsets.only(right: rightPadding, left: leftPadding, top: 10, bottom: 10);
   }
 
+  updateState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
@@ -171,7 +190,31 @@ class InputFieldState extends State<InputField> {
         decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
-        child: Stack(children: [
+        child: Column(children: [
+        files.isNotEmpty
+        ? Container(
+            color: Colors.blueGrey[750],
+            child: FormBuilder(
+              key: formKey,
+              child: Column(
+                children: <Widget>[
+                  FileViewer(
+                    name: 'images',
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.blueGrey[750],
+                      labelStyle: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    files: files,
+                    updateState: updateState,
+                    previewImages: true,
+                  ),
+                ],
+              ),
+            ),
+          )
+        : const SizedBox(),
+        Stack(children: [
           TextFormField(
             controller: widget.controller,
             focusNode: widget.focusNode,
@@ -327,7 +370,13 @@ class InputFieldState extends State<InputField> {
                     padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
                     constraints: const BoxConstraints(maxWidth: 40.0),
                     iconSize: 30.0,
-                    onPressed: widget.onPressedMedia,
+                    onPressed: () async {
+                      final file = await MediaShare().selectFile();
+                      setState(() {
+                        files.addAll(file ?? []);
+                        widget.focusNode!.requestFocus();
+                      });
+                    },
                     hoverColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
@@ -341,14 +390,19 @@ class InputFieldState extends State<InputField> {
               )
             : const SizedBox(),
         ]),
-      ),
+      ])),
     );
   }
 
   OutlineInputBorder buildBorder([include, size, color, context]) {
     include ??= false;
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(size ?? 8),
+      borderRadius: files.isEmpty
+      ? BorderRadius.circular(size ?? 8)
+      : BorderRadius.only(
+          bottomLeft: Radius.circular(size ?? 8.0),
+          bottomRight: Radius.circular(size ?? 8.0)
+        ),
       borderSide: include
           ? BorderSide(
               color: color ?? Theme.of(context).colorScheme.outline,
