@@ -1,30 +1,18 @@
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:mime/mime.dart';
 
 class MediaShare {
   late UploadTask? uploadTask;
 
-  static const imageFileExts = [
-    'gif',
-    'jpg',
-    'jpeg',
-    'png',
-    'webp',
-    'bmp',
-    'dib',
-    'wbmp',
-  ];
-
   String getFileType(String ext) {
-    if (imageFileExts.contains(ext)) {
-      return 'image/$ext';
-    }
+    String? mimeType = lookupMimeType(ext);
+    List<String> types = mimeType!.split('/');
+    String type = types[0]; // 'image' or 'audio'
+    String subtype = types[1]; // 'png' or 'mp3'
 
-    switch (ext) {
-      default:
-        return 'application/octet-stream';
-    }
+    return '$type/$subtype';
   }
 
   Future uploadFiles(List<PlatformFile> files) async {
@@ -32,8 +20,9 @@ class MediaShare {
       for (PlatformFile element in files) {
         final Uint8List? data = element.bytes;
         final String fileName = element.name;
-        final ext = element.extension!.toLowerCase();
-        final type = getFileType(ext);
+        //final ext = element.extension!.toLowerCase();
+        final type = getFileType(fileName);
+        print(fileName);
 
         final ref = FirebaseStorage.instance.ref().child('media_share/$fileName');
         uploadTask = ref.putData(data!, SettableMetadata(

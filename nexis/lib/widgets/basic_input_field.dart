@@ -154,8 +154,12 @@ class InputFieldState extends State<InputField> {
         setState(() {
           widget.onSubmittedMultiline!();
           try {
-            MediaShare().uploadFiles(files);
-            files.clear();
+            if (files.isNotEmpty) {
+              final List<PlatformFile> sendFiles = [];
+              sendFiles.addAll(files);
+              MediaShare().uploadFiles(sendFiles);
+              files.clear();
+            }
           } catch (e){
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('$e')),
