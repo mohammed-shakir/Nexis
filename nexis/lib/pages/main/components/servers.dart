@@ -78,8 +78,6 @@ class ServersState extends State<Servers> {
                         ServerButton(
                           onPressed: () {
                             setState(() => selectedIndex = i + 1);
-                            prefs?.setString('selectedServer',
-                                serversData[i]['id'].toString());
                             serverProvider.setSelectServer(
                                 serversData[i]['id'].toString());
                             serverProvider

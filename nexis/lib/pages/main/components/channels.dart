@@ -39,73 +39,64 @@ class ChannelsState extends State<Channels> {
     }
   }
 
-  Future<List<String>> getChannels(ServerProvider serverProvider) async {
-    String serverId = serverProvider.selectedServerId.toString();
-    if (serverId != 'null') {
-      return await serverProvider.fetchServerChannels(serverId);
-    } else {
-      return [];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      future: channelsDataFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          List<String> channels = snapshot.data ?? [];
-          print(channels);
-          return Column(
-            children: [
-              Expanded(child: buildServerChannels(channels)),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      backgroundImage: AssetImage("./assets/temp.png"),
-                      backgroundColor: Colors.transparent,
-                      radius: 15,
-                    ),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'Shackman',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
+    return Consumer<ServerProvider>(builder: (context, serverProvider, _) {
+      return FutureBuilder<List<String>>(
+        future: channelsDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Column(
+              children: [
+                Expanded(child: buildServerChannels(serverProvider)),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundImage: AssetImage("./assets/temp.png"),
+                        backgroundColor: Colors.transparent,
+                        radius: 15,
                       ),
-                    ),
-                    const Spacer(),
-                    HoverIconButton(
-                      icon: const Icon(Icons.mic),
-                      onPressed: () {},
-                      color: Colors.grey,
-                      hoverColor: Colors.white,
-                      size: 20,
-                    ),
-                    HoverIconButton(
-                      icon: const Icon(Icons.settings),
-                      onPressed: () {
-                        Navigator.pushNamed(context, RouteNames.settingsPage);
-                      },
-                      color: Colors.grey,
-                      hoverColor: Colors.white,
-                      size: 20,
-                    ),
-                  ],
+                      const SizedBox(width: 5),
+                      const Text(
+                        'Shackman',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const Spacer(),
+                      HoverIconButton(
+                        icon: const Icon(Icons.mic),
+                        onPressed: () {},
+                        color: Colors.grey,
+                        hoverColor: Colors.white,
+                        size: 20,
+                      ),
+                      HoverIconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () {
+                          Navigator.pushNamed(context, RouteNames.settingsPage);
+                        },
+                        color: Colors.grey,
+                        hoverColor: Colors.white,
+                        size: 20,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    );
+              ],
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
+      );
+    });
   }
 
-  Widget buildServerChannels(List<String> channels) {
+  Widget buildServerChannels(ServerProvider serverProvider) {
     return Container(
       color: Theme.of(context).colorScheme.background,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -136,34 +127,21 @@ class ChannelsState extends State<Channels> {
               ),
             ),
             const SizedBox(height: 10),
-            for (int i = 0; i < channels.length; i++)
-              ChannelButton(
-                onPressed: () => setState(() => selectedIndex = i),
-                icon: const Icon(Icons.chat, size: 18),
-                isSelected: selectedIndex == i,
-                size: 18,
-                name: channels[i],
-              ),
-            // ChannelButton(
-            //   onPressed: () => setState(() => selectedIndex = 0),
-            //   icon: const Icon(Icons.chat, size: 18),
-            //   isSelected: selectedIndex == 0,
-            //   size: 18,
-            //   name: "General",
-            // ),
-            // const SizedBox(height: 5),
-            // ChannelButton(
-            //   onPressed: () => setState(() => selectedIndex = 1),
-            //   icon: const Icon(Icons.chat, size: 18),
-            //   isSelected: selectedIndex == 1,
-            //   size: 18,
-            //   name: "Balls",
-            // ),
-            Text(
-              '''
-              ${Provider.of<ServerProvider>(context).getServerChannels}!
-              ''',
-            ),
+            ...serverProvider.getServerChannels?.expand<Widget>((channel) {
+                  return [
+                    ChannelButton(
+                      onPressed: () => setState(() => selectedIndex =
+                          serverProvider.getServerChannels!.indexOf(channel)),
+                      icon: const Icon(Icons.chat, size: 18),
+                      isSelected: selectedIndex ==
+                          serverProvider.getServerChannels!.indexOf(channel),
+                      size: 18,
+                      name: channel,
+                    ),
+                    const SizedBox(height: 5),
+                  ];
+                }) ??
+                [],
             const SizedBox(height: 20),
             const Padding(
               padding: EdgeInsets.only(left: 8.0),
