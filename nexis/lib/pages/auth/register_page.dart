@@ -136,8 +136,8 @@ class RegisterPageState extends State<RegisterPage> {
     bool hasUppercase = text!.contains(RegExp(r'[A-Z]'));
     bool hasDigits = text.contains(RegExp(r'[0-9]'));
     bool hasLowercase = text.contains(RegExp(r'[a-z]'));
-    bool hasSpecialCharacters =
-        text.contains(RegExp(r'[*.!@#$%^&(){}[]:;<>,.?/~_+-=|\]'));
+    bool hasSpecialCharacters = text.contains(RegExp(r'[^\w\d\s]')) ||
+                                text.contains(RegExp(r'_'));
     bool hasMinLength = text.length >= 8;
 
     return hasUppercase &&
@@ -302,9 +302,11 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          onPressed: emptyFieldCheck()
-                            ? signUp
-                            : null,
+                          onPressed: () {
+                            emptyFieldCheck()
+                              ? signUp()
+                              : null;
+                          },
                           mediumBody: 'Already have an account?',
                           recognizer: TapGestureRecognizer()
                             ..onTap = 
@@ -452,9 +454,11 @@ class RegisterPageState extends State<RegisterPage> {
                         CustomColumn(
                           type: ColumnType.type4,
                           buttonText: 'Register',
-                          onPressed: emptyFieldCheck()
-                            ? signUp
-                            : null,
+                          onPressed: () {
+                            emptyFieldCheck()
+                              ? signUp()
+                              : null;
+                          },
                           mediumBody: 'Already have an account?',
                           recognizer: TapGestureRecognizer()
                             ..onTap = 

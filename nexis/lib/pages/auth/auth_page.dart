@@ -178,9 +178,11 @@ class AuthPageState extends State<AuthPage> {
                         const SizedBox(height: 30),
                         CustomColumn(
                           type: ColumnType.type4,
-                          onPressed: emptyFieldCheck()
-                            ? signIn
-                            : null,
+                          onPressed: () {
+                            emptyFieldCheck()
+                              ? signIn()
+                              : null;
+                          },
                           buttonText: 'Sign In',
                           smallLabel: 'Need an account? ',
                           mediumBody: 'Register',
