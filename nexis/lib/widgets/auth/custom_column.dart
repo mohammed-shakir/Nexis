@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nexis/widgets/auth/custom_input_field.dart';
+import '../basic_input_field.dart';
 import '../custom_button.dart';
 import '../../pages/auth/utility/column_type.dart';
 import 'dart:math';
@@ -26,6 +26,7 @@ class CustomColumn extends StatelessWidget {
   final Widget? suffixIcon;
   final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
+  final void Function()? onPressedObscureText;
 
   const CustomColumn({
     Key? key,
@@ -49,6 +50,7 @@ class CustomColumn extends StatelessWidget {
     this.suffixIcon,
     this.autovalidateMode,
     this.validator,
+    this.onPressedObscureText,
   }) : super(key: key);
 
   @override
@@ -63,8 +65,8 @@ class CustomColumn extends StatelessWidget {
         sizedBox(margins[0]),
         text(type, context, mediumLabel),
         sizedBox(margins[1]),
-        textField(type, controller, onSubmitted, obscureText, hint, onTap,
-            readOnly, autovalidateMode, validator),
+        textField(context, type, controller, onSubmitted, obscureText, hint, onTap,
+            readOnly, autovalidateMode, validator, onPressedObscureText),
         rowCol(type, context, onTap, monthController, dayController,
             yearController, contextSize),
         sizedBox(margins[2]),
@@ -86,6 +88,7 @@ class CustomColumn extends StatelessWidget {
   }
 
   textField(
+      BuildContext context,
       ColumnType type,
       TextEditingController? controller,
       void Function(String)? onSubmitted,
@@ -94,22 +97,27 @@ class CustomColumn extends StatelessWidget {
       void Function()? onTap,
       bool? readOnly,
       AutovalidateMode? autovalidateMode,
-      String? Function(String?)? validator) {
+      String? Function(String?)? validator,
+      void Function()? onPressedObscureText) {
     if (type == ColumnType.type4 || type == ColumnType.type5) {
       return sizedBox(0);
     }
     return SizedBox(
       width: 500,
-      child: CustomTextField(
-        suffixIcon: suffixIcon,
+      child: InputField(
         obscureText: obscureText ?? false,
         hint: hint ?? '',
         controller: controller,
         onSubmitted: onSubmitted,
+        onPressedObscureText: onPressedObscureText,
         onTap: onTap,
         readOnly: readOnly ?? false,
         autovalidateMode: autovalidateMode,
         validator: validator,
+        includeBorder: true,
+        borderColor: Theme.of(context).colorScheme.outline,
+        focusedBorderColor: Theme.of(context).colorScheme.secondary,
+        padding: const EdgeInsets.symmetric(horizontal: 0.0),
       ),
     );
   }
@@ -174,7 +182,7 @@ class CustomColumn extends StatelessWidget {
 
   rowCol(
       ColumnType type,
-      BuildContext? context,
+      BuildContext context,
       void Function()? selectDate,
       TextEditingController? monthController,
       TextEditingController? dayController,
@@ -189,34 +197,46 @@ class CustomColumn extends StatelessWidget {
         children: [
           SizedBox(
             width: getDisplayWidth(contextSize!, 160),
-            child: CustomTextField(
+            child: InputField(
               obscureText: false,
               hint: 'Month',
               onTap: selectDate,
               controller: monthController,
               readOnly: true,
+              includeBorder: true,
+              borderColor: Theme.of(context).colorScheme.outline,
+              focusedBorderColor: Theme.of(context).colorScheme.secondary,
+              padding: const EdgeInsets.symmetric(horizontal: 0.0),
             ),
           ),
           SizedBox(width: getDisplayWidth(contextSize, 25)),
           SizedBox(
             width: getDisplayWidth(contextSize, 120),
-            child: CustomTextField(
+            child: InputField(
               obscureText: false,
               hint: 'Day',
               onTap: selectDate,
               controller: dayController,
               readOnly: true,
+              includeBorder: true,
+              borderColor: Theme.of(context).colorScheme.outline,
+              focusedBorderColor: Theme.of(context).colorScheme.secondary,
+              padding: const EdgeInsets.symmetric(horizontal: 0.0),
             ),
           ),
           SizedBox(width: getDisplayWidth(contextSize, 25)),
           SizedBox(
             width: getDisplayWidth(contextSize, 140),
-            child: CustomTextField(
+            child: InputField(
               obscureText: false,
               hint: 'Year',
               onTap: selectDate,
               controller: yearController,
               readOnly: true,
+              includeBorder: true,
+              borderColor: Theme.of(context).colorScheme.outline,
+              focusedBorderColor: Theme.of(context).colorScheme.secondary,
+              padding: const EdgeInsets.symmetric(horizontal: 0.0),
             ),
           ),
         ],

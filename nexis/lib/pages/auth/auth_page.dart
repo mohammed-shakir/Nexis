@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
+  final authKey = GlobalKey<FormState>();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
@@ -33,6 +36,11 @@ class AuthPageState extends State<AuthPage> {
   }
 
   void signIn() async {
+    final isValid = authKey.currentState!.validate();
+    if (!isValid) {
+      return;
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const LoadingScreen(),
@@ -79,6 +87,11 @@ class AuthPageState extends State<AuthPage> {
     }
   }
 
+  bool emptyFieldCheck() {
+    return emailController.value.text.isNotEmpty &&
+        passwordController.value.text.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return authPage(context);
@@ -117,54 +130,59 @@ class AuthPageState extends State<AuthPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomColumn(
-                        type: ColumnType.type1,
-                        largeLabel: 'Welcome!',
-                        mediumLabel: 'Email',
-                        controller: emailController,
-                        onSubmitted: (_) {
-                          signIn();
-                        },
-                      ),
-                      const SizedBox(height: 30),
-                      CustomColumn(
-                        type: ColumnType.type2,
-                        mediumLabel: 'Password',
-                        controller: passwordController,
-                        suffixIcon: IconButton(
-                          icon: Icon(obscureText
-                              ? Icons.visibility_off
-                              : Icons.visibility),
-                          onPressed: () {
+                  child: Form(
+                    key: authKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CustomColumn(
+                          type: ColumnType.type1,
+                          largeLabel: 'Welcome!',
+                          mediumLabel: 'Email',
+                          controller: emailController,
+                          onSubmitted: (_) {
+                            emptyFieldCheck() ? signIn() : null;
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (text) =>
+                              text != null && !EmailValidator.validate(text)
+                                  ? 'Invalid email format'
+                                  : null,
+                        ),
+                        const SizedBox(height: 30),
+                        CustomColumn(
+                          type: ColumnType.type2,
+                          mediumLabel: 'Password',
+                          controller: passwordController,
+                          onPressedObscureText: () {
                             setState(() {
                               obscureText = !obscureText;
                             });
                           },
+                          obscureText: obscureText,
+                          onSubmitted: (_) {
+                            emptyFieldCheck() ? signIn() : null;
+                          },
+                          mediumBody: 'Forgot your password?',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = RouteChange(context, '').reDir,
                         ),
-                        obscureText: obscureText,
-                        onSubmitted: (_) {
-                          signIn();
-                        },
-                        mediumBody: 'Forgot your password?',
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = RouteChange(context, '').reDir,
-                      ),
-                      const SizedBox(height: 30),
-                      CustomColumn(
-                        type: ColumnType.type4,
-                        onPressed: signIn,
-                        buttonText: 'Sign In',
-                        smallLabel: 'Need an account? ',
-                        mediumBody: 'Register',
-                        recognizer: TapGestureRecognizer()
-                          ..onTap =
-                              RouteChange(context, RouteNames.registerPage)
-                                  .reDir,
-                      ),
-                    ],
+                        const SizedBox(height: 30),
+                        CustomColumn(
+                          type: ColumnType.type4,
+                          onPressed: () {
+                            emptyFieldCheck() ? signIn() : null;
+                          },
+                          buttonText: 'Sign In',
+                          smallLabel: 'Need an account? ',
+                          mediumBody: 'Register',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap =
+                                RouteChange(context, RouteNames.registerPage)
+                                    .reDir,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

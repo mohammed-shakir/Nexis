@@ -141,6 +141,14 @@ class RegisterPageState extends State<RegisterPage> {
         hasMinLength;
   }
 
+  bool emptyFieldCheck() {
+    return emailController.value.text.isNotEmpty &&
+        usernameController.value.text.isNotEmpty &&
+        passwordController.value.text.isNotEmpty &&
+        confirmPasswordController.value.text.isNotEmpty &&
+        dateController.value.text.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
