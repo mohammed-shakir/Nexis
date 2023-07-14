@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:async';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -10,8 +11,8 @@ class LoadingScreen extends StatefulWidget {
 
 class LoadingScreenState extends State<LoadingScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
+  late final AnimationController controller;
+  late final Animation<double> animation;
 
   final List<String> loadingPhrases = [
     'Loading the magic...',
@@ -25,22 +26,29 @@ class LoadingScreenState extends State<LoadingScreen>
   ];
 
   String randomPhrase = '';
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
 
-    _animation = Tween<double>(begin: 0, end: 360).animate(CurvedAnimation(
-      parent: _controller,
+    animation = Tween<double>(begin: 0, end: 360).animate(CurvedAnimation(
+      parent: controller,
       curve: Curves.easeInOut,
     ));
 
     randomPhrase = loadingPhrases[Random().nextInt(loadingPhrases.length)];
+
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      setState(() {
+        randomPhrase = loadingPhrases[Random().nextInt(loadingPhrases.length)];
+      });
+    });
   }
 
   @override
@@ -52,10 +60,10 @@ class LoadingScreenState extends State<LoadingScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedBuilder(
-              animation: _animation,
+              animation: animation,
               builder: (_, child) {
                 return Transform.rotate(
-                  angle: _animation.value * (3.1416 / 180),
+                  angle: animation.value * (3.1416 / 180),
                   child: child,
                 );
               },
@@ -81,7 +89,8 @@ class LoadingScreenState extends State<LoadingScreen>
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
+    timer?.cancel();
     super.dispose();
   }
 }
@@ -95,13 +104,13 @@ class LoadingIndicatorFull extends StatefulWidget {
 
 class LoadingIndicatorFullState extends State<LoadingIndicatorFull>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+  late final AnimationController controller;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
@@ -122,7 +131,7 @@ class LoadingIndicatorFullState extends State<LoadingIndicatorFull>
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 }
@@ -136,13 +145,13 @@ class LoadingIndicator extends StatefulWidget {
 
 class LoadingIndicatorState extends State<LoadingIndicator>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+  late final AnimationController controller;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
@@ -158,7 +167,7 @@ class LoadingIndicatorState extends State<LoadingIndicator>
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 }

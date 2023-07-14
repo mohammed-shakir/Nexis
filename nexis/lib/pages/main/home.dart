@@ -249,14 +249,20 @@ class HomeState extends State<Home> {
                                       ),
                                     ),
                                     InputField(
+                                      fillColor: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceVariant,
                                       controller: messageController,
                                       focusNode: messageFocusNode,
                                       hint: 'Message #{send to}',
                                       onPressedGif: () async {
-                                        final gifUrl = await Navigator.of(context).push<String>(
+                                        final gifUrl =
+                                            await Navigator.of(context)
+                                                .push<String>(
                                           PageRouteBuilder(
                                             opaque: false,
-                                            pageBuilder: (_, __, ___) => const GifSearchDialog(),
+                                            pageBuilder: (_, __, ___) =>
+                                                const GifSearchDialog(),
                                           ),
                                         );
 
@@ -267,10 +273,12 @@ class HomeState extends State<Home> {
                                       },
                                       onPressedEmoji: () {},
                                       buttonKey: buttonKey,
-                                      onSubmittedMultiline: onSubmittedMultiline,
+                                      onSubmittedMultiline:
+                                          onSubmittedMultiline,
                                       multiline: true,
                                       maxLines: 15,
-                                      padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          35.0, 0.0, 35.0, 30.0),
                                     ),
                                   ]),
                                 ),
