@@ -165,23 +165,6 @@ class HomeState extends State<Home> {
     }
   }
 
-  onSubmittedMultiline() async {
-    try {
-      //messageController.text = (await MediaShare().uploadFile(pickedFile!, fileName!))!;
-      if (messageController.text.isNotEmpty) {
-        await sendMessage();
-        if (messageController.text.length <= maxMessageLength) {
-          scrollToBottom();
-          messageFocusNode.requestFocus();
-        }
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error sending message: $e')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -254,13 +237,10 @@ class HomeState extends State<Home> {
                                       focusNode: messageFocusNode,
                                       hint: 'Message #{send to}',
                                       onPressedGif: () async {
-                                        final gifUrl =
-                                            await Navigator.of(context)
-                                                .push<String>(
+                                        final gifUrl = await Navigator.of(context).push<String>(
                                           PageRouteBuilder(
                                             opaque: false,
-                                            pageBuilder: (_, __, ___) =>
-                                                const GifSearchDialog(),
+                                            pageBuilder: (_, __, ___) => const GifSearchDialog(),
                                           ),
                                         );
 
@@ -270,9 +250,23 @@ class HomeState extends State<Home> {
                                         }
                                       },
                                       onPressedEmoji: () {},
-                                      onPressedMedia: () {},
+                                      includeMedia: true,
                                       buttonKey: buttonKey,
-                                      onSubmittedMultiline: onSubmittedMultiline,
+                                      onSubmittedMultiline: () async {
+                                        try {
+                                          if (messageController.text.isNotEmpty) {
+                                            await sendMessage();
+                                            if (messageController.text.length <= maxMessageLength) {
+                                              scrollToBottom();
+                                              messageFocusNode.requestFocus();
+                                            }
+                                          }
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text('Error sending message: $e')),
+                                          );
+                                        }
+                                      },
                                       multiline: true,
                                       maxLines: 15,
                                       padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
@@ -354,9 +348,23 @@ class HomeState extends State<Home> {
           }
         },
         onPressedEmoji: () {},
-        onPressedMedia: () {},
+        includeMedia: true,
         buttonKey: buttonKey,
-        onSubmittedMultiline: onSubmittedMultiline,
+        onSubmittedMultiline: () async {
+          try {
+            if (messageController.text.isNotEmpty) {
+              await sendMessage();
+              if (messageController.text.length <= maxMessageLength) {
+                scrollToBottom();
+                messageFocusNode.requestFocus();
+              }
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error sending message: $e')),
+            );
+          }
+        },
         multiline: true,
         maxLines: 15,
         padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
