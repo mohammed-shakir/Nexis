@@ -57,12 +57,12 @@ class ParticipantInfoState extends State<ParticipantInfo> {
                 memberIds = List<String>.from(serverData?['member_ids'] ?? []);
                 return buildParticipantInfo();
               } else {
-                return const LoadingIndicator();
+                return const LoadingIndicatorFull();
               }
             },
           );
         } else {
-          return const LoadingIndicator();
+          return const LoadingIndicatorFull();
         }
       },
     );

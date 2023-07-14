@@ -48,7 +48,7 @@ class ServersState extends State<Servers> {
           List<Map<String, dynamic>> serversData = snapshot.data ?? [];
           return buildServers(serversData);
         } else {
-          return const LoadingIndicator();
+          return const LoadingIndicatorFull();
         }
       },
     );

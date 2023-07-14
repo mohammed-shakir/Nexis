@@ -64,7 +64,8 @@ class MessageItem extends StatelessWidget {
                 content.startsWith("https://media.tenor.com")
                     ? CachedNetworkImage(
                         imageUrl: content,
-                        placeholder: (context, url) => const LoadingIndicator(),
+                        placeholder: (context, url) =>
+                            const LoadingIndicatorFull(),
                       )
                     : Text(
                         content,

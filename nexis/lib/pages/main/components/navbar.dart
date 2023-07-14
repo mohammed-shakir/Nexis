@@ -59,7 +59,7 @@ class NavBarState extends State<NavBar> {
               return buildDesktopServerNavbar(context, prefs);
           }
         } else {
-          return const LoadingIndicator();
+          return const LoadingIndicatorFull();
         }
       },
     );

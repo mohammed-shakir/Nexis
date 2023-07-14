@@ -86,14 +86,14 @@ class LoadingScreenState extends State<LoadingScreen>
   }
 }
 
-class LoadingIndicator extends StatefulWidget {
-  const LoadingIndicator({Key? key}) : super(key: key);
+class LoadingIndicatorFull extends StatefulWidget {
+  const LoadingIndicatorFull({Key? key}) : super(key: key);
 
   @override
-  LoadingIndicatorState createState() => LoadingIndicatorState();
+  LoadingIndicatorFullState createState() => LoadingIndicatorFullState();
 }
 
-class LoadingIndicatorState extends State<LoadingIndicator>
+class LoadingIndicatorFullState extends State<LoadingIndicatorFull>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -117,6 +117,42 @@ class LoadingIndicatorState extends State<LoadingIndicator>
           strokeWidth: 3,
         ),
       ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+class LoadingIndicator extends StatefulWidget {
+  const LoadingIndicator({Key? key}) : super(key: key);
+
+  @override
+  LoadingIndicatorState createState() => LoadingIndicatorState();
+}
+
+class LoadingIndicatorState extends State<LoadingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CircularProgressIndicator(
+      color: Theme.of(context).colorScheme.secondary,
+      strokeWidth: 3,
     );
   }
 

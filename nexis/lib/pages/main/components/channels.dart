@@ -90,7 +90,7 @@ class ChannelsState extends State<Channels> {
               ],
             );
           } else {
-            return const LoadingIndicator();
+            return const LoadingIndicatorFull();
           }
         },
       );
