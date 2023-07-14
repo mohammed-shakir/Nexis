@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/server_providor.dart';
 import '../../../widgets/server_button.dart';
+import '../../../widgets/loading_screen.dart';
 
 class Servers extends StatefulWidget {
   const Servers({Key? key}) : super(key: key);
@@ -47,7 +48,7 @@ class ServersState extends State<Servers> {
           List<Map<String, dynamic>> serversData = snapshot.data ?? [];
           return buildServers(serversData);
         } else {
-          return const CircularProgressIndicator();
+          return const LoadingIndicator();
         }
       },
     );

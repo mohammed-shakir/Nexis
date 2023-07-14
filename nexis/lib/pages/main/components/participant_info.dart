@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/server_providor.dart';
+import '../../../widgets/loading_screen.dart';
 
 class ParticipantInfo extends StatefulWidget {
   const ParticipantInfo({Key? key}) : super(key: key);
@@ -56,12 +57,12 @@ class ParticipantInfoState extends State<ParticipantInfo> {
                 memberIds = List<String>.from(serverData?['member_ids'] ?? []);
                 return buildParticipantInfo();
               } else {
-                return const CircularProgressIndicator();
+                return const LoadingIndicator();
               }
             },
           );
         } else {
-          return const CircularProgressIndicator();
+          return const LoadingIndicator();
         }
       },
     );
