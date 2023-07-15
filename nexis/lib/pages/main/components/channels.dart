@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import '../../../widgets/channel_button.dart';
 import '../../../widgets/hover_icon_button.dart';
 import '../../../classes/route_names.dart';
 import '../../../providers/server_providor.dart';
-import 'package:provider/provider.dart';
+import '../../../widgets/loading_screen.dart';
 
 class Channels extends StatefulWidget {
   const Channels({Key? key}) : super(key: key);
@@ -89,7 +90,7 @@ class ChannelsState extends State<Channels> {
               ],
             );
           } else {
-            return const CircularProgressIndicator();
+            return const LoadingIndicatorFull();
           }
         },
       );
