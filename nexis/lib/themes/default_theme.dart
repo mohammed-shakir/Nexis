@@ -51,7 +51,7 @@ final ThemeData appTheme = ThemeData(
     thumbColor: MaterialStateProperty.all(Colors.black),
   ),
   textSelectionTheme: const TextSelectionThemeData(
-    selectionColor: Colors.blue,
+    selectionColor: Color(0x80800020),
   ),
   scaffoldBackgroundColor: const Color(0xFF242C40),
 );
