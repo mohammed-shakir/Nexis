@@ -52,10 +52,22 @@ class MessageInterfaceState extends State<MessageInterface> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 shrinkWrap: true,
                 itemCount: widget.messages.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) =>
-                    MessageItem(message: widget.messages[index]),
+                separatorBuilder: (context, index) {
+                  bool showSenderInfoNext =
+                      index + 1 == widget.messages.length ||
+                          widget.messages[index + 1].sender !=
+                              widget.messages[index].sender;
+                  return SizedBox(height: showSenderInfoNext ? 10 : 5);
+                },
+                itemBuilder: (context, index) {
+                  bool showSenderInfo = index == 0 ||
+                      widget.messages[index].sender !=
+                          widget.messages[index - 1].sender;
+                  return MessageItem(
+                    message: widget.messages[index],
+                    showSenderInfo: showSenderInfo,
+                  );
+                },
               ),
             ),
     );
