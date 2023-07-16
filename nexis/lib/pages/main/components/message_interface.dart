@@ -63,9 +63,21 @@ class MessageInterfaceState extends State<MessageInterface> {
                       return SizedBox(height: showSenderInfoNext ? 10 : 5);
                     },
                     itemBuilder: (context, index) {
-                      bool showSenderInfo = index == 0 ||
-                          widget.messages[index].sender !=
-                              widget.messages[index - 1].sender;
+                      bool showSenderInfo;
+                      if (index == 0) {
+                        showSenderInfo = true;
+                      } else {
+                        final previousTimestamp =
+                            widget.messages[index - 1].timestamp.toDate();
+                        final currentTimestamp =
+                            widget.messages[index].timestamp.toDate();
+                        final difference =
+                            currentTimestamp.difference(previousTimestamp);
+
+                        showSenderInfo = widget.messages[index].sender !=
+                                widget.messages[index - 1].sender ||
+                            difference.inMinutes >= 5;
+                      }
                       return MessageItem(
                         message: widget.messages[index],
                         showSenderInfo: showSenderInfo,
