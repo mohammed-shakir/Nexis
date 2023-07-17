@@ -43,19 +43,48 @@ class MessageInterfaceState extends State<MessageInterface> {
                 style: TextStyle(color: Colors.white),
               ),
             )
-          : Scrollbar(
-              thumbVisibility: true,
-              controller: widget.scrollController,
-              child: ListView.separated(
+          : SelectionArea(
+              child: Scrollbar(
+                thumbVisibility: true,
                 controller: widget.scrollController,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                shrinkWrap: true,
-                itemCount: widget.messages.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) =>
-                    MessageItem(message: widget.messages[index]),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ListView.separated(
+                    controller: widget.scrollController,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 20),
+                    shrinkWrap: true,
+                    itemCount: widget.messages.length,
+                    separatorBuilder: (context, index) {
+                      bool showSenderInfoNext =
+                          index + 1 == widget.messages.length ||
+                              widget.messages[index + 1].sender !=
+                                  widget.messages[index].sender;
+                      return SizedBox(height: showSenderInfoNext ? 10 : 5);
+                    },
+                    itemBuilder: (context, index) {
+                      bool showSenderInfo;
+                      if (index == 0) {
+                        showSenderInfo = true;
+                      } else {
+                        final previousTimestamp =
+                            widget.messages[index - 1].timestamp.toDate();
+                        final currentTimestamp =
+                            widget.messages[index].timestamp.toDate();
+                        final difference =
+                            currentTimestamp.difference(previousTimestamp);
+
+                        showSenderInfo = widget.messages[index].sender !=
+                                widget.messages[index - 1].sender ||
+                            difference.inMinutes >= 5;
+                      }
+                      return MessageItem(
+                        message: widget.messages[index],
+                        showSenderInfo: showSenderInfo,
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
     );

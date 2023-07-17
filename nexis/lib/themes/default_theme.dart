@@ -8,6 +8,7 @@ final ThemeData appTheme = ThemeData(
     outline: const Color(0xFF171c2a),
     background: const Color.fromARGB(255, 21, 25, 37),
     onBackground: const Color.fromARGB(255, 15, 18, 28),
+    surfaceVariant: const Color.fromARGB(255, 28, 34, 51),
   ),
   textTheme: const TextTheme(
     // Title
@@ -50,7 +51,7 @@ final ThemeData appTheme = ThemeData(
     thumbColor: MaterialStateProperty.all(Colors.black),
   ),
   textSelectionTheme: const TextSelectionThemeData(
-    selectionColor: Colors.blue,
+    selectionColor: Color(0x80800020),
   ),
   scaffoldBackgroundColor: const Color(0xFF242C40),
 );

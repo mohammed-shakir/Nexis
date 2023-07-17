@@ -124,18 +124,12 @@ class InputFieldState extends State<InputField> {
   void onChanged() {
     if (widget.controllerListenerFunction != null) {
       widget.controllerListenerFunction?.call(widget.controller!.text);
-    } else {
-      defaultListenerFunction();
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void defaultListenerFunction() {
-    widget.logger.i(widget.controller?.text);
   }
 
   Color setColor(bool hover) {

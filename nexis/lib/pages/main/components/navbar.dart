@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../enums/screen_type.dart';
 import '../../../widgets/hover_icon_button.dart';
+import '../../../widgets/loading_screen.dart';
 
 class NavBar extends StatefulWidget {
   final VoidCallback? openDrawer;
@@ -58,7 +59,7 @@ class NavBarState extends State<NavBar> {
               return buildDesktopServerNavbar(context, prefs);
           }
         } else {
-          return const CircularProgressIndicator();
+          return const LoadingIndicatorFull();
         }
       },
     );

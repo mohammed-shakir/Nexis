@@ -237,6 +237,9 @@ class HomeState extends State<Home> {
                                     ),
                                     StatefulBuilder(
                                       builder: (ctx, setState) => InputField(
+                                        fillColor: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceVariant,
                                         controller: messageController,
                                         focusNode: messageFocusNode,
                                         hint: 'Message #{send to}',

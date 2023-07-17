@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/server_providor.dart';
 import '../../../widgets/server_button.dart';
+import '../../../widgets/loading_screen.dart';
 
 class Servers extends StatefulWidget {
   const Servers({Key? key}) : super(key: key);
@@ -12,24 +13,25 @@ class Servers extends StatefulWidget {
 }
 
 class ServersState extends State<Servers> {
-  late SharedPreferences prefs;
+  late SharedPreferences? prefs;
   int selectedIndex = 0;
   late Future<SharedPreferences> prefsFuture;
   late Future<List<Map<String, dynamic>>> serversDataFuture;
+  late ServerProvider serverProvider;
 
   @override
   void initState() {
     super.initState();
 
     prefsFuture = SharedPreferences.getInstance();
-    var serverProvider = Provider.of<ServerProvider>(context, listen: false);
+    serverProvider = Provider.of<ServerProvider>(context, listen: false);
     serversDataFuture = initSharedPreferences(serverProvider);
   }
 
   Future<List<Map<String, dynamic>>> initSharedPreferences(
       ServerProvider serverProvider) async {
-    final prefs = await prefsFuture;
-    List<String>? serverIds = prefs.getStringList('servers');
+    prefs = await prefsFuture;
+    List<String>? serverIds = prefs?.getStringList('servers');
     if (serverIds != null && serverIds.isNotEmpty) {
       return Future.wait(serverIds.map(serverProvider.fetchServerData));
     } else {
@@ -46,7 +48,7 @@ class ServersState extends State<Servers> {
           List<Map<String, dynamic>> serversData = snapshot.data ?? [];
           return buildServers(serversData);
         } else {
-          return const CircularProgressIndicator();
+          return const LoadingIndicatorFull();
         }
       },
     );
@@ -75,8 +77,13 @@ class ServersState extends State<Servers> {
                     Column(
                       children: [
                         ServerButton(
-                          onPressed: () =>
-                              setState(() => selectedIndex = i + 1),
+                          onPressed: () {
+                            setState(() => selectedIndex = i + 1);
+                            serverProvider.setSelectServer(
+                                serversData[i]['id'].toString());
+                            serverProvider
+                                .setChannels(serversData[i]['id'].toString());
+                          },
                           image: (serversData[i]['photo'] != null &&
                                   serversData[i]['photo'] != '' &&
                                   (serversData[i]['photo'] as String)

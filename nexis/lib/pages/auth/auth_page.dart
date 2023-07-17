@@ -9,6 +9,7 @@ import 'utility/route_change.dart';
 import '../../firebase/login.dart';
 import '../../classes/route_names.dart';
 import '../../providers/user_providor.dart';
+import '../../widgets/loading_screen.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -25,7 +26,7 @@ class AuthPageState extends State<AuthPage> {
   bool obscureText = true;
 
   static final firebase_auth.FirebaseAuth firebaseAuth =
-    firebase_auth.FirebaseAuth.instance;
+      firebase_auth.FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -40,18 +41,11 @@ class AuthPageState extends State<AuthPage> {
       return;
     }
 
-    BuildContext dialogContext = context;
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          dialogContext = context;
-          return Center(
-              child: CircularProgressIndicator(
-            color: Theme.of(context).colorScheme.secondary,
-            strokeWidth: 4.0,
-          ));
-        });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const LoadingScreen(),
+      ),
+    );
 
     String email = emailController.text;
     String password = passwordController.text;
@@ -72,9 +66,11 @@ class AuthPageState extends State<AuthPage> {
           if (!userProvider.isVerified) {
             await userProvider.logout();
             setState(() {
-              Navigator.pop(dialogContext);
+              Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Awaiting email verification for email: $email')),
+                SnackBar(
+                    content:
+                        Text('Awaiting email verification for email: $email')),
               );
             });
           } else {
@@ -83,7 +79,7 @@ class AuthPageState extends State<AuthPage> {
         }
       } catch (e) {
         passwordController.clear();
-        Navigator.pop(dialogContext);
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Wrong email or password: $e')),
         );
@@ -145,15 +141,13 @@ class AuthPageState extends State<AuthPage> {
                           mediumLabel: 'Email',
                           controller: emailController,
                           onSubmitted: (_) {
-                            emptyFieldCheck()
-                              ? signIn()
-                              : null;
+                            emptyFieldCheck() ? signIn() : null;
                           },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (text) =>
+                          validator: (text) =>
                               text != null && !EmailValidator.validate(text)
-                                ? 'Invalid email format'
-                                : null,
+                                  ? 'Invalid email format'
+                                  : null,
                         ),
                         const SizedBox(height: 30),
                         CustomColumn(
@@ -167,9 +161,7 @@ class AuthPageState extends State<AuthPage> {
                           },
                           obscureText: obscureText,
                           onSubmitted: (_) {
-                            emptyFieldCheck()
-                              ? signIn()
-                              : null;
+                            emptyFieldCheck() ? signIn() : null;
                           },
                           mediumBody: 'Forgot your password?',
                           recognizer: TapGestureRecognizer()
@@ -178,9 +170,9 @@ class AuthPageState extends State<AuthPage> {
                         const SizedBox(height: 30),
                         CustomColumn(
                           type: ColumnType.type4,
-                          onPressed: emptyFieldCheck()
-                            ? signIn
-                            : null,
+                          onPressed: () {
+                            emptyFieldCheck() ? signIn() : null;
+                          },
                           buttonText: 'Sign In',
                           smallLabel: 'Need an account? ',
                           mediumBody: 'Register',
