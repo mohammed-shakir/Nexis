@@ -16,34 +16,36 @@ class FileViewer extends FormBuilderFieldDecoration<List<PlatformFile>> {
     super.decoration,
     required this.files,
     required this.updateState,
-  }) : super(builder: (FormFieldState<List<PlatformFile>?> field) {
-        final state = field as FileViewerState;
+  }) : super(
+          builder: (FormFieldState<List<PlatformFile>?> field) {
+            final state = field as FileViewerState;
 
-        return InputDecorator(
-          decoration: state.decoration.copyWith(
-            counterText: null,
-            border: const UnderlineInputBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                topRight: Radius.circular(8.0)
+            return InputDecorator(
+              decoration: state.decoration.copyWith(
+                counterText: null,
+                border: const UnderlineInputBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8.0),
+                      topRight: Radius.circular(8.0)),
+                ),
               ),
-            ),
-          ),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 3),
-              state.fileViewer(state.widget.files),
-            ],
-          ),
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 3),
+                  state.fileViewer(state.widget.files),
+                ],
+              ),
+            );
+          },
         );
-      },
-    );
 
   @override
-  FormBuilderFieldDecorationState<FileViewer, List<PlatformFile>> createState() => FileViewerState();
+  FormBuilderFieldDecorationState<FileViewer, List<PlatformFile>>
+      createState() => FileViewerState();
 }
 
-class FileViewerState extends FormBuilderFieldDecorationState<FileViewer, List<PlatformFile>> {
+class FileViewerState
+    extends FormBuilderFieldDecorationState<FileViewer, List<PlatformFile>> {
   Widget fileViewer(List<PlatformFile> files) {
     final scrollController = ScrollController();
     return SizedBox(
@@ -54,7 +56,8 @@ class FileViewerState extends FormBuilderFieldDecorationState<FileViewer, List<P
           data: Theme.of(context).copyWith(
             scrollbarTheme: ScrollbarThemeData(
               crossAxisMargin: -2.0,
-              thumbColor: MaterialStateProperty.all(Theme.of(context).colorScheme.tertiary),
+              thumbColor: MaterialStateProperty.all(
+                  Theme.of(context).colorScheme.tertiary),
             ),
           ),
           child: Scrollbar(
@@ -97,16 +100,15 @@ class FileViewerState extends FormBuilderFieldDecorationState<FileViewer, List<P
                   width: 130,
                   alignment: Alignment.center,
                   child: (getFileType(files[index].name)[0] == 'image')
-                    ? kIsWeb
-                        ? Image.memory(files[index].bytes!,
-                            fit: BoxFit.cover)
-                        : Image.file(File(files[index].path!),
-                            fit: BoxFit.cover)
-                    : Container(
-                        alignment: Alignment.center,
-                        color: Colors.transparent,
-                        child: getIcon(files[index].name),
-                      ),
+                      ? kIsWeb
+                          ? Image.memory(files[index].bytes!, fit: BoxFit.cover)
+                          : Image.file(File(files[index].path!),
+                              fit: BoxFit.cover)
+                      : Container(
+                          alignment: Alignment.center,
+                          color: Colors.transparent,
+                          child: getIcon(files[index].name),
+                        ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
