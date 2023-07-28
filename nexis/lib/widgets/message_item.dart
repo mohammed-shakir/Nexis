@@ -88,6 +88,7 @@ class MessageItem extends StatelessWidget {
                     content,
                     style: const TextStyle(
                       color: Colors.white,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
               ],

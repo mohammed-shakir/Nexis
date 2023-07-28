@@ -178,7 +178,7 @@ class InputFieldState extends State<InputField> {
               builder: (ctx, set) => FileViewer(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.blueGrey[750],
+                  fillColor: widget.fillColor ?? Colors.blueGrey[750],
                   labelStyle: Theme.of(context).textTheme.bodyLarge,
                 ),
                 files: widget.files!,

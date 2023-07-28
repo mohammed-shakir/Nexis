@@ -19,6 +19,7 @@ class DisplayMedia extends StatefulWidget {
 
 class DisplayMediaState extends State<DisplayMedia> {
   late String fileName = '';
+
   Future fetchMedia() async {
     final storageRef = FirebaseStorage.instance
         .ref()
@@ -30,7 +31,7 @@ class DisplayMediaState extends State<DisplayMedia> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    /*return FutureBuilder<void>(
       future: fetchMedia(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -47,7 +48,15 @@ class DisplayMediaState extends State<DisplayMedia> {
           );
         }
       },
-    );
+    );*/
+    return buildFile();
+  }
+
+  getFileName() {
+    String str = widget.content.substring(
+        widget.content.indexOf(widget.messageId) + widget.messageId.length + 3,
+        widget.content.indexOf('?alt='));
+    return str;
   }
 
   Widget buildFile() {
@@ -61,12 +70,12 @@ class DisplayMediaState extends State<DisplayMedia> {
             height: 160,
             width: 160,
             alignment: Alignment.center,
-            child: (getFileType(fileName)[0] == 'image')
+            child: (getFileType(getFileName())[0] == 'image')
                 ? Image.network(widget.content, fit: BoxFit.cover)
                 : Container(
                     alignment: Alignment.center,
                     color: Colors.transparent,
-                    child: getIcon(fileName),
+                    child: getIcon(getFileName()),
                   ),
           ),
           Container(
@@ -74,7 +83,7 @@ class DisplayMediaState extends State<DisplayMedia> {
             width: double.infinity,
             color: Colors.transparent,
             child: Text(
-              fileName,
+              getFileName(),
               style: const TextStyle(
                 fontWeight: FontWeight.w100,
                 color: Colors.white,
