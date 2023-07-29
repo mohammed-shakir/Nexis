@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:nexis/media/display_media.dart';
 import '../models/message_model.dart';
 import '../classes/time_format.dart';
 import '../../widgets/loading_screen.dart';
@@ -69,19 +70,27 @@ class MessageItem extends StatelessWidget {
                       )
                     : const SizedBox(height: 0),
                 showSenderInfo ? const SizedBox(height: 4) : const SizedBox(),
-                content.startsWith("https://media.tenor.com")
-                    ? CachedNetworkImage(
-                        imageUrl: content,
-                        placeholder: (context, url) =>
-                            const LoadingIndicatorFull(),
-                      )
-                    : Text(
-                        content,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
+                if (content.startsWith("https://media.tenor.com"))
+                  CachedNetworkImage(
+                    imageUrl: content,
+                    placeholder: (context, url) =>
+                        const LoadingIndicatorFull(),
+                  )
+                else if (content.startsWith(
+                    "https://firebasestorage.googleapis.com/v0/b/nexis-4723a.appspot.com"))
+                  DisplayMedia(
+                    sender: message.sender,
+                    messageId: message.id,
+                    content: content,
+                  )
+                else
+                  Text(
+                    content,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
               ],
             ),
           ),

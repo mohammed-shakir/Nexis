@@ -1,8 +1,10 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
+import '../../media/media_share.dart';
 import '../../models/message_model.dart';
 import 'components/channels.dart';
 import 'components/participant_info.dart';
@@ -33,6 +35,7 @@ class HomeState extends State<Home> {
   late SharedPreferences prefs;
   final buttonKey = GlobalKey();
   final gifSearchDialog = const GifSearchDialog();
+  List<PlatformFile> files = [];
 
   @override
   void initState() {
@@ -165,22 +168,6 @@ class HomeState extends State<Home> {
     }
   }
 
-  onSubmittedMultiline() async {
-    try {
-      if (messageController.text.isNotEmpty) {
-        await sendMessage();
-        if (messageController.text.length <= maxMessageLength) {
-          scrollToBottom();
-          messageFocusNode.requestFocus();
-        }
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error sending message: $e')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -248,37 +235,62 @@ class HomeState extends State<Home> {
                                         scrollController: scrollController,
                                       ),
                                     ),
-                                    InputField(
-                                      fillColor: Theme.of(context)
+                                    StatefulBuilder(
+                                      builder: (ctx, setState) => InputField(
+                                        fillColor: Theme.of(context)
                                           .colorScheme
                                           .surfaceVariant,
-                                      controller: messageController,
-                                      focusNode: messageFocusNode,
-                                      hint: 'Message #{send to}',
-                                      onPressedGif: () async {
-                                        final gifUrl =
-                                            await Navigator.of(context)
-                                                .push<String>(
-                                          PageRouteBuilder(
-                                            opaque: false,
-                                            pageBuilder: (_, __, ___) =>
-                                                const GifSearchDialog(),
-                                          ),
-                                        );
+                                        controller: messageController,
+                                        focusNode: messageFocusNode,
+                                        hint: 'Message #{send to}',
+                                        onPressedGif: () async {
+                                          final gifUrl = await Navigator.of(context).push<String>(
+                                            PageRouteBuilder(
+                                              opaque: false,
+                                              pageBuilder: (_, __, ___) => const GifSearchDialog(),
+                                            ),
+                                          );
 
-                                        if (gifUrl != null) {
-                                          messageController.text = gifUrl;
-                                          sendMessage();
-                                        }
-                                      },
-                                      onPressedEmoji: () {},
-                                      buttonKey: buttonKey,
-                                      onSubmittedMultiline:
-                                          onSubmittedMultiline,
-                                      multiline: true,
-                                      maxLines: 15,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          35.0, 0.0, 35.0, 30.0),
+                                          if (gifUrl != null) {
+                                            messageController.text = gifUrl;
+                                            sendMessage();
+                                          }
+                                        },
+                                        onPressedEmoji: () {},
+                                        files: files,
+                                        onPressedMedia: () async {
+                                          final file = await MediaShare().selectFile();
+                                          setState(() {
+                                            files.addAll(file ?? []);
+                                            messageFocusNode.requestFocus();
+                                          });
+                                        },
+                                        buttonKey: buttonKey,
+                                        onSubmittedMultiline: () async {
+                                          try {
+                                            final List<PlatformFile> sendFiles = [];
+                                            if (files.isNotEmpty) {
+                                              sendFiles.addAll(files);
+                                              files.clear();
+                                            }
+                                            if (messageController.text.isNotEmpty) {
+                                              await sendMessage();
+                                              if (messageController.text.length <= maxMessageLength) {
+                                                scrollToBottom();
+                                                messageFocusNode.requestFocus();
+                                              }
+                                            }
+                                            await MediaShare().uploadFiles(sendFiles, prefs);
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Error sending message: $e')),
+                                            );
+                                          }
+                                        },
+                                        multiline: true,
+                                        maxLines: 15,
+                                        padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
+                                      ),
                                     ),
                                   ]),
                                 ),
@@ -333,36 +345,72 @@ class HomeState extends State<Home> {
         ),
       ),
       body: SafeArea(
-        child: MessageInterface(
-          messages: messages,
-          messagesLoaded: messagesLoaded,
-          scrollController: scrollController,
-        ),
-      ),
-      bottomNavigationBar: InputField(
-        controller: messageController,
-        focusNode: messageFocusNode,
-        hint: 'Message #{send to}',
-        onPressedGif: () async {
-          final gifUrl = await Navigator.of(context).push<String>(
-            PageRouteBuilder(
-              opaque: false,
-              pageBuilder: (_, __, ___) => const GifSearchDialog(),
-            ),
-          );
+        child: Column(children: [
+          Expanded(
+            child:MessageInterface(
+            messages: messages,
+            messagesLoaded: messagesLoaded,
+            scrollController: scrollController,
+          )),
+          StatefulBuilder(
+            builder: (ctx, setState) => InputField(
+              fillColor: Theme.of(context)
+                .colorScheme
+                .surfaceVariant,
+              controller: messageController,
+              focusNode: messageFocusNode,
+              hint: 'Message #{send to}',
+              onPressedGif: () async {
+                final gifUrl = await Navigator.of(context).push<String>(
+                  PageRouteBuilder(
+                    opaque: false,
+                    pageBuilder: (_, __, ___) => const GifSearchDialog(),
+                  ),
+                );
 
-          if (gifUrl != null) {
-            messageController.text = gifUrl;
-            sendMessage();
-          }
-        },
-        onPressedEmoji: () {},
-        buttonKey: buttonKey,
-        onSubmittedMultiline: onSubmittedMultiline,
-        multiline: true,
-        maxLines: 15,
-        padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
-      ),
+                if (gifUrl != null) {
+                  messageController.text = gifUrl;
+                  sendMessage();
+                }
+              },
+              onPressedEmoji: () {},
+              files: files,
+              onPressedMedia: () async {
+                final file = await MediaShare().selectFile();
+                setState(() {
+                  files.addAll(file ?? []);
+                  messageFocusNode.requestFocus();
+                });
+              },
+              buttonKey: buttonKey,
+              onSubmittedMultiline: () async {
+                try {
+                  final List<PlatformFile> sendFiles = [];
+                  if (files.isNotEmpty) {
+                    sendFiles.addAll(files);
+                    files.clear();
+                  }
+                  if (messageController.text.isNotEmpty) {
+                    await sendMessage();
+                    if (messageController.text.length <= maxMessageLength) {
+                      scrollToBottom();
+                      messageFocusNode.requestFocus();
+                    }
+                  }
+                  await MediaShare().uploadFiles(sendFiles, prefs);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error sending message: $e')),
+                  );
+                }
+              },
+              multiline: true,
+              maxLines: 15,
+              padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
+            ),
+          ),
+      ]),
+      )
     );
   }
 }
