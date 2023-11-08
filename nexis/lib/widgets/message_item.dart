@@ -12,6 +12,38 @@ class MessageItem extends StatelessWidget {
   const MessageItem(
       {super.key, required this.message, this.showSenderInfo = true});
 
+  Widget _buildContentWidget(BuildContext context, String content) {
+    Map<String, Widget Function(BuildContext)> contentBuilders = {
+      "https://media.tenor.com": (BuildContext context) => CachedNetworkImage(
+            imageUrl: content,
+            placeholder: (context, url) => const LoadingIndicatorFull(),
+          ),
+      "https://firebasestorage.googleapis.com/v0/b/nexis-4723a.appspot.com":
+          (BuildContext context) => DisplayMedia(
+                sender: message.sender,
+                messageId: message.id,
+                content: content,
+              ),
+    };
+
+    Widget contentWidget = Text(
+      content,
+      style: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w300,
+      ),
+    );
+
+    for (var entry in contentBuilders.entries) {
+      if (content.startsWith(entry.key)) {
+        contentWidget = entry.value(context);
+        break;
+      }
+    }
+
+    return contentWidget;
+  }
+
   @override
   Widget build(BuildContext context) {
     final sender = message.sender;
@@ -49,48 +81,28 @@ class MessageItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                showSenderInfo
-                    ? Row(
-                        children: [
-                          Text(
-                            sender,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            formattedTimestamp,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      )
-                    : const SizedBox(height: 0),
-                showSenderInfo ? const SizedBox(height: 4) : const SizedBox(),
-                if (content.startsWith("https://media.tenor.com"))
-                  CachedNetworkImage(
-                    imageUrl: content,
-                    placeholder: (context, url) =>
-                        const LoadingIndicatorFull(),
-                  )
-                else if (content.startsWith(
-                    "https://firebasestorage.googleapis.com/v0/b/nexis-4723a.appspot.com"))
-                  DisplayMedia(
-                    sender: message.sender,
-                    messageId: message.id,
-                    content: content,
-                  )
-                else
-                  Text(
-                    content,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
-                    ),
+                if (showSenderInfo) ...[
+                  Row(
+                    children: [
+                      Text(
+                        sender,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        formattedTimestamp,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 4),
+                ],
+                _buildContentWidget(context, content),
               ],
             ),
           ),
