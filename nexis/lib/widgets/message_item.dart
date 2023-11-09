@@ -16,7 +16,9 @@ class MessageItem extends StatelessWidget {
     Map<String, Widget Function(BuildContext)> contentBuilders = {
       "https://media.tenor.com": (BuildContext context) => CachedNetworkImage(
             imageUrl: content,
-            placeholder: (context, url) => const LoadingIndicatorFull(),
+            placeholder: (context, url) => const LoadingIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            fit: BoxFit.cover,
           ),
       "https://firebasestorage.googleapis.com/v0/b/nexis-4723a.appspot.com":
           (BuildContext context) => DisplayMedia(
