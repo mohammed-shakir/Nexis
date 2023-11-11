@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:nexis/widgets/input/base_input_field.dart';
 
 class PasswordInputField extends BaseInputField {
-  const PasswordInputField({Key? key})
-      : super(key: key, focusBorderColor: const Color(0xFF800020));
+  final TextEditingController controller;
+  const PasswordInputField({
+    Key? key,
+    required this.controller,
+  }) : super(key: key, focusBorderColor: const Color(0xFF800020));
 
   @override
   PasswordInputFieldState createState() => PasswordInputFieldState();
@@ -16,7 +19,7 @@ class PasswordInputFieldState extends BaseInputFieldState<PasswordInputField> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      textFormField(obscureText: obscureText),
+      textFormField(controller: widget.controller, obscureText: obscureText),
       Positioned(
           right: 0,
           child: MouseRegion(

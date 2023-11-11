@@ -34,15 +34,41 @@ abstract class BaseInputField extends StatefulWidget {
 
 abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
   TextFormField textFormField({
+    TextEditingController? controller,
+    FocusNode? focusNode,
+    void Function(String)? onFieldSubmitted,
+    TextStyle? style,
+    bool readOnly = false,
     bool obscureText = false,
+    Color cursorColor = Colors.white,
+    double cursorHeight = 20.0,
+    double cursorWidth = 1.2,
+    int minLines = 1,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+    TextInputAction? textInputAction,
+    AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
+    String? Function(String?)? validator,
+    void Function()? onTap,
   }) {
     return TextFormField(
-      style: Theme.of(context).textTheme.displayMedium,
-      cursorColor: Colors.white,
-      cursorHeight: 20.0,
-      cursorWidth: 1.2,
-      decoration: widget.fieldDecoration(context),
+      controller: controller,
+      focusNode: focusNode,
+      onFieldSubmitted: onFieldSubmitted,
+      style: style ?? Theme.of(context).textTheme.displayMedium,
+      readOnly: readOnly,
       obscureText: obscureText,
+      cursorColor: cursorColor,
+      cursorHeight: cursorHeight,
+      cursorWidth: cursorWidth,
+      minLines: minLines,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      autovalidateMode: autovalidateMode,
+      validator: validator,
+      onTap: onTap,
+      decoration: widget.fieldDecoration(context),
     );
   }
 
