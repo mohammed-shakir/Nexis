@@ -7,7 +7,8 @@ abstract class BaseInputField extends StatefulWidget {
     this.focusBorderColor,
   }) : super(key: key);
 
-  InputDecoration fieldDecoration(BuildContext context) {
+  InputDecoration fieldDecoration(BuildContext context,
+      [EdgeInsetsGeometry? contentPadding]) {
     return InputDecoration(
         hoverColor: Colors.transparent,
         border: buildBorder(context),
@@ -15,8 +16,9 @@ abstract class BaseInputField extends StatefulWidget {
         filled: true,
         fillColor: Colors.blueGrey[750],
         hintStyle: Theme.of(context).textTheme.labelSmall,
-        contentPadding: const EdgeInsets.only(
-            right: 10.0, left: 10.0, top: 10, bottom: 10));
+        contentPadding: contentPadding ??
+            const EdgeInsets.only(
+                right: 10.0, left: 10.0, top: 10.0, bottom: 10.0));
   }
 
   OutlineInputBorder buildBorder([context, color]) {
@@ -49,6 +51,7 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
     TextInputAction? textInputAction,
     AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
     String? Function(String?)? validator,
+    EdgeInsetsGeometry? contentPadding,
     void Function()? onTap,
   }) {
     return TextFormField(
@@ -68,7 +71,7 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
       autovalidateMode: autovalidateMode,
       validator: validator,
       onTap: onTap,
-      decoration: widget.fieldDecoration(context),
+      decoration: widget.fieldDecoration(context, contentPadding),
     );
   }
 

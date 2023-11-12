@@ -18,10 +18,17 @@ class PasswordInputFieldState extends BaseInputFieldState<PasswordInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      textFormField(controller: widget.controller, obscureText: obscureText),
-      Positioned(
-          right: 0,
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        textFormField(
+          controller: widget.controller,
+          obscureText: obscureText,
+          contentPadding: const EdgeInsets.only(
+              right: 40.0, left: 10.0, top: 10.0, bottom: 10.0),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 4.0),
           child: MouseRegion(
             onEnter: (event) {
               setState(() {
@@ -34,7 +41,6 @@ class PasswordInputFieldState extends BaseInputFieldState<PasswordInputField> {
               });
             },
             child: IconButton(
-              padding: const EdgeInsets.fromLTRB(5.0, 8.5, 5.0, 0.0),
               constraints: const BoxConstraints(maxWidth: 40.0),
               iconSize: 30.0,
               onPressed: () {
@@ -51,7 +57,9 @@ class PasswordInputFieldState extends BaseInputFieldState<PasswordInputField> {
                 color: setColor(obscureTextIconHover),
               ),
             ),
-          )),
-    ]);
+          ),
+        ),
+      ],
+    );
   }
 }

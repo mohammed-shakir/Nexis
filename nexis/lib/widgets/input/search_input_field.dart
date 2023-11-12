@@ -15,14 +15,23 @@ class SearchInputField extends BaseInputField {
 class SearchInputFieldState extends BaseInputFieldState<SearchInputField> {
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      textFormField(controller: widget.controller),
-      const Positioned(
-          right: 0,
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        textFormField(
+          controller: widget.controller,
+          contentPadding: const EdgeInsets.only(
+              right: 35.0, left: 10.0, top: 10.0, bottom: 10.0),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(right: 4.0),
           child: Icon(
-            Icons.visibility,
+            Icons.search,
+            size: 30.0,
             color: Colors.grey,
-          )),
-    ]);
+          ),
+        ),
+      ],
+    );
   }
 }
