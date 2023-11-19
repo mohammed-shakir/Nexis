@@ -6,7 +6,7 @@ class SearchInputField extends BaseInputField {
   const SearchInputField({
     Key? key,
     required this.controller,
-  }) : super(key: key, focusBorderColor: const Color(0xFF800020));
+  }) : super(key: key);
 
   @override
   SearchInputFieldState createState() => SearchInputFieldState();

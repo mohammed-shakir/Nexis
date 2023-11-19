@@ -3,10 +3,15 @@ import 'package:nexis/widgets/input/base_input_field.dart';
 
 class BasicInputField extends BaseInputField {
   final TextEditingController controller;
+  final AutovalidateMode? autovalidateMode;
+  final String? Function(String?)? validator;
+
   const BasicInputField({
     Key? key,
     required this.controller,
-  }) : super(key: key, focusBorderColor: const Color(0xFF800020));
+    this.autovalidateMode,
+    this.validator,
+  }) : super(key: key);
 
   @override
   BasicInputFieldState createState() => BasicInputFieldState();
@@ -15,6 +20,11 @@ class BasicInputField extends BaseInputField {
 class BasicInputFieldState extends BaseInputFieldState<BasicInputField> {
   @override
   Widget build(BuildContext context) {
-    return textFormField(controller: widget.controller);
+    return textFormField(
+      controller: widget.controller,
+      autovalidateMode: widget.autovalidateMode!,
+      validator: widget.validator,
+      focusBorderColor: Theme.of(context).colorScheme.outline,
+    );
   }
 }

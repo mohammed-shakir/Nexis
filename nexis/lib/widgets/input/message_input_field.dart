@@ -8,6 +8,9 @@ class MessageInputField extends BaseInputField {
   final TextEditingController controller;
   final List<PlatformFile> files;
   final void Function() onSubmittedMultiline;
+  final void Function() onPressedEmoji;
+  final void Function() onPressedGif;
+  final void Function() onPressedMedia;
   final Color? fillColor;
   final String? hint;
   const MessageInputField({
@@ -15,9 +18,12 @@ class MessageInputField extends BaseInputField {
     required this.controller,
     required this.files,
     required this.onSubmittedMultiline,
+    required this.onPressedEmoji,
+    required this.onPressedGif,
+    required this.onPressedMedia,
     this.fillColor,
     this.hint,
-  }) : super(key: key, focusBorderColor: const Color(0xFF800020));
+  }) : super(key: key);
 
   @override
   OutlineInputBorder buildBorder([context, color]) {
@@ -66,7 +72,7 @@ class MessageInputFieldState extends BaseInputFieldState<MessageInputField> {
                   builder: (ctx, set) => FileViewer(
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.blueGrey[750],
+                      fillColor: widget.fillColor ?? Colors.blueGrey[750],
                       labelStyle: Theme.of(context).textTheme.bodyLarge,
                     ),
                     files: widget.files,
@@ -80,10 +86,11 @@ class MessageInputFieldState extends BaseInputFieldState<MessageInputField> {
                   textFormField(
                     controller: widget.controller,
                     contentPadding: const EdgeInsets.only(
-                        right: 40.0, left: 40.0, top: 10.0, bottom: 10.0),
+                        right: 80.0, left: 45.0, top: 10.0, bottom: 10.0),
                     fillColor: widget.fillColor,
                     maxLines: 15,
                     hint: widget.hint,
+                    keyboardType: TextInputType.multiline,
                   ),
                   Positioned(
                     right: 0,
@@ -124,9 +131,7 @@ class MessageInputFieldState extends BaseInputFieldState<MessageInputField> {
           Icons.emoji_emotions,
           color: setColor(emojiIconHover),
         ),
-        onPressed: () {
-          // Emoji icon action
-        },
+        onPressed: widget.onPressedEmoji,
       ),
     );
   }
@@ -153,9 +158,7 @@ class MessageInputFieldState extends BaseInputFieldState<MessageInputField> {
           Icons.gif_box_rounded,
           color: setColor(gifIconHover),
         ),
-        onPressed: () {
-          // Gif icon action
-        },
+        onPressed: widget.onPressedGif,
       ),
     );
   }
@@ -182,9 +185,7 @@ class MessageInputFieldState extends BaseInputFieldState<MessageInputField> {
           Icons.add_box_rounded,
           color: setColor(mediaIconHover),
         ),
-        onPressed: () {
-          // Media icon action
-        },
+        onPressed: widget.onPressedMedia,
       ),
     );
   }

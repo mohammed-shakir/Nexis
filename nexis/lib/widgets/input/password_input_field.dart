@@ -6,7 +6,7 @@ class PasswordInputField extends BaseInputField {
   const PasswordInputField({
     Key? key,
     required this.controller,
-  }) : super(key: key, focusBorderColor: const Color(0xFF800020));
+  }) : super(key: key);
 
   @override
   PasswordInputFieldState createState() => PasswordInputFieldState();
@@ -22,11 +22,11 @@ class PasswordInputFieldState extends BaseInputFieldState<PasswordInputField> {
       alignment: Alignment.centerRight,
       children: [
         textFormField(
-          controller: widget.controller,
-          obscureText: obscureText,
-          contentPadding: const EdgeInsets.only(
-              right: 40.0, left: 10.0, top: 10.0, bottom: 10.0),
-        ),
+            controller: widget.controller,
+            obscureText: obscureText,
+            contentPadding: const EdgeInsets.only(
+                right: 40.0, left: 10.0, top: 10.0, bottom: 10.0),
+            focusBorderColor: Theme.of(context).colorScheme.outline),
         Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: MouseRegion(

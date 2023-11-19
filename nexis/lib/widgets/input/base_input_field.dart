@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 
 abstract class BaseInputField extends StatefulWidget {
-  final Color? focusBorderColor;
   const BaseInputField({
     Key? key,
-    this.focusBorderColor,
   }) : super(key: key);
 
   InputDecoration fieldDecoration(BuildContext context,
-      [EdgeInsetsGeometry? contentPadding, Color? fillColor, String? hint]) {
+      [EdgeInsetsGeometry? contentPadding,
+      Color? fillColor,
+      String? hint,
+      Color? focusBorderColor,
+      Color? hoverColor,
+      TextStyle? hintStyle]) {
     return InputDecoration(
-        hoverColor: Colors.transparent,
+        hoverColor: hoverColor,
         border: buildBorder(context),
         focusedBorder: buildBorder(context, focusBorderColor),
         filled: true,
         fillColor: fillColor ?? Colors.blueGrey[750],
         hintText: hint,
-        hintStyle: Theme.of(context).textTheme.labelSmall,
+        hintStyle: hintStyle ?? Theme.of(context).textTheme.labelSmall,
         contentPadding: contentPadding ??
             const EdgeInsets.only(
                 right: 10.0, left: 10.0, top: 10.0, bottom: 10.0));
@@ -40,22 +43,25 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
     TextEditingController? controller,
     FocusNode? focusNode,
     void Function(String)? onFieldSubmitted,
+    String? Function(String?)? validator,
+    void Function()? onTap,
     TextStyle? style,
+    TextStyle? hintStyle,
     bool readOnly = false,
     bool obscureText = false,
     Color cursorColor = Colors.white,
+    Color? fillColor,
+    Color focusBorderColor = const Color(0xFF800020),
+    Color hoverColor = Colors.transparent,
     double cursorHeight = 20.0,
     double cursorWidth = 1.2,
-    Color? fillColor,
     int minLines = 1,
     int maxLines = 1,
     String? hint,
     TextInputType keyboardType = TextInputType.text,
     TextInputAction? textInputAction,
     AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
-    String? Function(String?)? validator,
     EdgeInsetsGeometry? contentPadding,
-    void Function()? onTap,
   }) {
     return TextFormField(
       controller: controller,
@@ -74,8 +80,8 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
       autovalidateMode: autovalidateMode,
       validator: validator,
       onTap: onTap,
-      decoration:
-          widget.fieldDecoration(context, contentPadding, fillColor, hint),
+      decoration: widget.fieldDecoration(context, contentPadding, fillColor,
+          hint, focusBorderColor, hoverColor, hintStyle),
     );
   }
 
