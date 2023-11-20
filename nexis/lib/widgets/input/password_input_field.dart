@@ -36,8 +36,9 @@ class PasswordInputFieldState extends BaseInputFieldState<PasswordInputField> {
                 right: 40.0, left: 10.0, top: 10.0, bottom: 10.0),
             focusBorderColor: Theme.of(context).colorScheme.secondary,
             onFieldSubmitted: widget.onFieldSubmitted),
-        Padding(
-          padding: const EdgeInsets.only(right: 4.0),
+        Positioned(
+          top: 0,
+          right: 4.0,
           child: mouseRegionObscureText(),
         ),
       ],

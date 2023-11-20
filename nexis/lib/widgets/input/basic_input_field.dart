@@ -8,6 +8,7 @@ class BasicInputField extends BaseInputField {
   final void Function(String)? onFieldSubmitted;
   final void Function()? onTap;
   final bool readOnly;
+  final String? hint;
 
   const BasicInputField({
     Key? key,
@@ -17,6 +18,7 @@ class BasicInputField extends BaseInputField {
     this.onFieldSubmitted,
     this.onTap,
     this.readOnly = false,
+    this.hint,
   }) : super(key: key);
 
   @override
@@ -34,6 +36,7 @@ class BasicInputFieldState extends BaseInputFieldState<BasicInputField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       onTap: widget.onTap,
       readOnly: widget.readOnly,
+      hint: widget.hint,
     );
   }
 }

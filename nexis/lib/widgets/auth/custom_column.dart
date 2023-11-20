@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/widgets/input/base_input_field.dart';
 import 'package:nexis/widgets/input/basic_input_field.dart';
-import '../basic_input_field.dart';
 import '../custom_button.dart';
 import '../../pages/auth/utility/column_type.dart';
 import 'dart:math';
@@ -17,19 +16,12 @@ class CustomColumn extends StatelessWidget {
   final TextEditingController? controller;
   final void Function(String)? onSubmitted;
   final GestureRecognizer? recognizer;
-  final bool? obscureText;
-  final String? hint;
   final void Function()? onTap;
   final void Function()? onPressed;
   final String? buttonText;
   final TextEditingController? monthController;
   final TextEditingController? dayController;
   final TextEditingController? yearController;
-  final bool? readOnly;
-  final Widget? suffixIcon;
-  final AutovalidateMode? autovalidateMode;
-  final String? Function(String?)? validator;
-  final void Function()? onPressedObscureText;
 
   const CustomColumn({
     Key? key,
@@ -42,19 +34,12 @@ class CustomColumn extends StatelessWidget {
     this.controller,
     this.onSubmitted,
     this.recognizer,
-    this.obscureText,
-    this.hint,
     this.onTap,
     this.onPressed,
     this.buttonText,
     this.monthController,
     this.dayController,
     this.yearController,
-    this.readOnly,
-    this.suffixIcon,
-    this.autovalidateMode,
-    this.validator,
-    this.onPressedObscureText,
   }) : super(key: key);
 
   @override
@@ -168,19 +153,26 @@ class CustomColumn extends StatelessWidget {
             child: BasicInputField(
                 controller: monthController!,
                 onTap: selectDate,
-                readOnly: true),
+                readOnly: true,
+                hint: 'Month'),
           ),
           SizedBox(width: getDisplayWidth(contextSize, 25)),
           SizedBox(
             width: getDisplayWidth(contextSize, 120),
             child: BasicInputField(
-                controller: dayController!, onTap: selectDate, readOnly: true),
+                controller: dayController!,
+                onTap: selectDate,
+                readOnly: true,
+                hint: 'Day'),
           ),
           SizedBox(width: getDisplayWidth(contextSize, 25)),
           SizedBox(
             width: getDisplayWidth(contextSize, 140),
             child: BasicInputField(
-                controller: yearController!, onTap: selectDate, readOnly: true),
+                controller: yearController!,
+                onTap: selectDate,
+                readOnly: true,
+                hint: 'Year'),
           ),
         ],
       ),

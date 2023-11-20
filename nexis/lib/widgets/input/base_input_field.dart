@@ -11,7 +11,8 @@ abstract class BaseInputField extends StatefulWidget {
       String? hint,
       Color? focusBorderColor,
       Color? hoverColor,
-      TextStyle? hintStyle]) {
+      TextStyle? hintStyle,
+      int? errorMaxLines]) {
     return InputDecoration(
         hoverColor: hoverColor,
         border: buildBorder(context),
@@ -20,6 +21,7 @@ abstract class BaseInputField extends StatefulWidget {
         fillColor: fillColor ?? Colors.blueGrey[750],
         hintText: hint,
         hintStyle: hintStyle ?? Theme.of(context).textTheme.labelSmall,
+        errorMaxLines: errorMaxLines,
         contentPadding: contentPadding ??
             const EdgeInsets.only(
                 right: 10.0, left: 10.0, top: 10.0, bottom: 10.0));
@@ -57,6 +59,7 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
     double cursorWidth = 1.2,
     int minLines = 1,
     int maxLines = 1,
+    int errorMaxLines = 3,
     String? hint,
     TextInputType keyboardType = TextInputType.text,
     TextInputAction? textInputAction,
@@ -81,7 +84,7 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
       validator: validator,
       onTap: onTap,
       decoration: widget.fieldDecoration(context, contentPadding, fillColor,
-          hint, focusBorderColor, hoverColor, hintStyle),
+          hint, focusBorderColor, hoverColor, hintStyle, errorMaxLines),
     );
   }
 
