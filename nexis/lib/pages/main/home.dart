@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nexis/widgets/input/message/message_input_field.dart';
+import 'package:nexis/widgets/input/message/message_input_field_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
@@ -13,8 +15,9 @@ import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
 import '../../tenor/gif_search.dart';
-import '../../widgets/basic_input_field.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:async';
+import 'dart:io' show Platform;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -235,63 +238,7 @@ class HomeState extends State<Home> {
                                         scrollController: scrollController,
                                       ),
                                     ),
-                                    StatefulBuilder(
-                                      builder: (ctx, setState) => InputField(
-                                        fillColor: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceVariant,
-                                        controller: messageController,
-                                        focusNode: messageFocusNode,
-                                        hint: 'Message #{send to}',
-                                        onPressedGif: () async {
-                                          final gifUrl = await Navigator.of(context).push<String>(
-                                            PageRouteBuilder(
-                                              opaque: false,
-                                              pageBuilder: (_, __, ___) => const GifSearchDialog(),
-                                            ),
-                                          );
-
-                                          if (gifUrl != null) {
-                                            messageController.text = gifUrl;
-                                            sendMessage();
-                                          }
-                                        },
-                                        onPressedEmoji: () {},
-                                        files: files,
-                                        onPressedMedia: () async {
-                                          final file = await MediaShare().selectFile();
-                                          setState(() {
-                                            files.addAll(file ?? []);
-                                            messageFocusNode.requestFocus();
-                                          });
-                                        },
-                                        buttonKey: buttonKey,
-                                        onSubmittedMultiline: () async {
-                                          try {
-                                            final List<PlatformFile> sendFiles = [];
-                                            if (files.isNotEmpty) {
-                                              sendFiles.addAll(files);
-                                              files.clear();
-                                            }
-                                            if (messageController.text.isNotEmpty) {
-                                              await sendMessage();
-                                              if (messageController.text.length <= maxMessageLength) {
-                                                scrollToBottom();
-                                                messageFocusNode.requestFocus();
-                                              }
-                                            }
-                                            await MediaShare().uploadFiles(sendFiles, prefs);
-                                          } catch (e) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text('Error sending message: $e')),
-                                            );
-                                          }
-                                        },
-                                        multiline: true,
-                                        maxLines: 15,
-                                        padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
-                                      ),
-                                    ),
+                                    inputFieldBuilder(),
                                   ]),
                                 ),
                                 const SizedBox(
@@ -314,103 +261,148 @@ class HomeState extends State<Home> {
     );
   }
 
+  bool isMobile() {
+    if (kIsWeb) {
+      return false;
+    }
+    return Platform.isIOS || Platform.isAndroid;
+  }
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   Widget buildMobileHomeScreen(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      endDrawer: const Drawer(
-        child: ParticipantInfo(),
-      ),
-      drawer: const Drawer(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Servers(),
-            ),
-            Expanded(
-              flex: 3,
-              child: Channels(),
-            ),
-          ],
+        key: scaffoldKey,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        endDrawer: const Drawer(
+          child: ParticipantInfo(),
         ),
-      ),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56.0),
-        child: NavBar(
-          openDrawer: () => scaffoldKey.currentState?.openDrawer(),
-          openEndDrawer: () => scaffoldKey.currentState?.openEndDrawer(),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(children: [
-          Expanded(
-            child:MessageInterface(
-            messages: messages,
-            messagesLoaded: messagesLoaded,
-            scrollController: scrollController,
-          )),
-          StatefulBuilder(
-            builder: (ctx, setState) => InputField(
-              fillColor: Theme.of(context)
-                .colorScheme
-                .surfaceVariant,
-              controller: messageController,
-              focusNode: messageFocusNode,
-              hint: 'Message #{send to}',
-              onPressedGif: () async {
-                final gifUrl = await Navigator.of(context).push<String>(
-                  PageRouteBuilder(
-                    opaque: false,
-                    pageBuilder: (_, __, ___) => const GifSearchDialog(),
-                  ),
-                );
-
-                if (gifUrl != null) {
-                  messageController.text = gifUrl;
-                  sendMessage();
-                }
-              },
-              onPressedEmoji: () {},
-              files: files,
-              onPressedMedia: () async {
-                final file = await MediaShare().selectFile();
-                setState(() {
-                  files.addAll(file ?? []);
-                  messageFocusNode.requestFocus();
-                });
-              },
-              buttonKey: buttonKey,
-              onSubmittedMultiline: () async {
-                try {
-                  final List<PlatformFile> sendFiles = [];
-                  if (files.isNotEmpty) {
-                    sendFiles.addAll(files);
-                    files.clear();
-                  }
-                  if (messageController.text.isNotEmpty) {
-                    await sendMessage();
-                    if (messageController.text.length <= maxMessageLength) {
-                      scrollToBottom();
-                      messageFocusNode.requestFocus();
-                    }
-                  }
-                  await MediaShare().uploadFiles(sendFiles, prefs);
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error sending message: $e')),
-                  );
-                }
-              },
-              multiline: true,
-              maxLines: 15,
-              padding: const EdgeInsets.fromLTRB(35.0, 0.0, 35.0, 30.0),
-            ),
+        drawer: const Drawer(
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Servers(),
+              ),
+              Expanded(
+                flex: 3,
+                child: Channels(),
+              ),
+            ],
           ),
-      ]),
-      )
+        ),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(56.0),
+          child: NavBar(
+            openDrawer: () => scaffoldKey.currentState?.openDrawer(),
+            openEndDrawer: () => scaffoldKey.currentState?.openEndDrawer(),
+          ),
+        ),
+        body: SafeArea(
+          child: Column(children: [
+            Expanded(
+                child: MessageInterface(
+              messages: messages,
+              messagesLoaded: messagesLoaded,
+              scrollController: scrollController,
+            )),
+            isMobile() ? inputFieldBuilderMobile() : inputFieldBuilder(),
+          ]),
+        ));
+  }
+
+  Widget inputFieldBuilder() {
+    return StatefulBuilder(
+      builder: (ctx, setState) => MessageInputField(
+        fillColor: Theme.of(context).colorScheme.surfaceVariant,
+        controller: messageController,
+        files: files,
+        hint: 'Message',
+        onSubmittedMultiline: () async {
+          try {
+            final List<PlatformFile> sendFiles = [];
+            if (files.isNotEmpty) {
+              sendFiles.addAll(files);
+              files.clear();
+            }
+            if (messageController.text.isNotEmpty) {
+              await sendMessage();
+              if (messageController.text.length <= maxMessageLength) {
+                scrollToBottom();
+                messageFocusNode.requestFocus();
+              }
+            }
+            await MediaShare().uploadFiles(sendFiles, prefs);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error sending message: $e')),
+            );
+          }
+        },
+        onPressedEmoji: () {},
+        onPressedGif: () async {
+          final gifUrl = await Navigator.of(context).push<String>(
+            PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => const GifSearchDialog(),
+            ),
+          );
+
+          if (gifUrl != null) {
+            messageController.text = gifUrl;
+            sendMessage();
+          }
+        },
+        onPressedMedia: () async {
+          final file = await MediaShare().selectFile();
+          setState(() {
+            files.addAll(file ?? []);
+            messageFocusNode.requestFocus();
+          });
+        },
+      ),
+    );
+  }
+
+  Widget inputFieldBuilderMobile() {
+    return StatefulBuilder(
+      builder: (ctx, setState) => MessageInputFieldMobile(
+        fillColor: Theme.of(context).colorScheme.surfaceVariant,
+        controller: messageController,
+        files: files,
+        hint: 'Message',
+        onSubmittedMultiline: () async {
+          try {
+            final List<PlatformFile> sendFiles = [];
+            if (files.isNotEmpty) {
+              sendFiles.addAll(files);
+              files.clear();
+            }
+            if (messageController.text.isNotEmpty) {
+              await sendMessage();
+              if (messageController.text.length <= maxMessageLength) {
+                scrollToBottom();
+                messageFocusNode.requestFocus();
+              }
+            }
+            await MediaShare().uploadFiles(sendFiles, prefs);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error sending message: $e')),
+            );
+          }
+        },
+        onPressedSend: () async {
+          sendMessage();
+        },
+        onPressedMedia: () async {
+          final file = await MediaShare().selectFile();
+          setState(() {
+            files.addAll(file ?? []);
+            messageFocusNode.requestFocus();
+          });
+        },
+      ),
     );
   }
 }

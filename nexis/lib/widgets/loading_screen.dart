@@ -118,13 +118,11 @@ class LoadingIndicatorFullState extends State<LoadingIndicatorFull>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.secondary,
-          strokeWidth: 3,
-        ),
+    return Center(
+      child: CircularProgressIndicator(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.secondary,
+        strokeWidth: 3,
       ),
     );
   }
