@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nexis/pages/auth/utility/column_type.dart';
 import 'package:nexis/widgets/auth/custom_column.dart';
+import 'package:nexis/widgets/input/basic_input_field.dart';
+import 'package:nexis/widgets/input/password_input_field.dart';
 import 'package:provider/provider.dart';
 import 'utility/route_change.dart';
 import '../../firebase/login.dart';
@@ -23,7 +25,6 @@ class AuthPageState extends State<AuthPage> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool obscureText = true;
 
   static final firebase_auth.FirebaseAuth firebaseAuth =
       firebase_auth.FirebaseAuth.instance;
@@ -130,65 +131,65 @@ class AuthPageState extends State<AuthPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Form(
-                    key: authKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomColumn(
-                          type: ColumnType.type1,
-                          largeLabel: 'Welcome!',
-                          mediumLabel: 'Email',
-                          controller: emailController,
-                          onSubmitted: (_) {
-                            emptyFieldCheck() ? signIn() : null;
-                          },
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text) =>
-                              text != null && !EmailValidator.validate(text)
-                                  ? 'Invalid email format'
-                                  : null,
-                        ),
-                        const SizedBox(height: 30),
-                        CustomColumn(
-                          type: ColumnType.type2,
-                          mediumLabel: 'Password',
-                          controller: passwordController,
-                          onPressedObscureText: () {
-                            setState(() {
-                              obscureText = !obscureText;
-                            });
-                          },
-                          obscureText: obscureText,
-                          onSubmitted: (_) {
-                            emptyFieldCheck() ? signIn() : null;
-                          },
-                          mediumBody: 'Forgot your password?',
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = RouteChange(context, '').reDir,
-                        ),
-                        const SizedBox(height: 30),
-                        CustomColumn(
-                          type: ColumnType.type4,
-                          onPressed: () {
-                            emptyFieldCheck() ? signIn() : null;
-                          },
-                          buttonText: 'Sign In',
-                          smallLabel: 'Need an account? ',
-                          mediumBody: 'Register',
-                          recognizer: TapGestureRecognizer()
-                            ..onTap =
-                                RouteChange(context, RouteNames.registerPage)
-                                    .reDir,
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: authForm(context),
                 ),
               ),
             ]),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget authForm(BuildContext context) {
+    return Form(
+      key: authKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomColumn(
+            type: ColumnType.type1,
+            largeLabel: 'Welcome!',
+            mediumLabel: 'Email',
+            inputField: BasicInputField(
+              controller: emailController,
+              onFieldSubmitted: (_) {
+                emptyFieldCheck() ? signIn() : null;
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (text) =>
+                  text != null && !EmailValidator.validate(text)
+                      ? 'Invalid email format'
+                      : null,
+            ),
+          ),
+          const SizedBox(height: 30),
+          CustomColumn(
+            type: ColumnType.type2,
+            mediumLabel: 'Password',
+            inputField: PasswordInputField(
+              controller: passwordController,
+              onFieldSubmitted: (_) {
+                emptyFieldCheck() ? signIn() : null;
+              },
+            ),
+            mediumBody: 'Forgot your password?',
+            recognizer: TapGestureRecognizer()
+              ..onTap = RouteChange(context, '').reDir,
+          ),
+          const SizedBox(height: 30),
+          CustomColumn(
+            type: ColumnType.type4,
+            onPressed: () {
+              emptyFieldCheck() ? signIn() : null;
+            },
+            buttonText: 'Sign In',
+            smallLabel: 'Need an account? ',
+            mediumBody: 'Register',
+            recognizer: TapGestureRecognizer()
+              ..onTap = RouteChange(context, RouteNames.registerPage).reDir,
+          ),
+        ],
       ),
     );
   }
