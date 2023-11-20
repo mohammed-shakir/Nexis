@@ -258,9 +258,8 @@ class HomeState extends State<Home> {
     );
   }
 
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   Widget buildMobileHomeScreen(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: Theme.of(context).colorScheme.primary,
