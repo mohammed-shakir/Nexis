@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:nexis/widgets/input/base_input_field.dart';
-import '../../media/media_attachment.dart';
+import '../../../media/media_attachment.dart';
 
 class MessageInputField extends BaseInputField {
   final TextEditingController controller;
