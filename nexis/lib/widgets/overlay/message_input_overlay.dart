@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nexis/emoji/emoji_search.dart';
 import 'package:nexis/tenor/gif_search.dart';
-import 'package:nexis/widgets/custom_button.dart';
 import 'package:nexis/widgets/input/search_input_field.dart';
+import 'package:nexis/widgets/overlay/utils/select_button.dart';
 import '../../enums/screen_type.dart';
 
 class MessageInputOverlay extends StatefulWidget {
@@ -15,6 +15,7 @@ class MessageInputOverlay extends StatefulWidget {
 
 class MessageInputOverlayState extends State<MessageInputOverlay> {
   Type? type;
+  Type? selectedType;
 
   BuildContext? overlayContext;
   final TextEditingController searchController = TextEditingController();
@@ -84,7 +85,7 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
           right: screenType == ScreenType.desktop ? 265.0 : 15,
           bottom: 90,
           child: Material(
-            borderRadius: BorderRadius.circular(15),
+            color: Colors.transparent,
             child: Container(
               width: screenType == ScreenType.mobile
                   ? mediaQuery.size.width - 20
@@ -93,12 +94,11 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Theme.of(context).colorScheme.background,
-                border: Border.all(color: Colors.transparent),
               ),
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(15.0, 12.0, 0.0, 8.0),
+                    padding: const EdgeInsets.fromLTRB(15.0, 10.0, 0.0, 8.0),
                     child: Row(
                       children: [
                         selectButton(context, Type.gif, "GIFs"),
@@ -107,7 +107,7 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 8.0),
                     child: SizedBox(
                       height: 40,
                       child: SearchInputField(
@@ -136,19 +136,28 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
   }
 
   Widget selectButton(BuildContext context, Type type, String name) {
+    bool isSelected = selectedType == type;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
-      child: SizedBox(
-        child: CustomButton(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          text: name,
-          onPressed: (() async {
-            setState(() {
-              type = type;
-            });
-            refreshOverlay();
-          }),
-        ),
+      child: SelectButton(
+        text: name,
+        color: isSelected
+            ? Colors.white
+            : Colors.grey,
+        backgroundColor: isSelected
+            ? Colors.transparent
+            : Theme.of(context).colorScheme.background,
+        pressedBackgroundColor: Colors.transparent,
+        pressedTextColor: Colors.white,
+        hoverTextColor: Colors.white,
+        onPressed: () {
+          setState(() {
+            selectedType = isSelected ? null : type;
+            this.type = type;
+          });
+          refreshOverlay();
+        },
       ),
     );
   }
