@@ -3,8 +3,12 @@ import 'package:nexis/widgets/input/base_input_field.dart';
 
 class SearchInputField extends BaseInputField {
   final TextEditingController controller;
+  final String? hint;
+  final void Function(String) onChanged;
   const SearchInputField({
     Key? key,
+    this.hint,
+    required this.onChanged,
     required this.controller,
   }) : super(key: key);
 
@@ -22,6 +26,8 @@ class SearchInputFieldState extends BaseInputFieldState<SearchInputField> {
           controller: widget.controller,
           contentPadding: const EdgeInsets.only(
               right: 35.0, left: 10.0, top: 10.0, bottom: 10.0),
+          hint: widget.hint,
+          onChanged: widget.onChanged,
         ),
         const Padding(
           padding: EdgeInsets.only(right: 4.0),

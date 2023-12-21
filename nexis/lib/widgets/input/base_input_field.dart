@@ -47,6 +47,7 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
     void Function(String)? onFieldSubmitted,
     String? Function(String?)? validator,
     void Function()? onTap,
+    void Function(String)? onChanged,
     TextStyle? style,
     TextStyle? hintStyle,
     bool readOnly = false,
@@ -83,6 +84,7 @@ abstract class BaseInputFieldState<T extends BaseInputField> extends State<T> {
       autovalidateMode: autovalidateMode,
       validator: validator,
       onTap: onTap,
+      onChanged: onChanged,
       decoration: widget.fieldDecoration(context, contentPadding, fillColor,
           hint, focusBorderColor, hoverColor, hintStyle, errorMaxLines),
     );
