@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nexis/widgets/input/message/message_input_field.dart';
 import 'package:nexis/widgets/input/message/message_input_field_mobile.dart';
+import 'package:nexis/widgets/overlay/message_input_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../firebase/firestore_write.dart';
 import '../../firebase/firestore_read.dart';
@@ -270,7 +271,6 @@ class HomeState extends State<Home> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   Widget buildMobileHomeScreen(BuildContext context) {
-
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -339,12 +339,23 @@ class HomeState extends State<Home> {
             );
           }
         },
-        onPressedEmoji: () {},
+        onPressedEmoji: () async {
+          final emoji = await Navigator.of(context).push<String>(
+            PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => const MessageInputOverlay(initialType: Type.emoji),
+            ),
+          );
+
+          if (emoji != null) {
+            messageController.text += emoji;
+          }
+        },
         onPressedGif: () async {
           final gifUrl = await Navigator.of(context).push<String>(
             PageRouteBuilder(
               opaque: false,
-              pageBuilder: (_, __, ___) => const GifSearchDialog(),
+              pageBuilder: (_, __, ___) => const MessageInputOverlay(initialType: Type.gif),
             ),
           );
 
