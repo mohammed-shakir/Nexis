@@ -101,50 +101,21 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
                     padding: const EdgeInsets.fromLTRB(15.0, 12.0, 0.0, 8.0),
                     child: Row(
                       children: [
-                        Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
-                          child: SizedBox(
-                            child: CustomButton(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.background,
-                              text: "GIFs",
-                              onPressed: (() async {
-                                setState(() {
-                                  type = Type.gif;
-                                });
-                                refreshOverlay();
-                              }),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
-                          child: SizedBox(
-                            child: CustomButton(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.background,
-                              text: "Emoji",
-                              onPressed: (() async {
-                                setState(() {
-                                  type = Type.emoji;
-                                });
-                                refreshOverlay();
-                              }),
-                            ),
-                          ),
-                        ),
+                        selectButton(context, Type.gif, "GIFs"),
+                        selectButton(context, Type.emoji, "Emoji"),
                       ],
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: SearchInputField(
-                      //fillColor: Theme.of(context).colorScheme.surfaceVariant,
-                      controller: searchController,
-                      hint: getTypeInfo(type ?? Type.gif),
-                      onChanged: _onChange,
+                    child: SizedBox(
+                      height: 40,
+                      child: SearchInputField(
+                        fillColor: Theme.of(context).colorScheme.surfaceVariant,
+                        controller: searchController,
+                        hint: getTypeInfo(type ?? Type.gif),
+                        onChanged: _onChange,
+                      ),
                     ),
                   ),
                   const Divider(thickness: 0.4, color: Colors.black),
@@ -162,6 +133,24 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
+  }
+
+  Widget selectButton(BuildContext context, Type type, String name) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
+      child: SizedBox(
+        child: CustomButton(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          text: name,
+          onPressed: (() async {
+            setState(() {
+              type = type;
+            });
+            refreshOverlay();
+          }),
+        ),
+      ),
+    );
   }
 
   String getTypeInfo(Type type) {
