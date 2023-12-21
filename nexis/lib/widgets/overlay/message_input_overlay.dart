@@ -7,12 +7,13 @@ import 'package:nexis/widgets/overlay/utils/select_button.dart';
 import '../../enums/screen_type.dart';
 
 class MessageInputOverlay extends StatefulWidget {
-  const MessageInputOverlay({Key? key}) : super(key: key);
+  final Type initialType;
+
+  const MessageInputOverlay({Key? key, required this.initialType}) : super(key: key);
 
   @override
   MessageInputOverlayState createState() => MessageInputOverlayState();
 }
-
 class MessageInputOverlayState extends State<MessageInputOverlay> {
   Type? type;
   Type? selectedType;
@@ -28,6 +29,8 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
   @override
   void initState() {
     super.initState();
+    type = widget.initialType;
+    selectedType = widget.initialType;
     overlayEntry = OverlayEntry(builder: (context) {
       overlayContext = context;
       return buildOverlay(context);
@@ -57,7 +60,7 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
 
   void _onChange(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 200), () {
       childkey.currentState?.fetchGifs(value);
     });
   }
@@ -98,7 +101,7 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(15.0, 10.0, 0.0, 8.0),
+                    padding: const EdgeInsets.fromLTRB(15.0, 8.0, 0.0, 4.0),
                     child: Row(
                       children: [
                         selectButton(context, Type.gif, "GIFs"),

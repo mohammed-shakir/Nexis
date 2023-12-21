@@ -12,7 +12,6 @@ class EmojiSearchDialog extends StatefulWidget {
 class EmojiSearchDialogState extends State<EmojiSearchDialog> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Container();
   }
 }
