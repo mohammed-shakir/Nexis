@@ -46,7 +46,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   firebase_storage: ^11.2.2
   http: ^0.13.3
-  cached_network_image: ^3.2.0
+  cached_network_image: ^3.3.0
   email_validator: "^2.1.16"
   just_the_tooltip: ^0.0.12
   file_picker: ^5.3.2
