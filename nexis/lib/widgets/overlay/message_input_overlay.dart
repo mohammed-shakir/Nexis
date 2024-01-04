@@ -14,17 +14,18 @@ class MessageInputOverlay extends StatefulWidget {
   @override
   MessageInputOverlayState createState() => MessageInputOverlayState();
 }
+
 class MessageInputOverlayState extends State<MessageInputOverlay> {
   Type? type;
   Type? selectedType;
 
   BuildContext? overlayContext;
   final TextEditingController searchController = TextEditingController();
-  final GlobalKey<GifSearchDialogState> childkey =
-      GlobalKey<GifSearchDialogState>();
+  final GlobalKey<GifSearchDialogState> childkey = GlobalKey<GifSearchDialogState>();
 
   OverlayEntry? overlayEntry;
   Timer? _debounce;
+  final ValueNotifier<String> emojiSearchQuery = ValueNotifier('');
 
   @override
   void initState() {
@@ -61,7 +62,11 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
   void _onChange(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 200), () {
-      childkey.currentState?.fetchGifs(value);
+      if (type == Type.emoji) {
+        emojiSearchQuery.value = value.toLowerCase();
+      } else if (type == Type.gif) {
+        childkey.currentState?.fetchGifs(value);
+      }
     });
   }
 
@@ -90,9 +95,7 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              width: screenType == ScreenType.mobile
-                  ? mediaQuery.size.width - 20
-                  : 450,
+              width: screenType == ScreenType.mobile ? mediaQuery.size.width - 20 : 450,
               height: (mediaQuery.size.height - 130).clamp(0, 500),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -145,12 +148,8 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
       padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
       child: SelectButton(
         text: name,
-        color: isSelected
-            ? Colors.white
-            : Colors.grey,
-        backgroundColor: isSelected
-            ? Colors.transparent
-            : Theme.of(context).colorScheme.background,
+        color: isSelected ? Colors.white : Colors.grey,
+        backgroundColor: isSelected ? Colors.transparent : Theme.of(context).colorScheme.background,
         pressedBackgroundColor: Colors.transparent,
         pressedTextColor: Colors.white,
         hoverTextColor: Colors.white,
@@ -179,7 +178,12 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
     if (type == Type.gif) {
       return GifSearchDialog(key: childkey);
     } else if (type == Type.emoji) {
-      return EmojiSearchDialog(key: childkey);
+      return ValueListenableBuilder<String>(
+        valueListenable: emojiSearchQuery,
+        builder: (context, value, _) {
+          return EmojiSearchDialog(searchQuery: value);
+        },
+      );
     } else {
       return const SizedBox();
     }
