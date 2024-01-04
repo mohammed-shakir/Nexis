@@ -82,9 +82,9 @@
           serviceWorkerVersion: serviceWorkerVersion,
         },
         onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine({
+          engineInitializer.initializeEngine(/*{
             useColorEmoji: true,
-          }).then(function(appRunner) {
+          }*/).then(function(appRunner) {
             appRunner.runApp();
           });
         }

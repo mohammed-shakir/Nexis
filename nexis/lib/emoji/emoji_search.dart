@@ -150,7 +150,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
           ),
           child: Text(
             widget.emojiData['emoji'],
-            style: const TextStyle(fontSize: 28),
+            style: const TextStyle(fontSize: 28, fontFamily: 'NotoColorEmoji'),
           ),
         ),
       ),
