@@ -15,7 +15,6 @@ import 'components/navbar.dart';
 import 'components/servers.dart';
 import 'components/message_interface.dart';
 import '../../enums/screen_type.dart';
-import '../../tenor/gif_search.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:async';
 import 'dart:io' show Platform;
@@ -38,7 +37,6 @@ class HomeState extends State<Home> {
   static const int maxMessageLength = 2000;
   late SharedPreferences prefs;
   final buttonKey = GlobalKey();
-  final gifSearchDialog = const GifSearchDialog();
   List<PlatformFile> files = [];
 
   @override

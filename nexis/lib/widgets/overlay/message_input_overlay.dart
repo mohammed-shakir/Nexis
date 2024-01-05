@@ -60,15 +60,16 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
   }
 
   void _onChange(String value) {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 200), () {
-      if (type == Type.emoji) {
-        emojiSearchQuery.value = value.toLowerCase();
-      } else if (type == Type.gif) {
-        childkey.currentState?.fetchGifs(value);
-      }
-    });
-  }
+  if (_debounce?.isActive ?? false) _debounce?.cancel();
+  _debounce = Timer(const Duration(milliseconds: 200), () {
+    if (type == Type.emoji) {
+      emojiSearchQuery.value = value.toLowerCase();
+    } else if (type == Type.gif) {
+      String searchTerm = value.isEmpty ? 'nexis' : value;
+      childkey.currentState?.fetchGifs(searchTerm);
+    }
+  });
+}
 
   Widget buildOverlay(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -175,8 +176,9 @@ class MessageInputOverlayState extends State<MessageInputOverlay> {
   }
 
   Widget getTypeWidget(Type type) {
+    String searchTerm = searchController.text.isEmpty ? 'nexis' : searchController.text;
     if (type == Type.gif) {
-      return GifSearchDialog(key: childkey);
+      return GifSearchDialog(searchController: searchController, initialSearchTerm: searchTerm, key: childkey);
     } else if (type == Type.emoji) {
       return ValueListenableBuilder<String>(
         valueListenable: emojiSearchQuery,

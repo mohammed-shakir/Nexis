@@ -94,7 +94,7 @@ class TextInputField extends StatelessWidget {
             child: CustomButton(
               key: buttonKey,
               text: "GIF",
-              onPressed: () async {
+              /*onPressed: () async {
                 final gifUrl = await Navigator.of(context).push<String>(
                   PageRouteBuilder(
                     opaque: false,
@@ -106,7 +106,7 @@ class TextInputField extends StatelessWidget {
                   messageController.text = gifUrl;
                   sendMessage();
                 }
-              },
+              },*/
             ),
           ),
         ],
