@@ -54,6 +54,7 @@ dependencies:
   flutter_form_builder: ^9.0.0
   mime: ^1.0.4
   file_icon: ^1.0.0 # Not maintained
+  connectivity_plus: ^5.0.2
 
 dev_dependencies:
   flutter_test:
