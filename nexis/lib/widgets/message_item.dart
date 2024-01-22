@@ -5,13 +5,22 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/message_model.dart';
 import '../classes/time_format.dart';
 import '../../widgets/loading_screen.dart';
+import '../../widgets/message_hover_menu.dart';
 
-class MessageItem extends StatelessWidget {
+class MessageItem extends StatefulWidget {
   final Message message;
   final bool showSenderInfo;
 
   const MessageItem(
-      {super.key, required this.message, this.showSenderInfo = true});
+      {Key? key, required this.message, this.showSenderInfo = true})
+      : super(key: key);
+
+  @override
+  MessageItemState createState() => MessageItemState();
+}
+
+class MessageItemState extends State<MessageItem> {
+  bool isHovered = false;
 
   Widget _buildContentWidget(BuildContext context, String content) {
     Map<String, Widget Function(BuildContext)> contentBuilders = {
@@ -23,8 +32,8 @@ class MessageItem extends StatelessWidget {
           ),
       "https://firebasestorage.googleapis.com/v0/b/nexis-4723a.appspot.com":
           (BuildContext context) => DisplayMedia(
-                sender: message.sender,
-                messageId: message.id,
+                sender: widget.message.sender,
+                messageId: widget.message.id,
                 content: content,
               ),
     };
@@ -49,11 +58,10 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sender = message.sender;
-    final timestamp = message.timestamp.toDate();
-    final content = message.content;
-    final avatar = message.avatar;
-
+    final sender = widget.message.sender;
+    final timestamp = widget.message.timestamp.toDate();
+    final content = widget.message.content;
+    final avatar = widget.message.avatar;
     final formattedTimestamp = TimeFormat.formattedTimestamp(timestamp);
 
     ImageProvider imageProvider;
@@ -64,52 +72,68 @@ class MessageItem extends StatelessWidget {
     }
 
     return Padding(
-      padding: showSenderInfo
+      padding: widget.showSenderInfo
           ? const EdgeInsets.only(top: 8)
           : const EdgeInsets.only(top: 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          showSenderInfo
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: CircleAvatar(
-                    backgroundImage: imageProvider,
-                    backgroundColor: Colors.transparent,
-                    radius: 20,
-                  ),
-                )
-              : const SizedBox(width: 48),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (showSenderInfo) ...[
-                  Row(
-                    children: [
-                      Text(
-                        sender,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => isHovered = true),
+        onExit: (_) => setState(() => isHovered = false),
+        child: Container(
+          color: isHovered
+              ? const Color.fromARGB(255, 31, 35, 47)
+              : Colors.transparent,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              widget.showSenderInfo
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: CircleAvatar(
+                        backgroundImage: imageProvider,
+                        backgroundColor: Colors.transparent,
+                        radius: 20,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        formattedTimestamp,
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
+                    )
+                  : const SizedBox(width: 48),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.showSenderInfo) ...[
+                      Row(
+                        children: [
+                          Text(
+                            sender,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            formattedTimestamp,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 4),
                     ],
-                  ),
-                  const SizedBox(height: 4),
-                ],
-                _buildContentWidget(context, content),
-              ],
-            ),
+                    _buildContentWidget(context, content),
+                  ],
+                ),
+              ),
+              if (isHovered)
+                MessageHoverMenu(
+                  isMessageOwner: true,
+                  onDelete: () {},
+                  onReply: () {},
+                  onAddReaction: () {},
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
