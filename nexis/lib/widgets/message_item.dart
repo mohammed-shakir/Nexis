@@ -37,8 +37,12 @@ class MessageItem extends StatelessWidget {
 
     return MarkdownBody(
       data: content,
+      selectable: true,
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-        p: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.white),
+        p: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(color: Colors.white),
       ),
     );
   }
