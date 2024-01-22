@@ -3,4 +3,5 @@ class RouteNames {
   static const String settingsPage = '/settings_page';
   static const String authPage = '/auth_page';
   static const String registerPage = '/register_page';
+  static const String offlinePage = '/offline_page';
 }
