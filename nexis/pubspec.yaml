@@ -55,6 +55,7 @@ dependencies:
   mime: ^1.0.4
   file_icon: ^1.0.0 # Not maintained
   connectivity_plus: ^5.0.2
+  flutter_markdown: ^0.6.18+3
 
 dev_dependencies:
   flutter_test:

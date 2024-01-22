@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nexis/media/display_media.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/message_model.dart';
 import '../classes/time_format.dart';
 import '../../widgets/loading_screen.dart';
@@ -28,22 +29,18 @@ class MessageItem extends StatelessWidget {
               ),
     };
 
-    Widget contentWidget = Text(
-      content,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.w300,
-      ),
-    );
-
     for (var entry in contentBuilders.entries) {
       if (content.startsWith(entry.key)) {
-        contentWidget = entry.value(context);
-        break;
+        return entry.value(context);
       }
     }
 
-    return contentWidget;
+    return MarkdownBody(
+      data: content,
+      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+        p: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.white),
+      ),
+    );
   }
 
   @override
