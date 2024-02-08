@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MessageHoverMenu extends StatelessWidget {
+class MessageOptionsMenu extends StatelessWidget {
   final bool isMessageOwner;
   final VoidCallback onDelete;
   final VoidCallback onReply;
   final VoidCallback onAddReaction;
   final Function(bool) onMenuToggle;
 
-  const MessageHoverMenu({
+  const MessageOptionsMenu({
     Key? key,
     required this.isMessageOwner,
     required this.onDelete,
