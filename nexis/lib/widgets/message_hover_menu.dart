@@ -5,6 +5,7 @@ class MessageHoverMenu extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onReply;
   final VoidCallback onAddReaction;
+  final Function(bool) onMenuToggle;
 
   const MessageHoverMenu({
     Key? key,
@@ -12,50 +13,62 @@ class MessageHoverMenu extends StatelessWidget {
     required this.onDelete,
     required this.onReply,
     required this.onAddReaction,
+    required this.onMenuToggle,
   }) : super(key: key);
+
+  void _showMenu(BuildContext context) {
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final button = context.findRenderObject() as RenderBox;
+    final position = button.localToGlobal(Offset.zero, ancestor: overlay);
+    final size = button.size;
+    onMenuToggle(true);
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy + size.height,
+        position.dx + size.width,
+        position.dy,
+      ),
+      items: [
+        if (isMessageOwner)
+          PopupMenuItem<String>(
+            value: 'Delete',
+            onTap: onDelete,
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        PopupMenuItem<String>(
+          value: 'Reply',
+          onTap: onReply,
+          child: const Text('Reply', style: TextStyle(color: Colors.white)),
+        ),
+        PopupMenuItem<String>(
+          value: 'Add Reaction',
+          onTap: onAddReaction,
+          child:
+              const Text('Add Reaction', style: TextStyle(color: Colors.white)),
+        ),
+      ],
+      color: Colors.grey[900],
+    ).then((value) {
+      onMenuToggle(false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      color: Colors.grey[900],
-      onSelected: (String value) {
-        switch (value) {
-          case 'Delete':
-            onDelete();
-            break;
-          case 'Reply':
-            onReply();
-            break;
-          case 'Add Reaction':
-            onAddReaction();
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        if (isMessageOwner)
-          const PopupMenuItem<String>(
-            value: 'Delete',
-            child: Text(
-              'Delete',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        const PopupMenuItem<String>(
-          value: 'Reply',
-          child: Text(
-            'Reply',
-            style: TextStyle(color: Colors.white),
-          ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _showMenu(context),
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _horizontalMenuIcon(),
         ),
-        const PopupMenuItem<String>(
-          value: 'Add Reaction',
-          child: Text(
-            'Add Reaction',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
-      icon: _horizontalMenuIcon(),
+      ),
     );
   }
 
@@ -63,11 +76,11 @@ class MessageHoverMenu extends StatelessWidget {
     return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.circle, size: 5, color: Colors.white),
+        Icon(Icons.circle, size: 4, color: Colors.white),
         SizedBox(width: 2),
-        Icon(Icons.circle, size: 5, color: Colors.white),
+        Icon(Icons.circle, size: 4, color: Colors.white),
         SizedBox(width: 2),
-        Icon(Icons.circle, size: 5, color: Colors.white),
+        Icon(Icons.circle, size: 4, color: Colors.white),
       ],
     );
   }

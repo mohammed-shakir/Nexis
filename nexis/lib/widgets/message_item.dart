@@ -21,6 +21,7 @@ class MessageItem extends StatefulWidget {
 
 class MessageItemState extends State<MessageItem> {
   bool isHovered = false;
+  bool isMenuOpen = false;
 
   Widget _buildContentWidget(BuildContext context, String content) {
     Map<String, Widget Function(BuildContext)> contentBuilders = {
@@ -79,57 +80,75 @@ class MessageItemState extends State<MessageItem> {
         onEnter: (_) => setState(() => isHovered = true),
         onExit: (_) => setState(() => isHovered = false),
         child: Container(
-          color: isHovered
+          color: isHovered || isMenuOpen
               ? const Color.fromARGB(255, 31, 35, 47)
               : Colors.transparent,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              widget.showSenderInfo
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: CircleAvatar(
-                        backgroundImage: imageProvider,
-                        backgroundColor: Colors.transparent,
-                        radius: 20,
-                      ),
-                    )
-                  : const SizedBox(width: 48),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (widget.showSenderInfo) ...[
-                      Row(
-                        children: [
-                          Text(
-                            sender,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.showSenderInfo
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: CircleAvatar(
+                            backgroundImage: imageProvider,
+                            backgroundColor: Colors.transparent,
+                            radius: 20,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            formattedTimestamp,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
+                        )
+                      : const SizedBox(width: 48),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.showSenderInfo) ...[
+                          Row(
+                            children: [
+                              Text(
+                                sender,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                formattedTimestamp,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
+                          const SizedBox(height: 4),
                         ],
-                      ),
-                      const SizedBox(height: 4),
-                    ],
-                    _buildContentWidget(context, content),
-                  ],
-                ),
+                        _buildContentWidget(context, content),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              if (isHovered)
-                MessageHoverMenu(
-                  isMessageOwner: true,
-                  onDelete: () {},
-                  onReply: () {},
-                  onAddReaction: () {},
+              if (isHovered || isMenuOpen)
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: 8,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: MessageHoverMenu(
+                      isMessageOwner: true,
+                      onDelete: () {},
+                      onReply: () {},
+                      onAddReaction: () {},
+                      onMenuToggle: (isOpen) {
+                        setState(() {
+                          isMenuOpen = isOpen;
+                          isHovered = isOpen || isHovered;
+                        });
+                      },
+                    ),
+                  ),
                 ),
             ],
           ),
