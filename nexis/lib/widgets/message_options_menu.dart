@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class MessageOptionsMenu extends StatelessWidget {
   final bool isMessageOwner;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
   final VoidCallback onReply;
   final VoidCallback onAddReaction;
   final Function(bool) onMenuToggle;
@@ -11,6 +12,7 @@ class MessageOptionsMenu extends StatelessWidget {
     Key? key,
     required this.isMessageOwner,
     required this.onDelete,
+    required this.onEdit,
     required this.onReply,
     required this.onAddReaction,
     required this.onMenuToggle,
@@ -37,6 +39,12 @@ class MessageOptionsMenu extends StatelessWidget {
             value: 'Delete',
             onTap: onDelete,
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        if (isMessageOwner)
+          PopupMenuItem<String>(
+            value: 'Edit',
+            onTap: onEdit,
+            child: const Text('Edit', style: TextStyle(color: Colors.white)),
           ),
         PopupMenuItem<String>(
           value: 'Reply',
