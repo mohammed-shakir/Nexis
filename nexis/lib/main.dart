@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nexis/pages/auth/register_page.dart';
-import 'firebase/firebase_init.dart';
-import 'classes/route_names.dart';
+import 'package:provider/provider.dart';
+// import 'package:nexis/services/connectivity_service.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'pages/offline/offline_page.dart';
 import 'pages/main/home.dart';
 import 'pages/settings/settings_page.dart';
 import 'pages/auth/auth_page.dart';
+import 'firebase/firebase_init.dart';
+import 'classes/route_names.dart';
 import 'themes/default_theme.dart';
 import 'providers/user_providor.dart';
 import 'providers/server_providor.dart';
-import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
